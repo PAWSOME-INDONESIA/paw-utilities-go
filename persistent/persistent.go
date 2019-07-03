@@ -2,8 +2,6 @@ package persistent
 
 import (
 	"database/sql"
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
@@ -12,8 +10,12 @@ type (
 	ORM interface {
 		Close() error
 
-		FindOne(interface{}, ...interface{}) error
-		Find(interface{}, interface{}, ...interface{}) error
+		Set(string, interface{}) ORM
+		Error() error
+
+		Where(interface{}, ...interface{}) ORM
+		First(interface{}) error
+		All(interface{}) error
 
 		Create(interface{}) error
 		Update(interface{}) error
@@ -30,10 +32,12 @@ type (
 		Begin() ORM
 		Commit() error
 		Rollback() error
+		DB() *gorm.DB
 	}
 
 	Impl struct {
 		Database *gorm.DB
+		Err      error
 	}
 )
 
@@ -45,12 +49,27 @@ func (o *Impl) Close() error {
 	return nil
 }
 
-func (o *Impl) FindOne(object interface{}, where ...interface{}) error {
-	res := o.Database.First(object, where...)
+func (o *Impl) Set(key string, value interface{}) ORM {
+	db := o.Database.Set(key, value)
+	err := db.Error
+	return &Impl{Database: db, Err: err}
+}
 
-	if err := res.Error; err != nil {
+func (o *Impl) Error() error {
+	return o.Err
+}
+
+func (o *Impl) Where(query interface{}, args ...interface{}) ORM {
+	db := o.Database.Where(query, args...)
+	return &Impl{Database: db, Err: db.Error}
+}
+
+func (o *Impl) First(object interface{}) error {
+	db := o.Database.First(object)
+
+	if err := db.Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return errors.Wrap(err, fmt.Sprintf("could not find record %+v", where...))
+			return errors.Wrap(err, "failed to get first row")
 		} else {
 			return errors.Wrap(err, "")
 		}
@@ -59,11 +78,11 @@ func (o *Impl) FindOne(object interface{}, where ...interface{}) error {
 	return nil
 }
 
-func (o *Impl) Find(object interface{}, query interface{}, condition ...interface{}) error {
-	res := o.Database.Where(query, condition...).Find(object)
+func (o *Impl) All(object interface{}) error {
+	res := o.Database.Find(object)
 
 	if err := res.Error; err != nil {
-		return errors.Wrapf(err, "failed to query %+v with condition %+v", query, condition)
+		return errors.Wrapf(err, "failed to query %s", object)
 	}
 
 	return nil
@@ -80,7 +99,7 @@ func (o *Impl) Create(object interface{}) error {
 }
 
 func (o *Impl) Update(object interface{}) error {
-	res := o.Database.Update(object)
+	res := o.Database.Save(object)
 
 	if err := res.Error; err != nil {
 		return errors.Wrapf(err, "failed to update object %+v", object)
@@ -155,4 +174,8 @@ func (o *Impl) RawSqlWithObject(sql string, object interface{}, args ...interfac
 
 func (o *Impl) RawSql(sql string, args ...interface{}) (*sql.Rows, error) {
 	return o.Database.Raw(sql, args...).Rows()
+}
+
+func (o *Impl) DB() *gorm.DB {
+	return o.Database
 }
