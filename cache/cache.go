@@ -18,10 +18,12 @@ type (
 	}
 
 	Cache interface {
-		Set(string, interface{}, time.Duration) error
+		SetWithExpiration(string, interface{}, time.Duration) error
+		Set(string, interface{}) error
 		Get(string) (string, error)
 		Remove(string) error
 		FlushDatabase() error
+		Close() error
 	}
 
 	cache struct {
@@ -47,7 +49,7 @@ func New(option *Option) (Cache, error) {
 	return &cache{r: client}, nil
 }
 
-func (c *cache) Set(key string, value interface{}, duration time.Duration) error {
+func (c *cache) SetWithExpiration(key string, value interface{}, duration time.Duration) error {
 	if err := check(c); err != nil {
 		return err
 	}
@@ -57,6 +59,14 @@ func (c *cache) Set(key string, value interface{}, duration time.Duration) error
 	}
 
 	return nil
+}
+
+func (c *cache) Set(key string, value interface{}) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	return c.SetWithExpiration(key, value, 0)
 }
 
 func (c *cache) Get(key string) (string, error) {
@@ -96,6 +106,14 @@ func (c *cache) FlushDatabase() error {
 
 	if _, err := c.r.FlushDB().Result(); err != nil {
 		return errors.Wrap(err, "failed to flush db!")
+	}
+
+	return nil
+}
+
+func (c *cache) Close() error {
+	if err := c.r.Close(); err != nil {
+		return errors.Wrap(err, "failed to close redis client")
 	}
 
 	return nil
