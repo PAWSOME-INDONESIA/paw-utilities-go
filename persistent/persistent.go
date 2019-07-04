@@ -2,6 +2,7 @@ package persistent
 
 import (
 	"database/sql"
+
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
@@ -32,7 +33,6 @@ type (
 		Begin() ORM
 		Commit() error
 		Rollback() error
-		DB() *gorm.DB
 	}
 
 	Impl struct {
@@ -51,8 +51,7 @@ func (o *Impl) Close() error {
 
 func (o *Impl) Set(key string, value interface{}) ORM {
 	db := o.Database.Set(key, value)
-	err := db.Error
-	return &Impl{Database: db, Err: err}
+	return &Impl{Database: db, Err: db.Error}
 }
 
 func (o *Impl) Error() error {
@@ -129,7 +128,9 @@ func (o *Impl) SoftDelete(object interface{}) error {
 }
 
 func (o *Impl) Begin() ORM {
-	return &Impl{Database: o.Database.Begin()}
+	copied := o.Database.Begin()
+	return &Impl{Database: copied, Err: copied.Error}
+
 }
 
 func (o *Impl) Rollback() error {
@@ -174,8 +175,4 @@ func (o *Impl) RawSqlWithObject(sql string, object interface{}, args ...interfac
 
 func (o *Impl) RawSql(sql string, args ...interface{}) (*sql.Rows, error) {
 	return o.Database.Raw(sql, args...).Rows()
-}
-
-func (o *Impl) DB() *gorm.DB {
-	return o.Database
 }
