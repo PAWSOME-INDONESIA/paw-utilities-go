@@ -15,35 +15,35 @@ type (
 	FindCallback func(*mgo.Cursor, error) error
 
 	Mongo interface {
-		FindOneWithContext(context.Context, string, interface{}, interface{}) error
-		FindOne(string, interface{}, interface{}) error
+		FindOneWithContext(context.Context, string, interface{}, interface{}, ...*options.FindOneOptions) error
+		FindOne(string, interface{}, interface{}, ...*options.FindOneOptions) error
 
 		FindWithContext(context.Context, string, interface{}, FindCallback, ...*options.FindOptions) error
 		Find(string, interface{}, FindCallback, ...*options.FindOptions) error
 
-		FindOneAndDeleteWithContext(context.Context, string, interface{}) error
-		FindOneAndDelete(string, interface{}) error
+		FindOneAndDeleteWithContext(context.Context, string, interface{}, ...*options.FindOneAndDeleteOptions) error
+		FindOneAndDelete(string, interface{}, ...*options.FindOneAndDeleteOptions) error
 
-		FindOneAndUpdateWithContext(context.Context, string, interface{}, interface{}) error
-		FindOneAndUpdate(string, interface{}, interface{}) error
+		FindOneAndUpdateWithContext(context.Context, string, interface{}, interface{}, ...*options.FindOneAndUpdateOptions) error
+		FindOneAndUpdate(string, interface{}, interface{}, ...*options.FindOneAndUpdateOptions) error
 
-		InsertWithContext(context.Context, string, interface{}) (*primitive.ObjectID, error)
-		Insert(string, interface{}) (*primitive.ObjectID, error)
+		InsertWithContext(context.Context, string, interface{}, ...*options.InsertOneOptions) (*primitive.ObjectID, error)
+		Insert(string, interface{}, ...*options.InsertOneOptions) (*primitive.ObjectID, error)
 
-		InsertManyWithContext(context.Context, string, []interface{}) ([]primitive.ObjectID, error)
-		InsertMany(string, []interface{}) ([]primitive.ObjectID, error)
+		InsertManyWithContext(context.Context, string, []interface{}, ...*options.InsertManyOptions) ([]primitive.ObjectID, error)
+		InsertMany(string, []interface{}, ...*options.InsertManyOptions) ([]primitive.ObjectID, error)
 
-		UpdateWithContext(context.Context, string, interface{}, interface{}) error
-		Update(string, interface{}, interface{}) error
+		UpdateWithContext(context.Context, string, interface{}, interface{}, ...*options.UpdateOptions) error
+		Update(string, interface{}, interface{}, ...*options.UpdateOptions) error
 
-		UpdateManyWithContext(context.Context, string, interface{}, interface{}) error
-		UpdateMany(string, interface{}, interface{}) error
+		UpdateManyWithContext(context.Context, string, interface{}, interface{}, ...*options.UpdateOptions) error
+		UpdateMany(string, interface{}, interface{}, ...*options.UpdateOptions) error
 
-		DeleteManyWithContext(context.Context, string, interface{}) error
-		DeleteMany(string, interface{}) error
+		DeleteManyWithContext(context.Context, string, interface{}, ...*options.DeleteOptions) error
+		DeleteMany(string, interface{}, ...*options.DeleteOptions) error
 
-		DeleteWithContext(context.Context, string, interface{}) error
-		Delete(string, interface{}) error
+		DeleteWithContext(context.Context, string, interface{}, ...*options.DeleteOptions) error
+		Delete(string, interface{}, ...*options.DeleteOptions) error
 
 		// - DDL
 		Indexes(string) mongo.IndexView
@@ -80,8 +80,8 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 	return &implementation{client, database, logger}, nil
 }
 
-func (i *implementation) FindOneWithContext(ctx context.Context, collection string, filter, object interface{}) error {
-	sr := i.database.Collection(collection).FindOne(ctx, filter)
+func (i *implementation) FindOneWithContext(ctx context.Context, collection string, filter, object interface{}, options ...*options.FindOneOptions) error {
+	sr := i.database.Collection(collection).FindOne(ctx, filter, options...)
 
 	if err := sr.Err(); err != nil {
 		return errors.Wrap(err, "FindOne failed!")
@@ -94,8 +94,8 @@ func (i *implementation) FindOneWithContext(ctx context.Context, collection stri
 	return nil
 }
 
-func (i *implementation) FindOne(collection string, filter interface{}, object interface{}) error {
-	return i.FindOneWithContext(context.Background(), collection, filter, object)
+func (i *implementation) FindOne(collection string, filter interface{}, object interface{}, options ...*options.FindOneOptions) error {
+	return i.FindOneWithContext(context.Background(), collection, filter, object, options...)
 }
 
 func (i *implementation) FindWithContext(ctx context.Context, collection string, filter interface{}, callback FindCallback, options ...*options.FindOptions) error {
@@ -118,8 +118,8 @@ func (i *implementation) Find(collection string, filter interface{}, callback Fi
 	return i.FindWithContext(context.Background(), collection, filter, callback, options...)
 }
 
-func (i *implementation) FindOneAndDeleteWithContext(ctx context.Context, collection string, filter interface{}) error {
-	sr := i.database.Collection(collection).FindOneAndDelete(ctx, filter)
+func (i *implementation) FindOneAndDeleteWithContext(ctx context.Context, collection string, filter interface{}, options ...*options.FindOneAndDeleteOptions) error {
+	sr := i.database.Collection(collection).FindOneAndDelete(ctx, filter, options...)
 
 	if err := sr.Err(); err != nil {
 		return errors.Wrap(err, "FindOneAndDeleteWithContext failed!")
@@ -128,12 +128,12 @@ func (i *implementation) FindOneAndDeleteWithContext(ctx context.Context, collec
 	return nil
 }
 
-func (i *implementation) FindOneAndDelete(collection string, filter interface{}) error {
-	return i.FindOneAndDeleteWithContext(context.Background(), collection, filter)
+func (i *implementation) FindOneAndDelete(collection string, filter interface{}, options ...*options.FindOneAndDeleteOptions) error {
+	return i.FindOneAndDeleteWithContext(context.Background(), collection, filter, options...)
 }
 
-func (i *implementation) FindOneAndUpdateWithContext(ctx context.Context, collection string, filter, object interface{}) error {
-	sr := i.database.Collection(collection).FindOneAndUpdate(ctx, filter, object)
+func (i *implementation) FindOneAndUpdateWithContext(ctx context.Context, collection string, filter, object interface{}, options ...*options.FindOneAndUpdateOptions) error {
+	sr := i.database.Collection(collection).FindOneAndUpdate(ctx, filter, object, options...)
 
 	if err := sr.Err(); err != nil {
 		return errors.Wrap(err, "FindOneAndUpdateWithContext failed!")
@@ -146,12 +146,12 @@ func (i *implementation) FindOneAndUpdateWithContext(ctx context.Context, collec
 	return nil
 }
 
-func (i *implementation) FindOneAndUpdate(collection string, filter, object interface{}) error {
-	return i.FindOneAndUpdateWithContext(context.Background(), collection, filter, object)
+func (i *implementation) FindOneAndUpdate(collection string, filter, object interface{}, options ...*options.FindOneAndUpdateOptions) error {
+	return i.FindOneAndUpdateWithContext(context.Background(), collection, filter, object, options...)
 }
 
-func (i *implementation) InsertWithContext(ctx context.Context, collection string, object interface{}) (*primitive.ObjectID, error) {
-	ir, err := i.database.Collection(collection).InsertOne(ctx, object)
+func (i *implementation) InsertWithContext(ctx context.Context, collection string, object interface{}, options ...*options.InsertOneOptions) (*primitive.ObjectID, error) {
+	ir, err := i.database.Collection(collection).InsertOne(ctx, object, options...)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "InsertOneWithContext failed!")
@@ -166,12 +166,12 @@ func (i *implementation) InsertWithContext(ctx context.Context, collection strin
 	return &id, nil
 }
 
-func (i *implementation) Insert(collection string, object interface{}) (*primitive.ObjectID, error) {
-	return i.InsertWithContext(context.Background(), collection, object)
+func (i *implementation) Insert(collection string, object interface{}, options ...*options.InsertOneOptions) (*primitive.ObjectID, error) {
+	return i.InsertWithContext(context.Background(), collection, object, options...)
 }
 
-func (i *implementation) InsertManyWithContext(ctx context.Context, collection string, documents []interface{}) ([]primitive.ObjectID, error) {
-	ir, err := i.database.Collection(collection).InsertMany(ctx, documents)
+func (i *implementation) InsertManyWithContext(ctx context.Context, collection string, documents []interface{}, options ...*options.InsertManyOptions) ([]primitive.ObjectID, error) {
+	ir, err := i.database.Collection(collection).InsertMany(ctx, documents, options...)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "InsertManyWithContext failed!")
@@ -197,56 +197,56 @@ func (i *implementation) InsertManyWithContext(ctx context.Context, collection s
 	return ids, nil
 }
 
-func (i *implementation) InsertMany(collection string, documents []interface{}) ([]primitive.ObjectID, error) {
-	return i.InsertManyWithContext(context.Background(), collection, documents)
+func (i *implementation) InsertMany(collection string, documents []interface{}, options ...*options.InsertManyOptions) ([]primitive.ObjectID, error) {
+	return i.InsertManyWithContext(context.Background(), collection, documents, options...)
 }
 
-func (i *implementation) UpdateWithContext(ctx context.Context, collection string, filter, object interface{}) error {
-	if _, err := i.database.Collection(collection).UpdateOne(ctx, filter, object); err != nil {
+func (i *implementation) UpdateWithContext(ctx context.Context, collection string, filter, object interface{}, options ...*options.UpdateOptions) error {
+	if _, err := i.database.Collection(collection).UpdateOne(ctx, filter, object, options...); err != nil {
 		return errors.Wrap(err, "UpdateWithContext failed!")
 	}
 
 	return nil
 }
 
-func (i *implementation) Update(collection string, filter, object interface{}) error {
-	return i.UpdateWithContext(context.Background(), collection, filter, object)
+func (i *implementation) Update(collection string, filter, object interface{}, options ...*options.UpdateOptions) error {
+	return i.UpdateWithContext(context.Background(), collection, filter, object, options...)
 }
 
-func (i *implementation) UpdateManyWithContext(ctx context.Context, collection string, filter, object interface{}) error {
-	if _, err := i.database.Collection(collection).UpdateMany(ctx, filter, object); err != nil {
+func (i *implementation) UpdateManyWithContext(ctx context.Context, collection string, filter, object interface{}, options ...*options.UpdateOptions) error {
+	if _, err := i.database.Collection(collection).UpdateMany(ctx, filter, object, options...); err != nil {
 		return errors.Wrap(err, "UpdateManyWithContext failed!")
 	}
 
 	return nil
 }
 
-func (i *implementation) UpdateMany(collection string, filter, object interface{}) error {
-	return i.UpdateManyWithContext(context.Background(), collection, filter, object)
+func (i *implementation) UpdateMany(collection string, filter, object interface{}, options ...*options.UpdateOptions) error {
+	return i.UpdateManyWithContext(context.Background(), collection, filter, object, options...)
 }
 
-func (i *implementation) DeleteManyWithContext(ctx context.Context, collection string, filter interface{}) error {
-	if _, err := i.database.Collection(collection).DeleteMany(ctx, filter); err != nil {
+func (i *implementation) DeleteManyWithContext(ctx context.Context, collection string, filter interface{}, options ...*options.DeleteOptions) error {
+	if _, err := i.database.Collection(collection).DeleteMany(ctx, filter, options...); err != nil {
 		return errors.Wrap(err, "DeleteManyWithContext failed!")
 	}
 
 	return nil
 }
 
-func (i *implementation) DeleteMany(collection string, filter interface{}) error {
-	return i.DeleteManyWithContext(context.Background(), collection, filter)
+func (i *implementation) DeleteMany(collection string, filter interface{}, options ...*options.DeleteOptions) error {
+	return i.DeleteManyWithContext(context.Background(), collection, filter, options...)
 }
 
-func (i *implementation) DeleteWithContext(ctx context.Context, collection string, filter interface{}) error {
-	if _, err := i.database.Collection(collection).DeleteOne(ctx, filter); err != nil {
+func (i *implementation) DeleteWithContext(ctx context.Context, collection string, filter interface{}, options ...*options.DeleteOptions) error {
+	if _, err := i.database.Collection(collection).DeleteOne(ctx, filter, options...); err != nil {
 		return errors.Wrap(err, "DeleteWithContext failed!")
 	}
 
 	return nil
 }
 
-func (i *implementation) Delete(collection string, filter interface{}) error {
-	return i.DeleteWithContext(context.Background(), collection, filter)
+func (i *implementation) Delete(collection string, filter interface{}, options ...*options.DeleteOptions) error {
+	return i.DeleteWithContext(context.Background(), collection, filter, options...)
 }
 
 func (i *implementation) Indexes(collection string) mongo.IndexView {
