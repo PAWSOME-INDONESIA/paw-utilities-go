@@ -2,6 +2,7 @@ package persistent
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
@@ -38,6 +39,11 @@ type (
 	Impl struct {
 		Database *gorm.DB
 		Err      error
+	}
+
+	Option struct {
+		MaxIdleConnection, MaxOpenConnection int
+		ConnMaxLifetime                      time.Duration
 	}
 )
 
