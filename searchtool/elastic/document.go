@@ -51,7 +51,7 @@ func constructBulkBody(action, index, _type string, ids []string, request interf
 	}
 
 	for i, id := range ids {
-		req := fmt.Sprintf(BulkTemplate, action, index, _type, id)
+		req := fmt.Sprintf(BulkTemplate, action, index, _type, id, upsert)
 		response.WriteString(fmt.Sprintf("%s\n", req))
 
 		if action == DELETE {
