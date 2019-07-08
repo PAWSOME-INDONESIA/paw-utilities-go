@@ -71,6 +71,7 @@ func getOption(option *Option) {
 
 func New(option *Option) (searchtool.SearchTool, error) {
 	getOption(option)
+	Log = option.Log
 
 	es := ElasticSearch{
 		Option: option,
