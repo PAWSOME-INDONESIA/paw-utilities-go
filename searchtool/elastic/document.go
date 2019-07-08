@@ -19,10 +19,10 @@ const (
 
 const (
 	SearchTemplate = `{ "query" : %s }`
-	BulkTemplate   = `{ "%s" : { "_index": "%s", "_type": "%s", "_id": "%s" } }`
+	BulkTemplate   = `{ "%s" : { "_index": "%s", "_type": "%s", "_id": "%v" } }`
 )
 
-func constructBulkBody(action, index, _type string, ids []string, request interface{}) (string, error) {
+func constructBulkBody(action, index, _type string, ids []string, request interface{}, upsert bool) (string, error) {
 	var response strings.Builder
 	var datas []string
 	var err error
@@ -63,7 +63,7 @@ func constructBulkBody(action, index, _type string, ids []string, request interf
 		case CREATE:
 			formatDoc = "%s\n"
 		case UPDATE:
-			formatDoc = "{ \"doc\" : %s}\n"
+			formatDoc = "{ \"doc\" : %s, \"doc_as_upsert\" : %s }\n"
 		}
 
 		var data = datas[i]
@@ -71,13 +71,13 @@ func constructBulkBody(action, index, _type string, ids []string, request interf
 			data = data[:len(data)-1]
 		}
 
-		response.WriteString(fmt.Sprintf(formatDoc, data))
+		response.WriteString(fmt.Sprintf(formatDoc, data, upsert))
 	}
 	return response.String(), nil
 }
 
-func (e *ElasticSearch) doBulk(ctx context.Context, action, index, _type string, ids []string, request interface{}) error {
-	body, err := constructBulkBody(action, index, _type, ids, request)
+func (e *ElasticSearch) doBulk(ctx context.Context, action, index, _type string, ids []string, request interface{}, upsert bool) error {
+	body, err := constructBulkBody(action, index, _type, ids, request, upsert)
 
 	if err != nil {
 		Log.Errorf("Error constructBulkBody with Request : %+v", request)

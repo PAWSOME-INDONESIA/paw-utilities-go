@@ -9,15 +9,15 @@ func (e *ElasticSearch) BulkCreateDocument(index string, _type string, ids []str
 }
 
 func (e *ElasticSearch) BulkCreateDocumentWithContext(ctx context.Context, index, _type string, ids []string, request interface{}) error {
-	return e.doBulk(ctx, CREATE, index, _type, ids, request)
+	return e.doBulk(ctx, CREATE, index, _type, ids, request, false)
 }
 
-func (e *ElasticSearch) BulkUpdateDocument(index, _type string, ids []string, request interface{}) error {
-	return e.BulkUpdateDocumentWithContext(context.Background(), index, _type, ids, request)
+func (e *ElasticSearch) BulkUpdateDocument(index, _type string, ids []string, request interface{}, upsert bool) error {
+	return e.BulkUpdateDocumentWithContext(context.Background(), index, _type, ids, request, upsert)
 }
 
-func (e *ElasticSearch) BulkUpdateDocumentWithContext(ctx context.Context, index, _type string, ids []string, request interface{}) error {
-	return e.doBulk(ctx, UPDATE, index, _type, ids, request)
+func (e *ElasticSearch) BulkUpdateDocumentWithContext(ctx context.Context, index, _type string, ids []string, request interface{}, upsert bool) error {
+	return e.doBulk(ctx, UPDATE, index, _type, ids, request, upsert)
 }
 
 func (e *ElasticSearch) BulkDeleteDocument(index, _type string, ids []string) error {
@@ -25,5 +25,5 @@ func (e *ElasticSearch) BulkDeleteDocument(index, _type string, ids []string) er
 }
 
 func (e *ElasticSearch) BulkDeleteDocumentWithContext(ctx context.Context, index, _type string, ids []string) error {
-	return e.doBulk(ctx, DELETE, index, _type, ids, nil)
+	return e.doBulk(ctx, DELETE, index, _type, ids, nil, false)
 }
