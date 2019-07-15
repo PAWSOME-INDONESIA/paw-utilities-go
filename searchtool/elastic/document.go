@@ -19,13 +19,13 @@ const (
 
 const (
 	SearchTemplate = `{ "query" : %s }`
-	BulkTemplate   = `{ "%s" : { "_index": "%s", "_type": "%s", "_id": "%v" } }`
+	BulkTemplate   = `{ "%s" : { "_index": "%s", "_type": "%s", "_id": "%s" } }`
 )
 
 func constructBulkBody(action, index, _type string, ids []string, request interface{}, upsert bool) (string, error) {
 	var response strings.Builder
-	var datas []string
 	var err error
+	datas := []string{}
 
 	if action != CREATE && action != UPDATE && action != DELETE {
 		Log.Error(`Action must be between "create", "update" or "delete"`)
@@ -63,7 +63,7 @@ func constructBulkBody(action, index, _type string, ids []string, request interf
 		case CREATE:
 			formatDoc = "%s\n"
 		case UPDATE:
-			formatDoc = "{ \"doc\" : %s, \"doc_as_upsert\" : %t }\n"
+			formatDoc = "{ \"doc\" : %s }, \"doc_as_upsert\" : %t }\n"
 		}
 
 		var data = datas[i]

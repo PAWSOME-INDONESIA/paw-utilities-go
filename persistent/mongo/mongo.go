@@ -45,8 +45,13 @@ type (
 		DeleteWithContext(context.Context, string, interface{}, ...*options.DeleteOptions) error
 		Delete(string, interface{}, ...*options.DeleteOptions) error
 
+		BulkDocumentWithContext(context.Context, string, []mgo.WriteModel) error
+		BulkDocument(string, []mgo.WriteModel) error
+
 		// - DDL
 		Indexes(string) mongo.IndexView
+		Client() *mgo.Client
+		DB() *mgo.Database
 	}
 
 	implementation struct {
@@ -78,6 +83,14 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 	database := client.Database(name)
 
 	return &implementation{client, database, logger}, nil
+}
+
+func (i *implementation) Client() *mgo.Client {
+	return i.client
+}
+
+func (i *implementation) DB() *mgo.Database {
+	return i.database
 }
 
 func (i *implementation) FindOneWithContext(ctx context.Context, collection string, filter, object interface{}, options ...*options.FindOneOptions) error {
@@ -251,4 +264,16 @@ func (i *implementation) Delete(collection string, filter interface{}, options .
 
 func (i *implementation) Indexes(collection string) mongo.IndexView {
 	return i.database.Collection(collection).Indexes()
+}
+
+func (i *implementation) BulkDocumentWithContext(ctx context.Context, collection string, data []mgo.WriteModel) error {
+	_, err := i.database.Collection(collection).BulkWrite(ctx, data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (i *implementation) BulkDocument(collection string, data []mgo.WriteModel) error {
+	return i.BulkDocumentWithContext(context.Background(), collection, data)
 }
