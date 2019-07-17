@@ -1,4 +1,4 @@
-package kafka
+package kafka_sarama
 
 import (
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
