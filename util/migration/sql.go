@@ -160,7 +160,7 @@ func (s *sql) Down() error {
 	}
 
 	// - remove version greater than before from migrations table
-	if err := s.orm.Exec("DELETE FROM migrations WHERE version >= ?", version); err != nil {
+	if err := tx.Exec("DELETE FROM migrations WHERE version >= ?", version); err != nil {
 		s.logger.Errorf("%s failed to execute delete migration script %+v", DownTag, version)
 		outer = err
 	}
