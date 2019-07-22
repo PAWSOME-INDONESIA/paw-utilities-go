@@ -87,13 +87,9 @@ func New(option *Option) (searchtool.SearchTool, error) {
 		return nil, errors.Wrap(err, "[Elastic Search] Error Create Client")
 	}
 
-	res, err := client.Info()
-
-	if err != nil {
+	if _, err := client.Info(); err != nil {
 		return nil, errors.Wrap(err, "[Elastic Search] Error Get Info")
 	}
-
-	Log.Infof("[Elastic Search] %+v", res)
 
 	es.Client = client
 
