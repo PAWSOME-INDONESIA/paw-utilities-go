@@ -54,7 +54,7 @@ func (n *nosql) Up() error {
 	}
 
 	if last == getLatestNoSqlMigrationVersion(n) {
-		n.logger.Infof("%s migration is already up to date!", UpTag)
+		n.logger.Infof("%s migration already up to date!", NoSqlUpTag)
 	}
 
 	keys := make([]int, 0)
@@ -82,12 +82,12 @@ func (n *nosql) Up() error {
 	}
 
 	for _, version := range versions {
-		n.logger.Infof("%s begin up migration version %d", UpTag, version)
+		n.logger.Infof("%s begin up migration version %d", NoSqlUpTag, version)
 		script := n.migrations[version]
-		n.logger.Infof("%s executing migration version %d", UpTag, version)
+		n.logger.Infof("%s executing migration version %d", NoSqlUpTag, version)
 
 		if err := script.Up(n.orm); err != nil {
-			n.logger.Errorf("%s failed to execute migration up script with version %d", UpTag, version)
+			n.logger.Errorf("%s failed to execute migration up script with version %d", NoSqlUpTag, version)
 			n.logger.Error(err)
 			return errors.Wrapf(err, "failed to execute migration %d", version)
 		}
@@ -96,7 +96,7 @@ func (n *nosql) Up() error {
 			return errors.Wrapf(err, "failed to execute migration %d", version)
 		}
 
-		n.logger.Infof("%s migration with version %d migrated!", UpTag, version)
+		n.logger.Infof("%s migration with version %d migrated!", NoSqlUpTag, version)
 	}
 	return nil
 }
@@ -135,7 +135,7 @@ func (n *nosql) Down() error {
 	}
 
 	if version == 0 {
-		n.logger.Infof("%s migrations table is empty, nothing to do", DownTag)
+		n.logger.Infof("%s migrations table is empty, nothing to do", NoSqlDownTag)
 		return nil
 	}
 
@@ -149,19 +149,19 @@ func (n *nosql) Down() error {
 
 	script := n.migrations[version]
 
-	n.logger.Infof("%s begin down migration %d version", DownTag, version)
+	n.logger.Infof("%s begin down migration %d version", NoSqlDownTag, version)
 
 	if err := script.Down(n.orm); err != nil {
-		n.logger.Errorf("%s failed to execute migration down script with version %d", DownTag, version)
+		n.logger.Errorf("%s failed to execute migration down script with version %d", NoSqlDownTag, version)
 		return errors.Wrapf(err, "failed to execute migration down script with version %d", version)
 	}
 
 	if err := n.orm.DeleteMany(TableName, bson.D{{"version", version}}); err != nil {
-		n.logger.Errorf("%s failed to execute migration down script with version %d", DownTag, version)
+		n.logger.Errorf("%s failed to execute migration down script with version %d", NoSqlDownTag, version)
 		return errors.Wrapf(err, "failed to execute migration down script with version %d", version)
 	}
 
-	n.logger.Infof("%s migration version %d succeeded", DownTag, version)
+	n.logger.Infof("%s migration version %d succeeded", NoSqlDownTag, version)
 	return nil
 }
 

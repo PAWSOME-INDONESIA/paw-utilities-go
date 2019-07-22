@@ -11,6 +11,9 @@ const (
 	ColumnName = "version"
 	UpTag      = "[MIGRATION-UP] -"
 	DownTag    = "[MIGRATION-DOWN] -"
+
+	NoSqlUpTag      = "[MIGRATION-UP-NOSQL] -"
+	NoSqlDownTag    = "[MIGRATION-DOWN-NOSQL] -"
 )
 
 type (
