@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
@@ -47,6 +48,11 @@ type (
 
 		BulkDocumentWithContext(context.Context, string, []mgo.WriteModel) error
 		BulkDocument(string, []mgo.WriteModel) error
+
+		CountWithFilterAndContext(context.Context, string, interface{}, ...*options.CountOptions) (int64, error)
+		CountWithFilter(string, interface{}, ...*options.CountOptions) (int64, error)
+		CountWithContext(context.Context, string, ...*options.CountOptions) (int64, error)
+		Count(string, ...*options.CountOptions) (int64, error)
 
 		// - DDL
 		Indexes(string) mongo.IndexView
@@ -256,6 +262,29 @@ func (i *implementation) DeleteWithContext(ctx context.Context, collection strin
 	}
 
 	return nil
+}
+
+func (i *implementation) CountWithFilterAndContext(ctx context.Context, collection string, filter interface{}, opts ...*options.CountOptions) (int64, error) {
+	coll := i.database.Collection(collection)
+	total, err := coll.CountDocuments(ctx, filter, opts...)
+
+	if err != nil {
+		return 0, errors.Wrapf(err, "count collection %s failed", collection)
+	}
+
+	return total, nil
+}
+
+func (i *implementation) CountWithFilter(collection string, filter interface{}, opts ...*options.CountOptions) (int64, error) {
+	return i.CountWithFilterAndContext(context.Background(), collection, filter, opts...)
+}
+
+func (i *implementation) CountWithContext(ctx context.Context, collection string, opts ...*options.CountOptions) (int64, error) {
+	return i.CountWithFilterAndContext(ctx, collection, bson.D{}, opts...)
+}
+
+func (i *implementation) Count(collection string, opts ...*options.CountOptions) (int64, error) {
+	return i.CountWithContext(context.Background(), collection, opts...)
 }
 
 func (i *implementation) Delete(collection string, filter interface{}, options ...*options.DeleteOptions) error {
