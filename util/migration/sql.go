@@ -322,7 +322,7 @@ func isAlreadyMigrated(s *sql, version int) error {
 
 	// - migrations table not empty but could not find migration with specific version
 	if !found {
-		return errors.Wrapf(err, "migration %d is not migrated!", version)
+		return errors.New(fmt.Sprintf("migration %d is not migrated!", version))
 	}
 
 	return nil
