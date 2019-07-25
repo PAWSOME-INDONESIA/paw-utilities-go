@@ -27,6 +27,5 @@ func (e *ElasticSearch) FindByIdWithContext(ctx context.Context, index, _type, i
 	}
 
 	*data = r.Source
-
 	return nil
 }

@@ -33,6 +33,5 @@ func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, que
 	}
 
 	*data = r.Hits
-
 	return nil
 }

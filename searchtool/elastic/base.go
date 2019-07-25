@@ -53,7 +53,8 @@ var Log logs.Logger
 
 func getOption(option *Option) {
 	if option.Log == nil {
-		Log, _ = logs.DefaultLog()
+		option.Log, _ = logs.DefaultLog()
+		Log = option.Log
 	}
 
 	if option.MaxIdleConnsPerHost == 0 {
@@ -71,7 +72,6 @@ func getOption(option *Option) {
 
 func New(option *Option) (searchtool.SearchTool, error) {
 	getOption(option)
-	Log = option.Log
 
 	es := ElasticSearch{
 		Option: option,

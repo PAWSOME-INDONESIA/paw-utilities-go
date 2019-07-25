@@ -63,7 +63,7 @@ func constructBulkBody(action, index, _type string, ids []string, request interf
 		case CREATE:
 			formatDoc = "%s\n"
 		case UPDATE:
-			formatDoc = "{ \"doc\" : %s }, \"doc_as_upsert\" : %t }\n"
+			formatDoc = "{ \"doc\" : %s, \"doc_as_upsert\" : %t } }\n"
 		}
 
 		var data = datas[i]
