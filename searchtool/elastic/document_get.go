@@ -2,16 +2,17 @@ package elastic
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/pkg/errors"
 
 	"github.com/elastic/go-elasticsearch/esapi"
 )
 
-func (e *ElasticSearch) FindById(index, _type, id string, data *interface{}) error {
+func (e *ElasticSearch) FindById(index, _type, id string, data interface{}) error {
 	return e.FindByIdWithContext(context.Background(), index, _type, id, data)
 }
 
-func (e *ElasticSearch) FindByIdWithContext(ctx context.Context, index, _type, id string, data *interface{}) error {
+func (e *ElasticSearch) FindByIdWithContext(ctx context.Context, index, _type, id string, data interface{}) error {
 	req := esapi.GetRequest{
 		Index:        index,
 		DocumentType: _type,
@@ -26,6 +27,14 @@ func (e *ElasticSearch) FindByIdWithContext(ctx context.Context, index, _type, i
 		return errors.Wrapf(err, "failed to find elastic document with id %s", id)
 	}
 
-	*data = r.Source
+	jsonString, err := json.Marshal(r.Source.(map[string]interface{}))
+	if err != nil {
+		return errors.Wrap(err, "failed to marshal document")
+	}
+
+	if err = json.Unmarshal(jsonString, &data); err != nil {
+		return errors.Wrap(err, "failed to unmarshal document")
+	}
+
 	return nil
 }

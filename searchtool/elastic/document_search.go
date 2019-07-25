@@ -2,6 +2,7 @@ package elastic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
 	"strings"
@@ -9,11 +10,11 @@ import (
 	"github.com/elastic/go-elasticsearch/esapi"
 )
 
-func (e *ElasticSearch) Search(index, _type, query string, data *interface{}) error {
+func (e *ElasticSearch) Search(index, _type, query string, data interface{}) error {
 	return e.SearchWithContext(context.Background(), index, _type, query, data)
 }
 
-func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, query string, data *interface{}) error {
+func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, query string, data interface{}) error {
 	body := fmt.Sprintf(SearchTemplate, query)
 	Log.Info(body)
 
@@ -32,6 +33,20 @@ func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, que
 		return errors.Wrapf(err, "failed to search elastic document with query %s", query)
 	}
 
-	*data = r.Hits
+	var jsons []string
+	variable := r.Hits.Hits.([]interface{})
+	for _, value := range variable {
+		obj := value.(map[string]interface{})["_source"]
+
+		jsonString, err := json.Marshal(obj)
+		if err != nil {
+			return errors.Wrap(err, "failed to marshal document")
+		}
+		jsons = append(jsons, string(jsonString))
+	}
+
+	if err = json.Unmarshal([]byte("[" + strings.Join(jsons, ",") + "]"), &data); err != nil {
+		return errors.Wrap(err, "failed to unmarshal document")
+	}
 	return nil
 }

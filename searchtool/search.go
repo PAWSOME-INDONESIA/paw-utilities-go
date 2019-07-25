@@ -4,6 +4,10 @@ import (
 	"context"
 )
 
+type Filler interface {
+	Fill(map[string]interface{}) error
+}
+
 type SearchTool interface {
 	IndexExist(string) error
 	IndexExistWithContext(context.Context, string) error
@@ -27,9 +31,9 @@ type SearchTool interface {
 	BulkDeleteDocument(string, string, []string) error
 	BulkDeleteDocumentWithContext(context.Context, string, string, []string) error
 
-	FindById(string, string, string, *interface{}) error
-	FindByIdWithContext(context.Context, string, string, string, *interface{}) error
+	FindById(string, string, string, interface{}) error
+	FindByIdWithContext(context.Context, string, string, string, interface{}) error
 
-	Search(string, string, string, *interface{}) error
-	SearchWithContext(context.Context, string, string, string, *interface{}) error
+	Search(string, string, string, interface{}) error
+	SearchWithContext(context.Context, string, string, string, interface{}) error
 }
