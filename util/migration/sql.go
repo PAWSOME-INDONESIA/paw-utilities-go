@@ -160,7 +160,7 @@ func (s *sql) Down() error {
 	}
 
 	// - remove version greater than before from migrations table
-	if err := s.orm.Exec("DELETE FROM migrations WHERE version >= ?", version); err != nil {
+	if err := tx.Exec("DELETE FROM migrations WHERE version >= ?", version); err != nil {
 		s.logger.Errorf("%s failed to execute delete migration script %+v", DownTag, version)
 		outer = err
 	}
@@ -322,7 +322,7 @@ func isAlreadyMigrated(s *sql, version int) error {
 
 	// - migrations table not empty but could not find migration with specific version
 	if !found {
-		return errors.Wrapf(err, "migration %d is not migrated!", version)
+		return errors.New(fmt.Sprintf("migration %d is not migrated!", version))
 	}
 
 	return nil
