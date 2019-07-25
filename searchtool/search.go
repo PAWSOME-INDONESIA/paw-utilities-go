@@ -4,10 +4,6 @@ import (
 	"context"
 )
 
-type Filler interface {
-	Fill(map[string]interface{}) error
-}
-
 type SearchTool interface {
 	IndexExist(string) error
 	IndexExistWithContext(context.Context, string) error
