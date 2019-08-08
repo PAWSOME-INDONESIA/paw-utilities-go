@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/caarlos0/env/v6"
 	"os"
 	"strings"
 
@@ -35,6 +36,14 @@ func New(path string, object interface{}) error {
 
 	if err := v.Unmarshal(&object); err != nil {
 		return errors.Wrap(err, "failed to unmarshal config to object")
+	}
+
+	return nil
+}
+
+func NewFromEnv(object interface{}) error {
+	if err := env.Parse(&object); err != nil {
+		return errors.Wrap(err, "failed to read from env variable")
 	}
 
 	return nil

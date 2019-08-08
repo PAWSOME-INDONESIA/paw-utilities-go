@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/Shopify/sarama v1.22.1
 	github.com/bsm/sarama-cluster v2.1.15+incompatible
+	github.com/caarlos0/env/v6 v6.0.0 // indirect
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/go-playground/locales v0.12.1 // indirect
