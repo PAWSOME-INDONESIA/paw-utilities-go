@@ -67,6 +67,11 @@ type (
 	}
 )
 
+func NewObjectID() *primitive.ObjectID {
+	id := primitive.NewObjectID()
+	return &id
+}
+
 func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, error) {
 	if uri == "" {
 		return nil, errors.New("uri is required!")
