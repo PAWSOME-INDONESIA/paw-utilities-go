@@ -67,19 +67,6 @@ type (
 	}
 )
 
-func NewObjectID() *primitive.ObjectID {
-	id := primitive.NewObjectID()
-	return &id
-}
-
-func ToObjectID(hex string) (*primitive.ObjectID, error) {
-	if id, err := primitive.ObjectIDFromHex(hex); err != nil {
-		return nil, err
-	} else {
-		return &id, nil
-	}
-}
-
 func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, error) {
 	if uri == "" {
 		return nil, errors.New("uri is required!")
