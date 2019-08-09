@@ -42,7 +42,7 @@ func New(path string, object interface{}) error {
 }
 
 func NewFromEnv(object interface{}) error {
-	if err := env.Parse(&object); err != nil {
+	if err := env.Parse(object); err != nil {
 		return errors.Wrap(err, "failed to read from env variable")
 	}
 
