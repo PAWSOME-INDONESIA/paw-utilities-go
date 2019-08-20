@@ -5,9 +5,7 @@
       "data": {
         "adult": 1,
         "filter": {
-          "paymentOptions": [
-            "pay_at_hotel"
-          ]
+
         },
         "night": 1,
         "page": 1,
@@ -34,15 +32,10 @@
       "expected": {
         "responseData": [
           {
-            "id": "kyriad-hotel-metro-cipulir-jakarta-108001534490371908",
-            "name": "Kyriad Metro Cipulir Jakarta",
+            "id": "blue-jazz-hostel-108001534518584830",
+            "name": "Blue Jazz Hostel",
             "address": null,
-            "postalCode": null,
-            "starRating": 3,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "postalCode": null
           }
         ]
       }

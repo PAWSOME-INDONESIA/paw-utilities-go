@@ -32,19 +32,7 @@
         "version" : "2"
       },
       "expected": {
-        "responseData": [
-          {
-            "id": "kyriad-hotel-metro-cipulir-jakarta-108001534490371908",
-            "name": "Kyriad Metro Cipulir Jakarta",
-            "address": null,
-            "postalCode": null,
-            "starRating": 3,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
-          }
-        ]
+
       }
     }
 
