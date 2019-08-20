@@ -48,7 +48,6 @@ type (
 
 // Test ...
 func (d *CommandAutocomplete) Test(contentList structs.ContentList) {
-
 	var (
 		err                  error
 		expectedResponse     []ContentlList
@@ -108,13 +107,12 @@ func (d *CommandAutocomplete) Test(contentList structs.ContentList) {
 		typeData := gjson.Get(v.String(), "type").String()
 		hotelCount := gjson.Get(v.String(), "hotelCount").Int()
 		name := gjson.Get(v.String(), "name").String()
+		// log.Info(hotelCount, gjson.GetBytes(dataByte, "hotelCount").Int())
 		if typeData == "AREA" || typeData == "REGION" || typeData == "COUNTRY" || typeData == "CITY" {
-			if hotelCount <= gjson.GetBytes(dataByte, "hotelCount").Int() {
+			if hotelCount < gjson.GetBytes(dataByte, "hotelCount").Int() {
 				resultHotelCountNotNull = append(resultHotelCountNotNull, name+`(type is `+typeData+`)`)
-
 			}
 		}
-
 	}
 
 	if len(resultHotelCountNotNull) > 0 {

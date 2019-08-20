@@ -18,6 +18,7 @@ type (
 	// Data ...
 	Data struct {
 		Adult       int    `json:"adult"`
+		Filter      Filter `json:"filter"`
 		Night       int    `json:"night"`
 		Page        int    `json:"page"`
 		Priority    string `json:"priorityRankingType"`
@@ -28,9 +29,14 @@ type (
 		StartDate   string `json:"startDate"`
 	}
 
+	// Filter ...
+	Filter struct {
+		PaymentOptions []string `json:"paymentOptions"`
+	}
+
 	// Expected ...
 	Expected struct {
-		ResponseData interface{} `json"responseData"`
+		ResponseData interface{} `json:"responseData"`
 	}
 
 	// HotelSearchResponse ...
@@ -72,7 +78,7 @@ type (
 		RateInfo       interface{} `json:"rateInfo"`
 		Promo          interface{} `json:"promo"`
 		ValueAdded     interface{} `json:"valueAdded"`
-		PaymentOption  interface{} `json:"paymentOption"`
+		PaymentOption  string      `json:"paymentOption"`
 		Soldout        bool        `json:"soldOut"`
 	}
 
@@ -86,15 +92,19 @@ type (
 // Test ...
 func (d *CommandSearch) Test(contentList structs.ContentList) {
 	var (
-		err                  error
-		data                 Data
-		hotelSearchResp      HotelSearchResponse
-		expected             Expected
-		expectedResponse     []ContentlList
-		checkMatchSearchType = true
-		checkAvailRoom       = true
-		logMatchSearchType   = make([]string, 0)
-		logAvailRoom         = make([]string, 0)
+		err                      error
+		data                     Data
+		hotelSearchResp          HotelSearchResponse
+		expected                 Expected
+		expectedResponse         []ContentlList
+		checkMatchSearchType     = true
+		checkAvailRoom           = true
+		checkNameEmpty           = true
+		checkFilterPaymentOption = true
+		logMatchSearchType       = make([]string, 0)
+		logAvailRoom             = make([]string, 0)
+		logNameEmpty             = make([]string, 0)
+		logFilterPaymentOption   = make([]string, 0)
 	)
 
 	// Get Data
@@ -158,6 +168,7 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 	if len(hotelSearchResp.Data.ContentList) == 0 {
 		log.Warning("2. Check hotel list must > 0", constant.SuccessMessage[false])
 		log.Warning("\nResponse : ", hotelSearchResp)
+		checkAvailRoom, checkFilterPaymentOption, checkMatchSearchType, checkNameEmpty = false, false, false, false
 	} else {
 		log.Info("2. Check hotel list must > 0", constant.SuccessMessage[true])
 	}
@@ -214,6 +225,27 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 				checkExpected[keyexpect] = true
 			}
 		}
+
+		// Check name empty
+		if &value.Name == nil || value.Name == " " || value.Name == "" {
+			checkNameEmpty = false
+			logNameEmpty = append(logNameEmpty, "\nHotel ID ", value.ID, string(value.Name))
+		}
+
+		// Check filter payment option
+		if len(data.Filter.PaymentOptions) > 0 {
+			isFound := false
+			for _, valPayment := range data.Filter.PaymentOptions {
+				// log.Info(valPayment, " == ", value.PaymentOption)
+				if value.PaymentOption == valPayment {
+					isFound = true
+				}
+			}
+			if !isFound {
+				logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
+				checkFilterPaymentOption = false
+			}
+		}
 	}
 
 	log.Info("4. Check hotel list should match search type (", data.SearchType, ")",
@@ -234,6 +266,22 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		log.Info("6. Check Expected response:")
 		for keyexpect := range expectedResponse {
 			log.Info("Expected response ", (keyexpect + 1), constant.SuccessMessage[checkExpected[keyexpect]])
+		}
+	}
+
+	log.Info("7. Check Hotel Name is not empty",
+		constant.SuccessMessage[checkNameEmpty])
+	if !checkNameEmpty {
+		log.Warning("Log Message :")
+		log.Warning(logNameEmpty)
+	}
+
+	if len(data.Filter.PaymentOptions) > 0 {
+		log.Info("8. Check Hotel should match with filter payment options : "+strings.Join(data.Filter.PaymentOptions, ","),
+			constant.SuccessMessage[checkFilterPaymentOption])
+		if !checkFilterPaymentOption {
+			log.Warning("Log Message :")
+			log.Warning(logFilterPaymentOption)
 		}
 	}
 
