@@ -4,9 +4,7 @@
       "command": "search",
       "data": {
         "adult": 1,
-        "filter": {
-
-        },
+        "filter": {},
         "night": 1,
         "page": 1,
         "priorityRankingType": "NORMAL_SEARCH",
@@ -27,7 +25,7 @@
         "user-agent": "Chrome",
         "username": "username",
         "x-forwarded-host": "192.168.1.1",
-        "version" : "2"
+        "version": "2"
       },
       "expected": {
         "responseData": [
@@ -40,6 +38,5 @@
         ]
       }
     }
-
   ]
 }

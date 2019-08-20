@@ -5,9 +5,10 @@ import (
 	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
 	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"encoding/json"
-	"github.com/tidwall/gjson"
 	"strings"
 	"time"
+
+	"github.com/tidwall/gjson"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -166,26 +167,41 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		return
 	}
 
-
 	var locationDetail []string
 	result2 := gjson.Get(respBody, "data.searchDetail.searchLocation").Array()
-	for _ , v := range result2 {
+	for _, v := range result2 {
 		locationDetail = append(locationDetail, v.String())
 	}
 
 	result3 := gjson.Get(respBody, "data.contents").Array()
 	locationInIndonesia := util.StringContaintsInSlice("indonesia", locationDetail)
-	if !locationInIndonesia && util.StringContaintsInSlice("pay_at_hotel", data.Filter.PaymentOptions) {
+	if !locationInIndonesia && util.StringContaintsInSlice(constant.PaymentMethod[1], data.Filter.PaymentOptions) {
 		if len(result3) > 0 {
-			log.Info("2. Expected Response if paymentOptions is ['pay_at_hotel'] and country other than Indonesia : List Hotels Must Null "+constant.SuccessMessage[false])
-		}else{
-			log.Info("2. Expected Response if paymentOptions is ['pay_at_hotel'] and country other than Indonesia : List Hotels Must Null "+constant.SuccessMessage[true])
+			log.Info("2. Expected Response if paymentOptions is ['" + constant.PaymentMethod[1] + "'] and country other than Indonesia : List Hotels Must Null " + constant.SuccessMessage[false])
+		} else {
+			log.Info("2. Expected Response if paymentOptions is ['" + constant.PaymentMethod[1] + "'] and country other than Indonesia : List Hotels Must Null " + constant.SuccessMessage[true])
+		}
+
+		if len(hotelSearchResp.Data.ContentList) > 0 {
+			for _, value := range hotelSearchResp.Data.ContentList {
+				// check if filter pay_at_hotel, should not have data here because it's not indo
+				if value.PaymentOption == constant.PaymentMethod[1] {
+					logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
+					checkFilterPaymentOption = false
+				}
+			}
+
+			log.Info("3. Check Hotel list should not have payment options : ["+constant.PaymentMethod[1]+"] "+strings.Join(data.Filter.PaymentOptions, ","),
+				constant.SuccessMessage[checkFilterPaymentOption])
+			if !checkFilterPaymentOption {
+				log.Warning("Log Message :")
+				log.Warning(logFilterPaymentOption)
+			}
 		}
 
 		return
 
 	}
-
 
 	if len(hotelSearchResp.Data.ContentList) == 0 {
 		log.Warning("2. Check hotel list must > 0", constant.SuccessMessage[false])
@@ -267,6 +283,14 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 				logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
 				checkFilterPaymentOption = false
 			}
+		} else {
+			if !locationInIndonesia {
+				// check pay_at_hotel should not in list of other indo
+				if value.PaymentOption == constant.PaymentMethod[1] {
+					logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
+					checkFilterPaymentOption = false
+				}
+			}
 		}
 	}
 
@@ -291,14 +315,12 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		}
 	}
 
-
 	log.Info("7. Check Hotel Name is not empty",
 		constant.SuccessMessage[checkNameEmpty])
 	if !checkNameEmpty {
 		log.Warning("Log Message :")
 		log.Warning(logNameEmpty)
 	}
-
 
 	if len(data.Filter.PaymentOptions) > 0 {
 		log.Info("8. Check Hotel should match with filter payment options : "+strings.Join(data.Filter.PaymentOptions, ","),
@@ -307,13 +329,17 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 			log.Warning("Log Message :")
 			log.Warning(logFilterPaymentOption)
 		}
+	} else {
+		if !locationInIndonesia {
+			// check pay_at_hotel should not in list of other indo
+			log.Info("8. Check Hotel should not have payment options : "+constant.PaymentMethod[1],
+				constant.SuccessMessage[checkFilterPaymentOption])
+			if !checkFilterPaymentOption {
+				log.Warning("Log Message :")
+				log.Warning(logFilterPaymentOption)
+			}
+		}
 	}
-
-
-
-
-
-
 
 	//interfaceData := make(map[string]interface{})
 	//marshalRequestData, _ := json.Marshal(contentList.Data)
@@ -327,8 +353,5 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 	//
 	//res2 := util.CallRest("POST", interfaceData, contentList.Header, url)
 	//respBody2 := util.GetResponseBody(res2)
-
-
-
 
 }
