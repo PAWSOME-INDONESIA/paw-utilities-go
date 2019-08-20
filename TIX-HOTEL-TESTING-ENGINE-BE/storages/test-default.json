@@ -101,10 +101,10 @@
             "expected": {
                 "responseData": [
                     {
-                        "roomId": "5bca629225a8fa5f9a0276c3",
-                        "roomName": "Deluxe Double Room Only",
-                        "soldOut": false,
-                        "breakfast": false
+                        "roomId": "5bca629225a8fa5f9a0276fe",
+                        "roomName": "Deluxe Twin Room Only",
+                        "descriptionRoom": "<p>Our Deluxe rooms, we offer you spacious rooms with City views. The rooms are designed in modern minimalist style and each room consist of two single bed. Widescreen LCD TV, Air Conditioning, Bathroom with standing shower, Mineral water, Phone Facilities, Working Desk, Sofa single, Safe Deposit Box, Hair Dryer, Refrigerator, Kettle Jug, Wireless Internet Access, and Internet Cable.</p>",
+                        "maxOccupancy": 2
                     }
                 ]
             }
