@@ -5,7 +5,6 @@ go 1.12
 require (
 	github.com/Shopify/sarama v1.22.1
 	github.com/bsm/sarama-cluster v2.1.15+incompatible
-	github.com/caarlos0/env/v6 v6.0.0
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -13,6 +12,8 @@ require (
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/jinzhu/gorm v1.9.9
+	github.com/joho/godotenv v1.3.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/labstack/echo/v4 v4.1.6
 	github.com/leodido/go-urn v1.1.0 // indirect
