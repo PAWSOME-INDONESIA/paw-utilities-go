@@ -5,6 +5,7 @@ import (
 	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
 	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"encoding/json"
+	"github.com/tidwall/gjson"
 	"strings"
 	"time"
 
@@ -165,6 +166,8 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		return
 	}
 
+
+
 	if len(hotelSearchResp.Data.ContentList) == 0 {
 		log.Warning("2. Check hotel list must > 0", constant.SuccessMessage[false])
 		log.Warning("\nResponse : ", hotelSearchResp)
@@ -269,6 +272,7 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		}
 	}
 
+
 	log.Info("7. Check Hotel Name is not empty",
 		constant.SuccessMessage[checkNameEmpty])
 	if !checkNameEmpty {
@@ -276,15 +280,49 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		log.Warning(logNameEmpty)
 	}
 
-	if len(data.Filter.PaymentOptions) > 0 {
-		log.Info("8. Check Hotel should match with filter payment options : "+strings.Join(data.Filter.PaymentOptions, ","),
-			constant.SuccessMessage[checkFilterPaymentOption])
-		if !checkFilterPaymentOption {
-			log.Warning("Log Message :")
-			log.Warning(logFilterPaymentOption)
-		}
+
+
+	interfaceData := make(map[string]interface{})
+	marshalRequestData, _ := json.Marshal(contentList.Data)
+	err = json.Unmarshal(marshalRequestData, &interfaceData)
+	if err != nil {
+		log.Warning("error unmarshal interfaceData :", err.Error())
+	}
+	if interfaceData["startDate"] == "now" {
+		interfaceData["startDate"] = time.Now().Format("2006-01-02")
 	}
 
-	// Test Database Level
-	// TestDB(data.SearchValue)
+	res2 := util.CallRest("POST", interfaceData, contentList.Header, url)
+	respBody2 := util.GetResponseBody(res2)
+
+	var locationDetail []string
+	result2 := gjson.Get(respBody2, "data.searchDetail.searchLocation").Array()
+	for _ , v := range result2 {
+		locationDetail = append(locationDetail, v.String())
+	}
+
+	result3 := gjson.Get(respBody2, "data.contents").Array()
+	locationInIndonesia := util.StringContaintsInSlice("indonesia", locationDetail)
+	if !locationInIndonesia {
+		if len(result3) > 0 {
+			log.Info("8. Expected Response if paymentOptions is ['pay_at_hotel'] and country other than Indonesia : List Hotels Must Null "+constant.SuccessMessage[false])
+		}else{
+			log.Info("8. Expected Response if paymentOptions is ['pay_at_hotel'] and country other than Indonesia : List Hotels Must Null "+constant.SuccessMessage[true])
+		}
+
+	}else{
+
+
+		if len(data.Filter.PaymentOptions) > 0 {
+			log.Info("8. Check Hotel should match with filter payment options : "+strings.Join(data.Filter.PaymentOptions, ","),
+				constant.SuccessMessage[checkFilterPaymentOption])
+			if !checkFilterPaymentOption {
+				log.Warning("Log Message :")
+				log.Warning(logFilterPaymentOption)
+			}
+		}
+
+	}
+
+
 }

@@ -62,3 +62,14 @@ func TestCheckSimilarStruct(t *testing.T) {
 
 	fmt.Println(CheckSimilarStruct(x, y))
 }
+
+func TestStringContaintsInSlice(t *testing.T)  {
+	str := "indonesia"
+	strArray := []string{"Indonesia", "Belgia"}
+
+	ok := StringContaintsInSlice(str, strArray)
+
+	if !ok {
+		t.Errorf("Must True")
+	}
+}

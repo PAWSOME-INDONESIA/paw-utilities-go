@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"reflect"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -144,3 +145,13 @@ func GetOutboundIP() net.IP {
 	return localAddr.IP
 }
 
+
+func StringContaintsInSlice(str string, list []string) bool {
+	for _, v := range list {
+
+		if strings.Contains(strings.ToLower(v), strings.ToLower(str)){
+			return true
+		}
+	}
+	return false
+}
