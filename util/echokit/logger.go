@@ -2,6 +2,7 @@ package echokit
 
 import (
 	"github.com/labstack/gommon/log"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"io"
@@ -124,9 +125,10 @@ func (l *LoggerWrapper) Panicf(format string, i ...interface{}) {
 	l.log.Panicf(format, i)
 }
 
-func NewLoggerWrapper(logger logs.Logger) *LoggerWrapper {
-	if log, ok := logger.Instance().(*logrus.Logger); ok {
-		return &LoggerWrapper{log: log}
+func NewLoggerWrapper(logger logs.Logger) (*LoggerWrapper, error) {
+	if instance, ok := logger.Instance().(*logrus.Logger); ok {
+		return &LoggerWrapper{log: instance}, nil
 	}
 
+	return nil, errors.New("logger is not type of logs.Logger")
 }
