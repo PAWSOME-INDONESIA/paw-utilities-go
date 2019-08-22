@@ -16,6 +16,7 @@ type (
 		Debugf(string, ...interface{})
 		Error(...interface{})
 		Errorf(string, ...interface{})
+		Instance() interface{}
 	}
 
 	Level     string
@@ -65,6 +66,9 @@ func (l *logger) Errorf(format string, args ...interface{}) {
 	l.instance.Errorf(format, args...)
 }
 
+func (l *logger) Instance() interface{} {
+	return l.instance
+}
 func New(option *Option) (Logger, error) {
 	instance := logrus.New()
 

@@ -6,13 +6,17 @@ import (
 	kfk "github.com/segmentio/kafka-go"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
+	"sync"
 	"time"
 )
 
 type (
 	kafka struct {
-		option Option
-		log    logs.Logger
+		option  Option
+		log     logs.Logger
+		writers map[string]*kfk.Writer
+		readers map[string]*kfk.Reader
+		mu      sync.Mutex
 	}
 )
 
@@ -40,9 +44,13 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Failed to Initialize Kafka")
 	}
+
 	return &kafka{
-		option: option,
-		log:    log,
+		option:  option,
+		log:     log,
+		writers: make(map[string]*kfk.Writer),
+		readers: make(map[string]*kfk.Reader),
+		mu:      sync.Mutex{},
 	}, nil
 }
 
@@ -51,17 +59,19 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 		return errors.New("At least 1 callbacks is required")
 	}
 
-	reader := kfk.NewReader(kfk.ReaderConfig{
-		Brokers: k.option.Host,
-		GroupID: k.option.ConsumerGroup,
-		Topic:   topic,
-		MaxWait: time.Duration(k.option.Interval) * time.Millisecond,
-	})
-	defer func() {
-		if err := reader.Close(); err != nil {
-			k.log.Error(err)
-		}
-	}()
+	k.mu.Lock()
+	if _, ok := k.readers[topic]; !ok {
+		reader := kfk.NewReader(kfk.ReaderConfig{
+			Brokers: k.option.Host,
+			GroupID: k.option.ConsumerGroup,
+			Topic:   topic,
+			MaxWait: time.Duration(k.option.Interval) * time.Millisecond,
+		})
+		k.readers[topic] = reader
+	}
+	k.mu.Unlock()
+
+	reader := k.readers[topic]
 
 	for {
 		m, err := reader.ReadMessage(ctx)
@@ -83,17 +93,19 @@ func (k *kafka) Read(topic string, callbacks []messaging.CallbackFunc) error {
 }
 
 func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) error {
-	w := kfk.NewWriter(kfk.WriterConfig{
-		Brokers:      k.option.Host,
-		Topic:        topic,
-		Balancer:     &kfk.Hash{},
-		BatchTimeout: time.Duration(k.option.Interval) * time.Millisecond,
-	})
-	defer func() {
-		if err := w.Close(); err != nil {
-			k.log.Error(err)
-		}
-	}()
+	k.mu.Lock()
+	if _, ok := k.writers[topic]; !ok {
+		writer := kfk.NewWriter(kfk.WriterConfig{
+			Brokers:      k.option.Host,
+			Topic:        topic,
+			Balancer:     &kfk.Hash{},
+			BatchTimeout: time.Duration(k.option.Interval) * time.Millisecond,
+		})
+		k.writers[topic] = writer
+	}
+	k.mu.Unlock()
+
+	w := k.writers[topic]
 
 	if err := w.WriteMessages(context.Background(), kfk.Message{Value: []byte(message)}); err != nil {
 		k.log.Error(err)
@@ -104,4 +116,25 @@ func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) e
 
 func (k *kafka) Publish(topic, message string) error {
 	return k.PublishWithContext(context.Background(), topic, message)
+}
+
+func (k *kafka) Close() error {
+	var err error
+	// - close writer
+	for _, w := range k.writers {
+		if e := w.Close(); e != nil {
+			err = e
+			k.log.Error(err)
+		}
+	}
+
+	// - close reader
+	for _, r := range k.readers {
+		if e := r.Close(); e != nil {
+			err = e
+			k.log.Error(err)
+		}
+	}
+
+	return err
 }

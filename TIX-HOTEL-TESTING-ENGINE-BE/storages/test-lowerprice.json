@@ -1,0 +1,42 @@
+{
+  "testing": [
+    {
+      "command": "search",
+      "data": {
+        "adult": 1,
+        "filter": {},
+        "night": 1,
+        "page": 1,
+        "priorityRankingType": "NORMAL_SEARCH",
+        "room": 1,
+        "searchType": "city",
+        "searchValue": "rochor-108001534490299246",
+        "sort": "lowest_price",
+        "startDate": "now"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1",
+        "version": "2"
+      },
+      "expected": {
+        "responseData": [
+          {
+            "id": "blue-jazz-hostel-108001534518584830",
+            "name": "Blue Jazz Hostel",
+            "address": null,
+            "postalCode": null
+          }
+        ]
+      }
+    }
+  ]
+}

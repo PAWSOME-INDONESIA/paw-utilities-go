@@ -9,4 +9,5 @@ type Queue interface {
 	Read(string, []CallbackFunc) error
 	PublishWithContext(context.Context, string, string) error
 	Publish(string, string) error
+	Close() error
 }

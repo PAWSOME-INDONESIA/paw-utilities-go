@@ -2,9 +2,11 @@ package config
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"os"
 	"strings"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -35,6 +37,31 @@ func New(path string, object interface{}) error {
 
 	if err := v.Unmarshal(&object); err != nil {
 		return errors.Wrap(err, "failed to unmarshal config to object")
+	}
+
+	return nil
+}
+
+func NewFromEnv(object interface{}) error {
+	filename := os.Getenv("CONFIG_FILE")
+
+	if filename == "" {
+		filename = ".env"
+	}
+
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		if err := envconfig.Process("", object); err != nil {
+			return errors.Wrap(err, "failed to read from env variable")
+		}
+		return nil
+	}
+
+	if err := godotenv.Load(filename); err != nil {
+		return errors.Wrap(err, "failed to read from .env file")
+	}
+
+	if err := envconfig.Process("", object); err != nil {
+		return errors.Wrap(err, "failed to read from env variable")
 	}
 
 	return nil
