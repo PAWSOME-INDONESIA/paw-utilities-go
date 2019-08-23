@@ -36,7 +36,7 @@
                 "filter": {},
                 "night": 1,
                 "page": 1,
-                "priorityRankingType": "NORMAL_SEARCH",
+                "priorityRankingType": "HOTEL_NOW",
                 "room": 1,
                 "searchType": "region",
                 "searchValue": "east-nusa-tenggara-108001534490276795",

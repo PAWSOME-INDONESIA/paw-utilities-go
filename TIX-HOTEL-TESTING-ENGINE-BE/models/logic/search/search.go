@@ -348,40 +348,42 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 
 	// TEST DB
 	priorityList := GetPriority(data.SearchValue, data.SearchType, data.Priority, data.StartDate)
-	slicee := hotelSearchResp.Data.ContentList
-	if len(hotelSearchResp.Data.ContentList) > len(priorityList.PublicID) {
-		slicee = hotelSearchResp.Data.ContentList[0:len(priorityList.PublicID)]
-	}
+	if len(priorityList.PublicID) > 0 {
+		slicee := hotelSearchResp.Data.ContentList
+		if len(hotelSearchResp.Data.ContentList) > len(priorityList.PublicID) {
+			slicee = hotelSearchResp.Data.ContentList[0:len(priorityList.PublicID)]
+		}
 
-	foundID := make([]string, 0)
-	for _, value := range priorityList.PublicID {
+		foundID := make([]string, 0)
+		for _, value := range priorityList.PublicID {
+			for _, valSlice := range slicee {
+				if value == valSlice.ID {
+					foundID = append(foundID, value)
+					break
+				}
+			}
+		}
+
+		searchID := make([]string, 0)
 		for _, valSlice := range slicee {
-			if value == valSlice.ID {
-				foundID = append(foundID, value)
-				break
+			for _, valFound := range foundID {
+				if valSlice.ID == valFound {
+					searchID = append(searchID, valFound)
+					break
+				}
 			}
 		}
-	}
 
-	searchID := make([]string, 0)
-	for _, valSlice := range slicee {
-		for _, valFound := range foundID {
-			if valSlice.ID == valFound {
-				searchID = append(searchID, valFound)
-				break
-			}
+		priorityRank := false
+		if hotelSearchResp.Data.ContentList[0].ID != searchID[0] {
+			log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+		} else {
+			priorityRank = reflect.DeepEqual(searchID, foundID)
+			log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+
 		}
-	}
-
-	priorityRank := false
-	if hotelSearchResp.Data.ContentList[0].ID != searchID[0] {
-		log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
-	} else {
-		priorityRank = reflect.DeepEqual(searchID, foundID)
-		log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
-
-	}
-	if !priorityRank {
-		log.Info("Priority Ranking must be ", strings.Join(foundID, ","))
+		if !priorityRank {
+			log.Info("Priority Ranking must be ", strings.Join(foundID, ","))
+		}
 	}
 }
