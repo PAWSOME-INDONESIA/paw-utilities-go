@@ -1,7 +1,6 @@
 package util
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
@@ -9,6 +8,8 @@ import (
 	"net/http"
 	"reflect"
 	"strings"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -145,11 +146,10 @@ func GetOutboundIP() net.IP {
 	return localAddr.IP
 }
 
-
 func StringContaintsInSlice(str string, list []string) bool {
 	for _, v := range list {
 
-		if strings.Contains(strings.ToLower(v), strings.ToLower(str)){
+		if strings.Contains(strings.ToLower(v), strings.ToLower(str)) {
 			return true
 		}
 	}

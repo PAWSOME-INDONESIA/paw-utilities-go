@@ -1,8 +1,9 @@
 package db
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
 	"context"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
 
 	log "github.com/sirupsen/logrus"
 

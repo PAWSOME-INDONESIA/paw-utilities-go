@@ -1,14 +1,16 @@
 package main
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/logic"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"encoding/json"
 	goflag "flag"
 	"io/ioutil"
 	"os"
 
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/logging"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/logging"
 
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
