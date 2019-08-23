@@ -373,9 +373,15 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		}
 	}
 
-	priorityRank := reflect.DeepEqual(searchID, foundID)
-	log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+	priorityRank := false
+	if hotelSearchResp.Data.ContentList[0].ID != searchID[0] {
+		log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+	} else {
+		priorityRank = reflect.DeepEqual(searchID, foundID)
+		log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+
+	}
 	if !priorityRank {
-		log.Info("Priority should be ", strings.Join(foundID, ","))
+		log.Info("Priority Ranking must be ", strings.Join(foundID, ","))
 	}
 }
