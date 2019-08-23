@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/pkg/errors"
@@ -9,6 +10,11 @@ import (
 )
 
 type (
+	ZData struct {
+		Score  float64
+		Member interface{}
+	}
+
 	Option struct {
 		Address      string
 		Password     string
@@ -21,6 +27,11 @@ type (
 		SetWithExpiration(string, interface{}, time.Duration) error
 		Set(string, interface{}) error
 		Get(string) (string, error)
+
+		SetZSetWithExpiration(string, time.Duration, ...redis.Z) error
+		SetZSetWith(string, ...redis.Z) error
+		GetZSet(string) ([]redis.Z, error)
+
 		Remove(string) error
 		FlushDatabase() error
 		Close() error
@@ -125,4 +136,39 @@ func check(c *cache) error {
 	}
 
 	return nil
+}
+
+func (c *cache) SetZSetWithExpiration(key string, duration time.Duration, data ...redis.Z) error {
+	if err := c.SetZSetWith(key, data...); err != nil {
+		return err
+	}
+
+	if _, err := c.r.Expire(key, duration).Result(); err != nil {
+		return errors.Wrapf(err, "failed to zadd cache with key %s!", key)
+	}
+	return nil
+}
+
+func (c *cache) SetZSetWith(key string, data ...redis.Z) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	if _, err := c.r.ZAdd(key, data...).Result(); err != nil {
+		return errors.Wrapf(err, "failed to zadd cache with key %s!", key)
+	}
+	return nil
+}
+
+func (c *cache) GetZSet(key string) ([]redis.Z, error) {
+	data, err := c.r.ZRangeWithScores(key, 0, -1).Result()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to run zrange command")
+	}
+
+	if len(data) <= 0 {
+		return nil, errors.New(fmt.Sprintf("key %s does not exits", key))
+	}
+
+	return data, nil
 }

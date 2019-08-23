@@ -6,6 +6,7 @@ import (
 	kfk "github.com/segmentio/kafka-go"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
+	"sync"
 	"time"
 )
 
@@ -15,6 +16,7 @@ type (
 		log     logs.Logger
 		writers map[string]*kfk.Writer
 		readers map[string]*kfk.Reader
+		mu      sync.Mutex
 	}
 )
 
@@ -48,6 +50,7 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 		log:     log,
 		writers: make(map[string]*kfk.Writer),
 		readers: make(map[string]*kfk.Reader),
+		mu:      sync.Mutex{},
 	}, nil
 }
 
@@ -56,6 +59,7 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 		return errors.New("At least 1 callbacks is required")
 	}
 
+	k.mu.Lock()
 	if _, ok := k.readers[topic]; !ok {
 		reader := kfk.NewReader(kfk.ReaderConfig{
 			Brokers: k.option.Host,
@@ -65,6 +69,7 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 		})
 		k.readers[topic] = reader
 	}
+	k.mu.Unlock()
 
 	reader := k.readers[topic]
 
@@ -88,6 +93,7 @@ func (k *kafka) Read(topic string, callbacks []messaging.CallbackFunc) error {
 }
 
 func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) error {
+	k.mu.Lock()
 	if _, ok := k.writers[topic]; !ok {
 		writer := kfk.NewWriter(kfk.WriterConfig{
 			Brokers:      k.option.Host,
@@ -97,6 +103,7 @@ func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) e
 		})
 		k.writers[topic] = writer
 	}
+	k.mu.Unlock()
 
 	w := k.writers[topic]
 
