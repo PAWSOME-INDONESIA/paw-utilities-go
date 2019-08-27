@@ -68,12 +68,20 @@
                         "postalCode": null,
                         "starRating": 4,
                         "country": {
-                          "id": "indonesia",
-                          "name": "Indonesia"
+                        "id": "indonesia",
+                        "name": "Indonesia"
                         },
                         "region": {
-                          "id": "bali-108001534490276212",
-                          "name": "Bali"
+                        "id": "bali-108001534490276212",
+                        "name": "Bali"
+                        },
+                        "city": {
+                        "id": "badung-108001534490276266",
+                        "name": "Badung"
+                        },
+                        "area": {
+                        "id": "legian-108001534490276358",
+                        "name": "Legian"
                         }
                     }
                 ]
@@ -83,7 +91,7 @@
             "command": "room",
             "data": {
                 "adult": 2,
-                "hotelId": "prama-sanur-beach-bali-hotel-204001554973979373",
+                "hotelId": "the-one-legian-108001534490280266",
                 "night": 1,
                 "room": 1,
                 "startDate": "now"
@@ -104,14 +112,16 @@
             "expected": {
                 "responseData": [
                     {
-                        "roomId": "5cb4434a0bae481c87643e38",
+                        "roomId": "5cc1c2020bae4818b828f632",
                         "roomName": "Superior",
                         "descriptionRoom": "",
                         "maxOccupancy": 2,
-                        "availableRoom": 10,
+                        "availableRoom": 1,
                         "soldOut": false,
                         "breakfast": false,
-                        "breakfastPax": null
+                        "breakfastPax": null,
+                        "wifi": true,
+                        "freeCancellation": false
                     }
                 ]
             }
