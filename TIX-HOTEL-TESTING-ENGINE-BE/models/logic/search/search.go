@@ -347,6 +347,11 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 	}
 
 	// TEST DB
+	if data.SearchType != constant.SearchTypeRegion ||
+		data.Sort != constant.SortTypePopularity {
+		return
+	}
+
 	priorityList := GetPriority(data.SearchValue, data.SearchType, data.Priority, data.StartDate)
 	if len(priorityList.PublicID) > 0 {
 		slicee := hotelSearchResp.Data.ContentList
@@ -367,6 +372,7 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		searchID := make([]string, 0)
 		for _, valSlice := range slicee {
 			for _, valFound := range foundID {
+
 				if valSlice.ID == valFound {
 					searchID = append(searchID, valFound)
 					break
@@ -375,15 +381,19 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		}
 
 		priorityRank := false
-		if hotelSearchResp.Data.ContentList[0].ID != searchID[0] {
-			log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+		if len(searchID) > 0 {
+			if hotelSearchResp.Data.ContentList[0].ID != searchID[0] {
+				log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+			} else {
+				priorityRank = reflect.DeepEqual(searchID, foundID)
+				log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+			}
+			if !priorityRank {
+				log.Info("Priority Ranking must be : ", strings.Join(foundID, "\n"))
+			}
 		} else {
-			priorityRank = reflect.DeepEqual(searchID, foundID)
-			log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
-
-		}
-		if !priorityRank {
-			log.Info("Priority Ranking must be ", strings.Join(foundID, ","))
+			log.Warn("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+			log.Warn("Priority Ranking must be : ", strings.Join(priorityList.PublicID, "\n"))
 		}
 	}
 }

@@ -16,6 +16,10 @@ const (
 )
 
 const (
+	SortTypePopularity = "popularity"
+)
+
+const (
 	// BookPending ...
 	BookPending = "PENDING"
 	// BookSuccess ...
