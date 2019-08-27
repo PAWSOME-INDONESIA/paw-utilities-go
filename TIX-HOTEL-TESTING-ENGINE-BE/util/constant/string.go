@@ -16,6 +16,10 @@ const (
 )
 
 const (
+	SortTypePopularity = "popularity"
+)
+
+const (
 	// BookPending ...
 	BookPending = "PENDING"
 	// BookSuccess ...
@@ -26,8 +30,11 @@ var (
 	// Vendor ...
 	Vendor = make(map[string]string)
 
-	// paymentMethod
+	// paymentMethod ...
 	PaymentMethod = make(map[int]string)
+
+	// SearchType ...
+	SearchType = make(map[string]string)
 )
 
 func init() {
@@ -39,4 +46,7 @@ func init() {
 	PaymentMethod[1] = "pay_at_hotel"
 	PaymentMethod[2] = "pay_now"
 	PaymentMethod[3] = "pay_at_hotel_without_cc"
+
+	SearchType[SearchTypeRegion] = "regionId"
+	SearchType[SearchTypeCity] = "cityId"
 }

@@ -1,11 +1,14 @@
 package autocomplete
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/util"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"encoding/json"
 	"os"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"

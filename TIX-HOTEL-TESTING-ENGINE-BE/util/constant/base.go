@@ -2,7 +2,7 @@ package constant
 
 const (
 	// BASEURL ...
-	BASEURL = "http://54.169.65.147:7060"
+	BASEURL = "http://13.250.22.93:7060"
 	// BASEURL_CART ...
 	BASEURL_CART = "http://54.169.65.147:7130"
 

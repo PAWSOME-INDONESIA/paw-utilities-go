@@ -1,12 +1,16 @@
 package search
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/util"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"encoding/json"
+	"reflect"
 	"strings"
 	"time"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util"
 
 	"github.com/tidwall/gjson"
 
@@ -292,6 +296,7 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 				}
 			}
 		}
+
 	}
 
 	log.Info("4. Check hotel list should match search type (", data.SearchType, ")",
@@ -341,17 +346,54 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		}
 	}
 
-	//interfaceData := make(map[string]interface{})
-	//marshalRequestData, _ := json.Marshal(contentList.Data)
-	//err = json.Unmarshal(marshalRequestData, &interfaceData)
-	//if err != nil {
-	//	log.Warning("error unmarshal interfaceData :", err.Error())
-	//}
-	//if interfaceData["startDate"] == "now" {
-	//	interfaceData["startDate"] = time.Now().Format("2006-01-02")
-	//}
-	//
-	//res2 := util.CallRest("POST", interfaceData, contentList.Header, url)
-	//respBody2 := util.GetResponseBody(res2)
+	// TEST DB
+	if data.SearchType != constant.SearchTypeRegion ||
+		data.Sort != constant.SortTypePopularity {
+		return
+	}
 
+	priorityList := GetPriority(data.SearchValue, data.SearchType, data.Priority, data.StartDate)
+	if len(priorityList.PublicID) > 0 {
+		slicee := hotelSearchResp.Data.ContentList
+		if len(hotelSearchResp.Data.ContentList) > len(priorityList.PublicID) {
+			slicee = hotelSearchResp.Data.ContentList[0:len(priorityList.PublicID)]
+		}
+
+		foundID := make([]string, 0)
+		for _, value := range priorityList.PublicID {
+			for _, valSlice := range slicee {
+				if value == valSlice.ID {
+					foundID = append(foundID, value)
+					break
+				}
+			}
+		}
+
+		searchID := make([]string, 0)
+		for _, valSlice := range slicee {
+			for _, valFound := range foundID {
+
+				if valSlice.ID == valFound {
+					searchID = append(searchID, valFound)
+					break
+				}
+			}
+		}
+
+		priorityRank := false
+		if len(searchID) > 0 {
+			if hotelSearchResp.Data.ContentList[0].ID != searchID[0] {
+				log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+			} else {
+				priorityRank = reflect.DeepEqual(searchID, foundID)
+				log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+			}
+			if !priorityRank {
+				log.Info("Priority Ranking must be : ", strings.Join(foundID, "\n"))
+			}
+		} else {
+			log.Warn("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+			log.Warn("Priority Ranking must be : ", strings.Join(priorityList.PublicID, "\n"))
+		}
+	}
 }

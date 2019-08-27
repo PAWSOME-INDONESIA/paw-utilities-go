@@ -1,12 +1,15 @@
 package _default
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/util"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"encoding/json"
 	"os"
 	"time"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -18,7 +21,7 @@ type (
 
 	Expected struct {
 		Url          string      `json:"url"`
-		Method string `json:"method"`
+		Method       string      `json:"method"`
 		ResponseData interface{} `json:"responseData"`
 	}
 
@@ -32,7 +35,7 @@ type (
 		Id             string      `json:"id"`
 		Name           string      `json:"name"`
 		PostalCode     string      `json:"postalCode"`
-		StarRating     float64         `json:"starRating"`
+		StarRating     float64     `json:"starRating"`
 		PaymentOptions string      `json:"paymentOptions"`
 		AvailableRoom  int         `json:"availableRoom"`
 		Refundable     interface{} `json:"refundable"`
@@ -51,7 +54,7 @@ type (
 
 func (d *CommandDefault) Test(contentList structs.ContentList) {
 	var (
-		err 			  error
+		err               error
 		expected          Expected
 		expectedResponse  []ContentlList
 		b2bSearchresponse B2bSearchresponse
@@ -70,14 +73,12 @@ func (d *CommandDefault) Test(contentList structs.ContentList) {
 		dataInterface["startDate"] = time.Now().Format("2006-01-02")
 	}
 
-
 	expectedByte, _ := json.Marshal(contentList.Expected)
 	err = json.Unmarshal(expectedByte, &expected)
 	if err != nil {
 		log.Warning("error unmarshal expected :", err.Error())
 		return
 	}
-
 
 	log.Info("Test Case :")
 
@@ -144,15 +145,5 @@ func (d *CommandDefault) Test(contentList structs.ContentList) {
 			log.Info("Expected response ", (keyexpect + 1), constant.SuccessMessage[checkExpected[keyexpect]])
 		}
 	}
-
-
-
-
-
-
-
-
-
-
 
 }

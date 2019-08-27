@@ -1,52 +1,75 @@
 package search
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/db"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"context"
+	"strings"
+	"time"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/db"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 
 	log "github.com/sirupsen/logrus"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // DBHotelSearch ...
 var DBHotelSearch db.Mongo
 
 func init() {
-	// DBHotelSearch = db.Connect("hotel_search")
+	DBHotelSearch = db.Connect("hotel_search")
 }
 
-// TestDB : test level DB
-func TestDB(publicID string) {
+// GetPriority : test level DB
+func GetPriority(ID string, searchType string, typee string, datee string) (elem structs.HotelSearchHotelPriorityRanking) {
 	var (
-		resultDB []*structs.HotelSearchHotel
+		// resultDB []*structs.HotelSearchHotelPriorityRanking
+
+		ctx = context.Background()
 	)
+
+	if _, ok := constant.SearchType[searchType]; !ok {
+		return
+	}
 
 	log.Info("Database Test Case :")
 
-	coll := DBHotelSearch.DB().Collection("hotel")
-	cur, err := coll.Find(context.Background(), bson.M{})
+	coll := DBHotelSearch.DB().Collection(constant.ColHotelPriorityRanking)
+	opts := options.FindOneOptions{
+		Projection: bson.M{},
+		Sort:       bson.M{"_id": 1},
+	}
+	startDate, _ := time.Parse("2006-01-02", datee)
+	filter := bson.D{
+		{"type", typee},
+		{constant.SearchType[searchType], ID},
+		{"isDeleted", 0},
+		{"startDate", bson.M{"$lte": startDate}},
+		{"endDate", bson.M{"$gte": startDate}},
+		{"cityId", ""},
+		{"areaId", ""},
+	}
+	// if searchType == constant.SearchTypeRegion {
+	// 	filter = append(filter, bson.E{"cityId", ""})
+	// }
+	// fmt.Println(typee, ID, constant.SearchType[searchType])
+	err := coll.FindOne(ctx, filter, &opts).Decode(&elem)
+	// defer cur.Close(ctx)
 	if err != nil {
-		log.Warning("error DB : ", err.Error())
-	}
+		// log.Warning(cur)
 
-	for cur.Next(context.Background()) {
-		var elem structs.HotelSearchHotel
-		err := cur.Decode(&elem)
-		if err != nil {
-			log.Fatal(err)
+		if strings.Contains(err.Error(), "no documents") {
+			log.Warning("Error : failed to find priority for ", ID)
+		} else {
+			log.Warning("error DB : ", err.Error())
 		}
-
-		resultDB = append(resultDB, &elem)
+		return
 	}
 
-	log.Info(resultDB, publicID)
-	// Check data exist
-	if len(resultDB) == 0 {
-		log.Warning("1. Check hotel exist ", constant.SuccessMessage[false])
-	} else {
-		log.Info("1. Check hotel exist ", constant.SuccessMessage[true])
-	}
+	// fmt.Println(elem.PublicID)
+	return
+
 }

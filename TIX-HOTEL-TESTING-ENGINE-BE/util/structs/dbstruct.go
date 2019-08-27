@@ -12,4 +12,10 @@ type (
 		OrderID int64  `bson:"orderId"`
 		Status  string `bson:"status"`
 	}
+
+	// HotelSearchHotelPriorityRanking ...
+	HotelSearchHotelPriorityRanking struct {
+		Type     string   `bson:"type"`
+		PublicID []string `bson:"publicIds"`
+	}
 )

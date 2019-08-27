@@ -1,10 +1,13 @@
 package book
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/db"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"context"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/db"
 
 	log "github.com/sirupsen/logrus"
 

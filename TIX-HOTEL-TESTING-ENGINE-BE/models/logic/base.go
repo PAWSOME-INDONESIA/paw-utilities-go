@@ -1,15 +1,18 @@
 package logic
 
 import (
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/logic/autocomplete"
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/logic/book"
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/logic/prebook"
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/logic/room"
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/logic/search"
-	"TIX-HOTEL-TESTING-ENGINE-BE/models/logic/default"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
-	"TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
 	"os"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/structs"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic/autocomplete"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic/book"
+	_default "github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic/default"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic/prebook"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic/room"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic/search"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -43,6 +46,5 @@ func MainTest(contentList structs.ContentList) {
 	log.Info("Command executed : " + contentList.Command)
 
 	CommandTest[contentList.Command].Test(contentList)
-
 
 }
