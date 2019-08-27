@@ -62,17 +62,18 @@
             "expected": {
                 "responseData": [
                     {
-                        "id": "poinciana-resort-bali-108001534520246202",
-                        "name": "Poinciana Resort Bali",
+                        "id": "the-one-legian-108001534490280266",
+                        "name": "The ONE Legian",
                         "address": null,
                         "postalCode": null,
+                        "starRating": 4,
                         "country": {
-                            "id": "indonesia",
-                            "name": "Indonesia"
+                          "id": "indonesia",
+                          "name": "Indonesia"
                         },
                         "region": {
-                            "id": "bali-108001534490276212",
-                            "name": "Bali"
+                          "id": "bali-108001534490276212",
+                          "name": "Bali"
                         }
                     }
                 ]
