@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"encoding"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -25,8 +27,8 @@ type (
 
 	Cache interface {
 		SetWithExpiration(string, interface{}, time.Duration) error
-		Set(string, interface{}) error
-		Get(string) (string, error)
+		Set(string,interface{}) error
+		Get(string, interface{}) error
 
 		SetZSetWithExpiration(string, time.Duration, ...redis.Z) error
 		SetZSetWith(string, ...redis.Z) error
@@ -41,6 +43,10 @@ type (
 		r *redis.Client
 	}
 )
+
+func (z *ZData) UnmarshalBinary(msg []byte) error {
+	return json.Unmarshal(msg, &z)
+}
 
 func New(option *Option) (Cache, error) {
 	var client *redis.Client
@@ -80,22 +86,30 @@ func (c *cache) Set(key string, value interface{}) error {
 	return c.SetWithExpiration(key, value, 0)
 }
 
-func (c *cache) Get(key string) (string, error) {
+func (c *cache) Get(key string, data interface{}) error {
+	if _, ok := data.(encoding.BinaryUnmarshaler); !ok {
+		return errors.New(fmt.Sprintf("failed to get cache with key %s!: redis: can't unmarshal (implement encoding.BinaryUnmarshaler)", key))
+	}
+
 	if err := check(c); err != nil {
-		return "", err
+		return err
 	}
 
 	val, err := c.r.Get(key).Result()
 
 	if err == redis.Nil {
-		return "", errors.Wrapf(err, "key %s does not exits", key)
+		return errors.Wrapf(err, "key %s does not exits", key)
 	}
 
 	if err != nil {
-		return "", errors.Wrapf(err, "failed to get key %s!", key)
+		return errors.Wrapf(err, "failed to get key %s!", key)
 	}
 
-	return val, nil
+	if err := data.(encoding.BinaryUnmarshaler).UnmarshalBinary([]byte(val)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *cache) Remove(key string) error {
