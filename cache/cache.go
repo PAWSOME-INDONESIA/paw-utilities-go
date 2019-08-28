@@ -2,7 +2,6 @@ package cache
 
 import (
 	"encoding"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -12,11 +11,6 @@ import (
 )
 
 type (
-	ZData struct {
-		Score  float64
-		Member interface{}
-	}
-
 	Option struct {
 		Address      string
 		Password     string
@@ -43,10 +37,6 @@ type (
 		r *redis.Client
 	}
 )
-
-func (z *ZData) UnmarshalBinary(msg []byte) error {
-	return json.Unmarshal(msg, &z)
-}
 
 func New(option *Option) (Cache, error) {
 	var client *redis.Client
@@ -168,6 +158,7 @@ func (c *cache) SetZSetWith(key string, data ...redis.Z) error {
 		return err
 	}
 
+	c.r.Del(key)
 	if _, err := c.r.ZAdd(key, data...).Result(); err != nil {
 		return errors.Wrapf(err, "failed to zadd cache with key %s!", key)
 	}
