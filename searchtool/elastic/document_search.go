@@ -3,7 +3,6 @@ package elastic
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/pkg/errors"
 	"strings"
 
@@ -15,13 +14,10 @@ func (e *ElasticSearch) Search(index, _type, query string, data interface{}) err
 }
 
 func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, query string, data interface{}) error {
-	body := fmt.Sprintf(SearchTemplate, query)
-	Log.Info(body)
-
 	req := esapi.SearchRequest{
 		Index:        []string{index},
 		DocumentType: []string{_type},
-		Body:         strings.NewReader(body),
+		Body:         strings.NewReader(query),
 		Pretty:       true,
 	}
 

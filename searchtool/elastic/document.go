@@ -18,7 +18,6 @@ const (
 )
 
 const (
-	SearchTemplate = `{ "query" : %s }`
 	BulkTemplate   = `{ "%s" : { "_index": "%s", "_type": "%s", "_id": "%s" } }`
 )
 
