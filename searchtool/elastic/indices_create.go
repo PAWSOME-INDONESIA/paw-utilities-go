@@ -33,11 +33,11 @@ func (e *ElasticSearch) CreateIndex(index, _type, mapping string) error {
 func (e *ElasticSearch) CreateIndexWithContext(ctx context.Context, index, _type, mapping string) error {
 	err := e.IndexExistWithContext(ctx, index)
 	if err != nil {
-		Log.Info(err)
+		e.Option.Log.Info(err)
 		return errors.Wrap(err, "Error Check Index Exist")
 	}
 
-	Log.Info("[ELASTIC SEARCH] Create Index")
+	e.Option.Log.Info("[ELASTIC SEARCH] Create Index")
 
 	encoded := constructIndexMapping(e.Option.Shards, e.Option.Replica, _type, mapping)
 

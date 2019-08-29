@@ -20,13 +20,13 @@ func (e *ElasticSearch) IndexExistWithContext(ctx context.Context, index string)
 	res, err := req.Do(ctx, e.Client)
 
 	if err != nil {
-		Log.Infof("[Elastic Search] Error getting response: %s", err)
+		e.Option.Log.Infof("[Elastic Search] Error getting response: %s", err)
 		return errors.Wrap(err, "[Elastic Search] Error getting response")
 	}
 
 	defer func() {
 		if err := res.Body.Close(); err != nil {
-			Log.Errorf("[ELATIC SEARCH] failed to close response body")
+			e.Option.Log.Errorf("[ELATIC SEARCH] failed to close response body")
 		}
 	}()
 

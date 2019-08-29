@@ -18,30 +18,31 @@ const (
 )
 
 const (
+	SearchTemplate = `{ "from" : %d, "size" : %d, "query" : %s , "sort" : [%s] }`
 	BulkTemplate   = `{ "%s" : { "_index": "%s", "_type": "%s", "_id": "%s" } }`
 )
 
-func constructBulkBody(action, index, _type string, ids []string, request interface{}, upsert bool) (string, error) {
+func (e *ElasticSearch) constructBulkBody(action, index, _type string, ids []string, request interface{}, upsert bool) (string, error) {
 	var response strings.Builder
 	var err error
 	datas := []string{}
 
 	if action != CREATE && action != UPDATE && action != DELETE {
-		Log.Error(`Action must be between "create", "update" or "delete"`)
+		e.Option.Log.Error(`Action must be between "create", "update" or "delete"`)
 		return "", errors.Wrap(err, "Action must be between \"create\", \"update\" or \"delete\"")
 	}
 
 	if action != DELETE {
 		val := reflect.ValueOf(request)
 		if val.Kind() != reflect.Slice {
-			Log.Error("Request must be a list")
+			e.Option.Log.Error("Request must be a list")
 			return "", errors.Wrap(err, "Request must be a list")
 		}
 
 		encoded, err := json.Marshal(request)
 
 		if err != nil {
-			Log.Errorf("Error parsing: %+v", request)
+			e.Option.Log.Errorf("Error parsing: %+v", request)
 			return "", errors.Wrapf(err, "Error parsing: %+v", request)
 		}
 
@@ -76,10 +77,10 @@ func constructBulkBody(action, index, _type string, ids []string, request interf
 }
 
 func (e *ElasticSearch) doBulk(ctx context.Context, action, index, _type string, ids []string, request interface{}, upsert bool) error {
-	body, err := constructBulkBody(action, index, _type, ids, request, upsert)
-
+	body, err := e.constructBulkBody(action, index, _type, ids, request, upsert)
+	
 	if err != nil {
-		Log.Errorf("Error constructBulkBody with Request : %+v", request)
+		e.Option.Log.Errorf("Error constructBulkBody with Request : %+v", request)
 		return errors.Wrapf(err, "Error constructBulkBody with Request : %+v", request)
 	}
 
@@ -94,23 +95,23 @@ func (e *ElasticSearch) doBulk(ctx context.Context, action, index, _type string,
 
 	defer func() {
 		if err := res.Body.Close(); err != nil {
-			Log.Errorf("[Elastic Search] failed to close response body %s", err)
+			e.Option.Log.Errorf("[Elastic Search] failed to close response body %s", err)
 		}
 	}()
 
 	if err != nil {
-		Log.Errorf("[Elastic Search] Error getting response: %s", err)
+		e.Option.Log.Errorf("[Elastic Search] Error getting response: %s", err)
 		return errors.Wrap(err, "[Elastic Search] Error getting response")
 	}
 
 	if res.IsError() {
-		Log.Errorf("[Elastic Search] [%s] Error %s document Ids=%+v", res.Status(), action, ids)
-		return errors.Wrapf(err, "[Elastic Search] [%s] Error %s document Ids=%+v", res.Status(), action, ids)
+		e.Option.Log.Errorf("[Elastic Search] [%+v] Error %s document Ids=%+v", res.String(), action, ids)
+		return errors.Wrapf(err, "[Elastic Search] [%+v] Error %s document Ids=%+v", res.String(), action, ids)
 	}
 
 	var r map[string]interface{}
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-		Log.Errorf("Error parsing the response body: %s", err)
+		e.Option.Log.Errorf("Error parsing the response body: %s", err)
 		return errors.Wrapf(err, "[Elastic Search] Error parsing the response body: %s", err)
 	}
 
@@ -119,23 +120,23 @@ func (e *ElasticSearch) doBulk(ctx context.Context, action, index, _type string,
 
 func (e *ElasticSearch) do(action string, res *esapi.Response, err error, data interface{}) error {
 	if err != nil {
-		Log.Errorf("[Elastic Search] Error getting response: %+v", err)
+		e.Option.Log.Errorf("[Elastic Search] Error getting response: %+v", err)
 		return errors.Wrap(err, "[Elastic Search] Error getting response")
 	}
 
 	defer func() {
 		if err := res.Body.Close(); err != nil {
-			Log.Errorf("[Elastic Search] failed to close response body %s", err)
+			e.Option.Log.Errorf("[Elastic Search] failed to close response body %s", err)
 		}
 	}()
 
 	if res.IsError() {
-		Log.Errorf("[Elastic Search] [%s] Error %s", res.Status(), action)
-		return errors.Wrapf(err, "[Elastic Search] [%s] Error %s", res.Status(), action)
+		e.Option.Log.Errorf("[Elastic Search] [%+v] Error %s", res.String(), action)
+		return errors.Wrapf(err, "[Elastic Search] [%+v] Error %s", res.String(), action)
 	}
 
 	if err := json.NewDecoder(res.Body).Decode(&data); err != nil {
-		Log.Errorf("Error parsing the response body: %+v", err)
+		e.Option.Log.Errorf("Error parsing the response body: %+v", err)
 		return errors.Wrap(err, "[Elastic Search] Error parsing the response body")
 	}
 

@@ -17,12 +17,12 @@ func (e *ElasticSearch) CreateDocumentWithContext(ctx context.Context, index, _t
 	jsonRequest, err := json.Marshal(request)
 
 	if err != nil {
-		Log.Errorf("[Elastic Search] Error on Parsing JSON: %+v\n", err)
+		e.Option.Log.Errorf("[Elastic Search] Error on Parsing JSON: %+v\n", err)
 		return errors.Wrapf(err, "[Elastic Search] Error on Parsing JSON: %+v\n", request)
 	}
 
 	if id == "" {
-		Log.Error("[Elastic Search] Id must be filled")
+		e.Option.Log.Error("[Elastic Search] Id must be filled")
 		return errors.Wrap(err, "[Elastic Search] Id must be filled")
 	}
 

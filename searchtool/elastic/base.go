@@ -49,12 +49,9 @@ type (
 	}
 )
 
-var Log logs.Logger
-
 func getOption(option *Option) {
 	if option.Log == nil {
 		option.Log, _ = logs.DefaultLog()
-		Log = option.Log
 	}
 
 	if option.MaxIdleConnsPerHost == 0 {

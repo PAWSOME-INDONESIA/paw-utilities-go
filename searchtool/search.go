@@ -30,6 +30,6 @@ type SearchTool interface {
 	FindById(string, string, string, interface{}) error
 	FindByIdWithContext(context.Context, string, string, string, interface{}) error
 
-	Search(string, string, string, interface{}) error
-	SearchWithContext(context.Context, string, string, string, interface{}) error
+	Search(string, string, string, interface{}, ...string) error
+	SearchWithContext(context.Context, string, string, string, interface{}, ...string) error
 }
