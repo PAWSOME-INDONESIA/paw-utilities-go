@@ -20,6 +20,8 @@ type (
 		Log                 logs.Logger
 		Shards              int
 		Replica             int
+		MaxPoolSize         int
+		MaxBatchSize        int
 	}
 
 	GetResponse struct {
@@ -64,6 +66,14 @@ func getOption(option *Option) {
 
 	if option.Replica == 0 {
 		option.Replica = DefaultReplica
+	}
+
+	if option.MaxBatchSize == 0 {
+		option.MaxBatchSize = 10
+	}
+
+	if option.MaxPoolSize == 0 {
+		option.MaxPoolSize = 5
 	}
 }
 

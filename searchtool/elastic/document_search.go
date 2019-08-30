@@ -29,7 +29,7 @@ func (e *ElasticSearch) Search(index, _type, query string, data interface{}, sor
 func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, query string, data interface{}, sort ...string) error {
 	jsons := SearchData{jsons: make([]string, 0)}
 
-	batchSize := int64(50)
+	batchSize := int64(e.Option.MaxBatchSize)
 	sortQuery := `{ "_id" : "asc" }`
 	if len(sort) > 0 {
 		sortQuery = strings.Join(sort, ",")
@@ -56,7 +56,7 @@ func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, que
 	if totalPage > 1 {
 		var wg sync.WaitGroup
 
-		p, _ := ants.NewPoolWithFunc(100, func(i interface{}) {
+		p, _ := ants.NewPoolWithFunc(e.Option.MaxPoolSize, func(i interface{}) {
 			page := i.(int64)
 			start := (page - 1) * batchSize
 			body := fmt.Sprintf(SearchTemplate, start, batchSize, query, sortQuery)
