@@ -39,15 +39,16 @@ func (e *ElasticSearch) constructBulkBody(action, index, _type string, ids []str
 			return "", errors.Wrap(err, "Request must be a list")
 		}
 
-		encoded, err := json.Marshal(request)
-
-		if err != nil {
-			e.Option.Log.Errorf("Error parsing: %+v", request)
-			return "", errors.Wrapf(err, "Error parsing: %+v", request)
+		for i := 0; i < val.Len(); i++ {
+			elem := val.Index(i).Interface()
+			encoded, err := json.Marshal(elem)
+			if err != nil {
+				e.Option.Log.Errorf("Error parsing: %+v", elem)
+				return "", errors.Wrapf(err, "Error parsing: %+v", elem)
+			} else {
+				datas = append(datas, string(encoded))
+			}
 		}
-
-		replacer := strings.NewReplacer("[", "", "]", "")
-		datas = strings.SplitAfter(replacer.Replace(string(encoded)), "},")
 	}
 
 	for i, id := range ids {
@@ -78,7 +79,7 @@ func (e *ElasticSearch) constructBulkBody(action, index, _type string, ids []str
 
 func (e *ElasticSearch) doBulk(ctx context.Context, action, index, _type string, ids []string, request interface{}, upsert bool) error {
 	body, err := e.constructBulkBody(action, index, _type, ids, request, upsert)
-	
+
 	if err != nil {
 		e.Option.Log.Errorf("Error constructBulkBody with Request : %+v", request)
 		return errors.Wrapf(err, "Error constructBulkBody with Request : %+v", request)
