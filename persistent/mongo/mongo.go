@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/pkg/errors"
@@ -10,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	mgo "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type (
@@ -84,6 +86,10 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to mongo!")
+	}
+
+	if err := client.Ping(ctx, readpref.Primary()); err != nil {
+		return nil, errors.Wrap(err, "failed to ping mongo")
 	}
 
 	database := client.Database(name)
