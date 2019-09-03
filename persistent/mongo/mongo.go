@@ -118,7 +118,7 @@ func (i *implementation) FindOne(collection string, filter interface{}, object i
 }
 
 func (i *implementation) FindWithContext(ctx context.Context, collection string, filter interface{}, callback FindCallback, options ...*options.FindOptions) error {
-	cursor, err := i.database.Collection(collection).Find(context.Background(), filter, options...)
+	cursor, err := i.database.Collection(collection).Find(ctx, filter, options...)
 
 	defer func() {
 		if err := cursor.Close(ctx); err != nil {
