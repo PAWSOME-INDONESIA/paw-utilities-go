@@ -127,6 +127,10 @@ func (i *implementation) FindWithContext(ctx context.Context, collection string,
 	cursor, err := i.database.Collection(collection).Find(ctx, filter, options...)
 
 	defer func() {
+		if cursor == nil {
+			return
+		}
+
 		if err := cursor.Close(ctx); err != nil {
 			i.logger.Errorf("failed to close cursor %s", err)
 		}
