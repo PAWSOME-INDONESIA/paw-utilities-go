@@ -24,6 +24,7 @@ type Option struct {
 	Host          []string
 	ConsumerGroup string
 	Interval      int
+	RequiredAck   int
 }
 
 func getOption(option *Option) error {
@@ -35,6 +36,9 @@ func getOption(option *Option) error {
 	}
 	if option.Interval == 0 {
 		option.Interval = 1
+	}
+	if option.RequiredAck == 0 {
+		option.RequiredAck = -1
 	}
 	return nil
 }
@@ -99,6 +103,7 @@ func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) e
 			Brokers:      k.option.Host,
 			Topic:        topic,
 			Balancer:     &kfk.Hash{},
+			RequiredAcks: k.option.RequiredAck,
 			BatchTimeout: time.Duration(k.option.Interval) * time.Millisecond,
 		})
 		k.writers[topic] = writer
