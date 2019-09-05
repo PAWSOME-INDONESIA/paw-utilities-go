@@ -2,6 +2,7 @@ package persistent
 
 import (
 	"database/sql"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -39,11 +40,13 @@ type (
 	Impl struct {
 		Database *gorm.DB
 		Err      error
+		Logger   logs.Logger
 	}
 
 	Option struct {
 		MaxIdleConnection, MaxOpenConnection int
 		ConnMaxLifetime                      time.Duration
+		LogMode                              bool
 	}
 )
 

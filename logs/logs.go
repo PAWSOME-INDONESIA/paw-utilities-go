@@ -16,6 +16,8 @@ type (
 		Debugf(string, ...interface{})
 		Error(...interface{})
 		Errorf(string, ...interface{})
+		Print(...interface{})
+		Printf(string, ...interface{})
 		Instance() interface{}
 	}
 
@@ -64,6 +66,14 @@ func (l *logger) Error(args ...interface{}) {
 
 func (l *logger) Errorf(format string, args ...interface{}) {
 	l.instance.Errorf(format, args...)
+}
+
+func (l *logger) Print(args ...interface{}) {
+	l.instance.Print(args...)
+}
+
+func (l *logger) Printf(format string, args ...interface{}) {
+	l.instance.Printf(format, args...)
 }
 
 func (l *logger) Instance() interface{} {
