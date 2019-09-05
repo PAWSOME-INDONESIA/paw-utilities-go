@@ -2,6 +2,7 @@ package example
 
 import (
 	"context"
+
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/persistent/mongo"
@@ -12,12 +13,12 @@ import (
 
 type (
 	VendorShutdown struct {
-		Vendor        string                   `json:"vendor"`
-		IsActive      int                      `json:"isActive"`
+		Vendor   string `json:"vendor"`
+		IsActive int    `json:"isActive"`
 	}
 )
 
-func main(){
+func mongoQuery() {
 	log, _ := logs.DefaultLog()
 	db, _ := mongo.New(context.Background(), "mongodb://localhost:27017", "hotel_search", log)
 

@@ -2,12 +2,13 @@ package example
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/cache"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"time"
 )
 
-func main() {
+func testRedis() {
 	log, _ := logs.DefaultLog()
 	option := cache.Option{
 		Address:      "localhost:6379",
@@ -44,6 +45,6 @@ func (m MapBool) MarshalBinary() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-func (m *MapBool) UnmarshalBinary(msg []byte) error{
+func (m *MapBool) UnmarshalBinary(msg []byte) error {
 	return json.Unmarshal(msg, &m)
 }

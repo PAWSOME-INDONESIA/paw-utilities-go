@@ -2,13 +2,14 @@ package example
 
 import (
 	"fmt"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool/elastic"
 	"math/rand"
 	"time"
+
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool/elastic"
 )
 
-func main() {
+func esBulk() {
 	type Tweet struct {
 		ID      string `json:"id"`
 		User    string `json:"user"`
