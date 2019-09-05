@@ -23,7 +23,7 @@ func (sd *SearchData) append(data ...string) {
 }
 
 func (e *ElasticSearch) Search(index, _type, query string, data interface{}, sort ...string) error {
-	return e.SearchWithContext(context.Background(), index, _type, query, data)
+	return e.SearchWithContext(context.Background(), index, _type, query, data, sort...)
 }
 
 func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, query string, data interface{}, sort ...string) error {
