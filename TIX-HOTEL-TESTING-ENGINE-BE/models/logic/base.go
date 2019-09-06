@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/models/logic/searchseo"
 	"os"
 
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util/constant"
@@ -32,6 +33,7 @@ func init() {
 	CommandTest[constant.CommandPrebook] = new(prebook.CommandPrebook)
 	CommandTest[constant.CommandBook] = new(book.CommandBook)
 	CommandTest[constant.CommandDefault] = new(_default.CommandDefault)
+	CommandTest[constant.CommandSearchSEO] = new(searchseo.CommandSearchSEO)
 }
 
 // MainTest : Main logic of test
