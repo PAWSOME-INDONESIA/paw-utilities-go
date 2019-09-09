@@ -13,6 +13,8 @@ const (
 	CommandBook = "book"
 	// CommandGeneral
 	CommandDefault = "default"
+	// CommandSearchSEO
+	CommandSearchSEO = "searchseo"
 )
 
 // URLCommand ...
@@ -25,4 +27,5 @@ func init() {
 	URLCommand[CommandPrebook] = "/tix-hotel-cart/hotel/prebook"
 	URLCommand[CommandBook] = "/tix-hotel-cart/hotel/book"
 	URLCommand[CommandDefault] = "/tix-hotel-search/general"
+	URLCommand[CommandSearchSEO] = "/tix-hotel-search/search/seo"
 }
