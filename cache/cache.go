@@ -15,13 +15,15 @@ type (
 		Address      string
 		Password     string
 		DB           int
+		PoolSize     int
+		PoolTimeout  time.Duration
 		ReadTimeout  time.Duration
 		WriteTimeout time.Duration
 	}
 
 	Cache interface {
 		SetWithExpiration(string, interface{}, time.Duration) error
-		Set(string,interface{}) error
+		Set(string, interface{}) error
 		Get(string, interface{}) error
 
 		SetZSetWithExpiration(string, time.Duration, ...redis.Z) error
@@ -45,6 +47,8 @@ func New(option *Option) (Cache, error) {
 		Addr:         option.Address,
 		Password:     option.Password,
 		DB:           option.DB,
+		PoolSize:     option.PoolSize,
+		PoolTimeout:  option.PoolTimeout,
 		ReadTimeout:  option.ReadTimeout,
 		WriteTimeout: option.WriteTimeout,
 	})
