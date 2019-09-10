@@ -18,7 +18,7 @@ const (
 )
 
 const (
-	SearchTemplate = `{ "from" : %d, "size" : %d, "query" : %s , "sort" : [%s] }`
+	SearchTemplate = `{ "_source" : { "excludes" : [ %s ] }, "from" : %d, "size" : %d, "query" : %s , "sort" : [%s] }`
 	BulkTemplate   = `{ "%s" : { "_index": "%s", "_type": "%s", "_id": "%s" } }`
 )
 

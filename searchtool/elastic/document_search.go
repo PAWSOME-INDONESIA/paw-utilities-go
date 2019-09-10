@@ -7,6 +7,7 @@ import (
 	"github.com/elastic/go-elasticsearch/esapi"
 	"github.com/panjf2000/ants"
 	"github.com/pkg/errors"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 	"strings"
 	"sync"
 )
@@ -22,20 +23,26 @@ func (sd *SearchData) append(data ...string) {
 	sd.jsons = append(sd.jsons, data...)
 }
 
-func (e *ElasticSearch) Search(index, _type, query string, data interface{}, sort ...string) error {
-	return e.SearchWithContext(context.Background(), index, _type, query, data, sort...)
+func (e *ElasticSearch) Search(index, _type, query string, data interface{}, option ...searchtool.SearchOption) error {
+	return e.SearchWithContext(context.Background(), index, _type, query, data, option...)
 }
 
-func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, query string, data interface{}, sort ...string) error {
+func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, query string, data interface{}, option ...searchtool.SearchOption) error {
 	jsons := SearchData{jsons: make([]string, 0)}
 
 	batchSize := int64(e.Option.MaxBatchSize)
 	sortQuery := `{ "_id" : "asc" }`
-	if len(sort) > 0 {
-		sortQuery = strings.Join(sort, ",")
+	excludeFields := ""
+	if len(option) > 0 {
+		if len(option[0].Sort) > 0 {
+			sortQuery = strings.Join(option[0].Sort, ",")
+		}
+		if len(option[0].ExcludedField) > 0 {
+			excludeFields = "\"" + strings.Join(option[0].ExcludedField, "\",\"") + "\""
+		}
 	}
 
-	body := fmt.Sprintf(SearchTemplate, 0, batchSize, query, sortQuery)
+	body := fmt.Sprintf(SearchTemplate, excludeFields, 0, batchSize, query, sortQuery)
 	searchResponse, err := e.search(ctx, index, _type, body)
 	if err != nil {
 		return errors.Wrap(err, "failed to search document")
@@ -59,7 +66,7 @@ func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, que
 		p, _ := ants.NewPoolWithFunc(e.Option.MaxPoolSize, func(i interface{}) {
 			page := i.(int64)
 			start := (page - 1) * batchSize
-			body := fmt.Sprintf(SearchTemplate, start, batchSize, query, sortQuery)
+			body := fmt.Sprintf(SearchTemplate, excludeFields, start, batchSize, query, sortQuery)
 			searchResponse, err = e.search(ctx, index, _type, body)
 			if err != nil {
 				err = errors.WithStack(err)

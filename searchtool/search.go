@@ -4,6 +4,11 @@ import (
 	"context"
 )
 
+type SearchOption struct {
+	Sort          []string
+	ExcludedField []string
+}
+
 type SearchTool interface {
 	IndexExist(string) error
 	IndexExistWithContext(context.Context, string) error
@@ -30,6 +35,6 @@ type SearchTool interface {
 	FindById(string, string, string, interface{}) error
 	FindByIdWithContext(context.Context, string, string, string, interface{}) error
 
-	Search(string, string, string, interface{}, ...string) error
-	SearchWithContext(context.Context, string, string, string, interface{}, ...string) error
+	Search(string, string, string, interface{}, ...SearchOption) error
+	SearchWithContext(context.Context, string, string, string, interface{}, ...SearchOption) error
 }
