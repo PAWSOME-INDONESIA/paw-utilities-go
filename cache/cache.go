@@ -32,6 +32,7 @@ type (
 
 		Remove(string) error
 		FlushDatabase() error
+		FlushAll() error
 		Close() error
 	}
 
@@ -124,6 +125,18 @@ func (c *cache) FlushDatabase() error {
 	}
 
 	if _, err := c.r.FlushDB().Result(); err != nil {
+		return errors.Wrap(err, "failed to flush db!")
+	}
+
+	return nil
+}
+
+func (c *cache) FlushAll() error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	if _, err := c.r.FlushAll().Result(); err != nil {
 		return errors.Wrap(err, "failed to flush db!")
 	}
 
