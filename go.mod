@@ -3,8 +3,10 @@ module github.com/tiket/TIX-HOTEL-UTILITIES-GO
 go 1.12
 
 require (
+	github.com/OrlovEvgeny/go-mcache v0.0.0-20190520090815-302f7b82bb96
 	github.com/Shopify/sarama v1.22.1
 	github.com/bsm/sarama-cluster v2.1.15+incompatible
+	github.com/bxcodec/faker/v3 v3.1.0
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -21,6 +23,7 @@ require (
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/panjf2000/ants v1.2.0
+	github.com/paulusrobin/go-memory-cache v0.0.3 // indirect
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5

@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	kfk "github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/gzip"
+	_ "github.com/segmentio/kafka-go/gzip"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
 	"sync"
@@ -21,10 +23,14 @@ type (
 )
 
 type Option struct {
-	Host          []string
-	ConsumerGroup string
-	Interval      int
-	RequiredAck   int
+	Host              []string
+	ConsumerGroup     string
+	Interval          int
+	RequiredAck       int
+	QueueCapacity     int
+	HeartbeatInterval time.Duration
+	ReadBackoffMin    time.Duration
+	ReadBackoffMax    time.Duration
 }
 
 func getOption(option *Option) error {
@@ -39,6 +45,18 @@ func getOption(option *Option) error {
 	}
 	if option.RequiredAck == 0 {
 		option.RequiredAck = -1
+	}
+	if option.QueueCapacity == 0 {
+		option.QueueCapacity = 100
+	}
+	if option.HeartbeatInterval == 0 {
+		option.HeartbeatInterval = 3 * time.Second
+	}
+	if option.ReadBackoffMin == 0 {
+		option.ReadBackoffMin = 100 * time.Millisecond
+	}
+	if option.ReadBackoffMax == 0 {
+		option.ReadBackoffMax = 1 * time.Second
 	}
 	return nil
 }
@@ -66,10 +84,14 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 	k.mu.Lock()
 	if _, ok := k.readers[topic]; !ok {
 		reader := kfk.NewReader(kfk.ReaderConfig{
-			Brokers: k.option.Host,
-			GroupID: k.option.ConsumerGroup,
-			Topic:   topic,
-			MaxWait: time.Duration(k.option.Interval) * time.Millisecond,
+			Brokers:           k.option.Host,
+			GroupID:           k.option.ConsumerGroup,
+			Topic:             topic,
+			MaxWait:           time.Duration(k.option.Interval) * time.Millisecond,
+			QueueCapacity:     k.option.QueueCapacity,
+			HeartbeatInterval: k.option.HeartbeatInterval,
+			ReadBackoffMin:    k.option.ReadBackoffMin,
+			ReadBackoffMax:    k.option.ReadBackoffMax,
 		})
 		k.readers[topic] = reader
 	}
@@ -100,11 +122,12 @@ func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) e
 	k.mu.Lock()
 	if _, ok := k.writers[topic]; !ok {
 		writer := kfk.NewWriter(kfk.WriterConfig{
-			Brokers:      k.option.Host,
-			Topic:        topic,
-			Balancer:     &kfk.Hash{},
-			RequiredAcks: k.option.RequiredAck,
-			BatchTimeout: time.Duration(k.option.Interval) * time.Millisecond,
+			Brokers:          k.option.Host,
+			Topic:            topic,
+			Balancer:         &kfk.Hash{},
+			RequiredAcks:     k.option.RequiredAck,
+			BatchTimeout:     time.Duration(k.option.Interval) * time.Millisecond,
+			CompressionCodec: gzip.NewCompressionCodec(),
 		})
 		k.writers[topic] = writer
 	}
