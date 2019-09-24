@@ -6,6 +6,8 @@ import (
 	kfk "github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/gzip"
 	_ "github.com/segmentio/kafka-go/gzip"
+	"github.com/segmentio/kafka-go/snappy"
+	_ "github.com/segmentio/kafka-go/snappy"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
 	"sync"
@@ -13,6 +15,7 @@ import (
 )
 
 type (
+	Compression string
 	kafka struct {
 		option  Option
 		log     logs.Logger
@@ -20,6 +23,11 @@ type (
 		readers map[string]*kfk.Reader
 		mu      sync.Mutex
 	}
+)
+
+const (
+	Snappy = "snappy"
+	Gzip   = "gzip"
 )
 
 type Option struct {
@@ -31,6 +39,7 @@ type Option struct {
 	HeartbeatInterval time.Duration
 	ReadBackoffMin    time.Duration
 	ReadBackoffMax    time.Duration
+	CompressionCodec  Compression
 }
 
 func getOption(option *Option) error {
@@ -57,6 +66,13 @@ func getOption(option *Option) error {
 	}
 	if option.ReadBackoffMax == 0 {
 		option.ReadBackoffMax = 1 * time.Second
+	}
+
+	if option.CompressionCodec == "" {
+		option.CompressionCodec = Snappy
+	}
+	if option.CompressionCodec != Snappy && option.CompressionCodec != Gzip {
+		return errors.New("Error compression codec type")
 	}
 	return nil
 }
@@ -120,6 +136,17 @@ func (k *kafka) Read(topic string, callbacks []messaging.CallbackFunc) error {
 
 func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) error {
 	k.mu.Lock()
+
+	var compressionCodec kfk.CompressionCodec
+	if k.option.CompressionCodec == Snappy {
+		compressionCodec = snappy.NewCompressionCodec()
+	} else if k.option.CompressionCodec == Gzip {
+		compressionCodec = gzip.NewCompressionCodec()
+	} else {
+		k.mu.Unlock()
+		return errors.New("error compression codec")
+	}
+
 	if _, ok := k.writers[topic]; !ok {
 		writer := kfk.NewWriter(kfk.WriterConfig{
 			Brokers:          k.option.Host,
@@ -127,7 +154,7 @@ func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) e
 			Balancer:         &kfk.Hash{},
 			RequiredAcks:     k.option.RequiredAck,
 			BatchTimeout:     time.Duration(k.option.Interval) * time.Millisecond,
-			CompressionCodec: gzip.NewCompressionCodec(),
+			CompressionCodec: compressionCodec,
 		})
 		k.writers[topic] = writer
 	}
