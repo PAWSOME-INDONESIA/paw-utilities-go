@@ -1,4 +1,4 @@
-package kafka_sarama
+package kafka_sarama_old
 
 import (
 	"time"
