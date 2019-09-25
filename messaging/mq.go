@@ -1,10 +1,13 @@
 package messaging
 
-type CallbackFunc func([]byte) error
+import (
+	"context"
+)
 
-type MQ interface {
-	Publish(string, string)
-	AddTopicListener(string, CallbackFunc)
-	Listen()
+type Queue interface {
+	ReadWithContext(context.Context, string, []CallbackFunc) error
+	Read(string, []CallbackFunc) error
+	PublishWithContext(context.Context, string, string) error
+	Publish(string, string) error
 	Close() error
 }

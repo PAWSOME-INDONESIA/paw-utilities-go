@@ -7,25 +7,27 @@ import (
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
 	"sync"
+	"time"
 )
 
 type (
 	Option struct {
-		Host          []string
-		ConsumerGroup string
-		SaramaVersion [4]uint
+		Host             []string
+		ConsumerGroup    string
+		ProducerRetryMax int
 	}
 	kafka struct {
 		option   Option
 		log      logs.Logger
 		consumer map[string]sarama.ConsumerGroup
+		producer sarama.AsyncProducer
 		config   *sarama.Config
 		mu       sync.Mutex
 	}
 
 	handler struct {
-		callback messaging.CallbackFunc
-		logger   logs.Logger
+		callbacks []messaging.CallbackFunc
+		logger    logs.Logger
 	}
 )
 
@@ -41,7 +43,7 @@ func (h *handler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 	for message := range claim.Messages() {
 		value := message.Value
 
-		for _, callback := range h.callback {
+		for _, callback := range h.callbacks {
 			go func(cb messaging.CallbackFunc) {
 				if err := callback(value); err != nil {
 					h.logger.Errorf("failed to proceed message")
@@ -49,34 +51,81 @@ func (h *handler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 			}(callback)
 		}
 	}
-	panic("implement me")
+	return nil
 }
 
-func (k *kafka) ReadWithContext(context.Context, string, []messaging.CallbackFunc) error {
-	consumer, err := sarama.NewConsumerGroup(k.option.Host, k.option.ConsumerGroup, k.config)
-	if err != nil {
-		return errors.WithStack(err)
+func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []messaging.CallbackFunc) error {
+	if len(callbacks) < 1 {
+		return errors.New("At least 1 callbacks is required")
 	}
 
+	k.mu.Lock()
+	if _, ok := k.consumer[topic]; !ok {
+		consumer, err := sarama.NewConsumerGroup(k.option.Host, k.option.ConsumerGroup, k.config)
+		if err != nil {
+			return errors.Wrapf(err, "Failed to Create Consumer Topic %s!", topic)
+		}
+		k.consumer[topic] = consumer
+	}
+	k.mu.Unlock()
+
+	consumer := k.consumer[topic]
+
+	defer func() {
+		if err := consumer.Close(); err != nil {
+			k.log.Error(err)
+		}
+	}()
+
+	handler := &handler{}
+	if err := consumer.Consume(context.Background(), []string{topic}, handler); err != nil {
+		k.log.Error(err)
+		return errors.WithStack(err)
+	}
+	return nil
 }
 
 func (k *kafka) Read(topic string, callback []messaging.CallbackFunc) error {
 	return k.ReadWithContext(context.Background(), topic, callback)
 }
 
-func (k *kafka) PublishWithContext(context.Context, string, string) error {
-	panic("implement me")
+func (k *kafka) PublishWithContext(ctx context.Context, topic, msg string) error {
+	k.log.Infof("PUBLISH : %s - %s\n", topic, msg)
+	go func() {
+		input := k.producer.Input()
+
+		input <- &sarama.ProducerMessage{
+			Topic:     topic,
+			Key:       nil,
+			Value:     sarama.StringEncoder(msg),
+			Timestamp: time.Now(),
+		}
+	}()
+	return nil
 }
 
-func (k *kafka) Publish(string, string) error {
-	panic("implement me")
+func (k *kafka) Publish(topic, msg string) error {
+	return k.PublishWithContext(context.Background(), topic, msg)
 }
 
 func (k *kafka) Close() error {
-	panic("implement me")
+	var err error
+	for _, w := range k.consumer {
+		if e := w.Close(); e != nil {
+			err = e
+			k.log.Error(err)
+		}
+	}
+	if err = k.producer.Close(); err != nil {
+		return errors.Wrapf(err, "Failed to Close Producer")
+	}
+	return err
 }
 
 func getOption(option *Option) error {
+	if option.ProducerRetryMax == 0 {
+		option.ProducerRetryMax = 3
+	}
 	return nil
 }
 
@@ -87,15 +136,22 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 	}
 
 	config := sarama.NewConfig()
+	config.Version = sarama.V2_3_0_0
 	config.ClientID = option.ConsumerGroup
 	config.Consumer.Return.Errors = true
-	config.Version = sarama.KafkaVersion{option.SaramaVersion}
+	config.Producer.Retry.Max = option.ProducerRetryMax
+
+	producer, err := sarama.NewAsyncProducer(option.Host, config)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to Create Producer! %+v", option)
+	}
 
 	return &kafka{
 		option:   option,
+		config:   config,
 		log:      log,
 		consumer: make(map[string]sarama.ConsumerGroup),
-		config:   config,
+		producer: producer,
 		mu:       sync.Mutex{},
 	}, nil
 }
