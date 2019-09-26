@@ -44,13 +44,13 @@ func (h *handler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 		value := message.Value
 
 		for _, callback := range h.callbacks {
-			go func(cb messaging.CallbackFunc) {
-				if err := cb(value); err != nil {
-					h.logger.Errorf("failed to proceed message")
-				}
-			}(callback)
+			if err := callback(value); err != nil {
+				h.logger.Errorf("failed to proceed message")
+			}
 		}
+		session.MarkMessage(message, "")
 	}
+
 	return nil
 }
 
@@ -71,10 +71,12 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 	k.mu.Unlock()
 
 	consumer := k.consumer[topic]
+
 	handler := handler{
-		callbacks:callbacks,
-		logger: k.log,
+		callbacks: callbacks,
+		logger:    k.log,
 	}
+
 	if err := consumer.Consume(context.Background(), []string{topic}, &handler); err != nil {
 		k.log.Error(err)
 		return errors.WithStack(err)
@@ -87,7 +89,7 @@ func (k *kafka) Read(topic string, callback []messaging.CallbackFunc) error {
 }
 
 func (k *kafka) PublishWithContext(ctx context.Context, topic, msg string) error {
-	go func() {
+	go func(topic, message string) {
 		input := k.producer.Input()
 
 		input <- &sarama.ProducerMessage{
@@ -96,7 +98,7 @@ func (k *kafka) PublishWithContext(ctx context.Context, topic, msg string) error
 			Value:     sarama.StringEncoder(msg),
 			Timestamp: time.Now(),
 		}
-	}()
+	}(topic, msg)
 	return nil
 }
 
@@ -134,7 +136,13 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 	config := sarama.NewConfig()
 	config.Version = sarama.V2_3_0_0
 	config.ClientID = option.ConsumerGroup
+
+	// - consumer config
+	config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	config.Consumer.Return.Errors = true
+
+	// - producer config
 	config.Producer.Retry.Max = option.ProducerRetryMax
 
 	producer, err := sarama.NewAsyncProducer(option.Host, config)
