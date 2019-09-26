@@ -90,7 +90,6 @@ func (k *kafka) Read(topic string, callback []messaging.CallbackFunc) error {
 }
 
 func (k *kafka) PublishWithContext(ctx context.Context, topic, msg string) error {
-	k.log.Infof("PUBLISH : %s - %s\n", topic, msg)
 	go func() {
 		input := k.producer.Input()
 
