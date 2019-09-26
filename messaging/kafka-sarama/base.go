@@ -32,11 +32,11 @@ type (
 )
 
 func (h *handler) Setup(session sarama.ConsumerGroupSession) error {
-	panic("implement me")
+	return nil
 }
 
 func (h *handler) Cleanup(session sarama.ConsumerGroupSession) error {
-	panic("implement me")
+	return nil
 }
 
 func (h *handler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
@@ -45,7 +45,7 @@ func (h *handler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 
 		for _, callback := range h.callbacks {
 			go func(cb messaging.CallbackFunc) {
-				if err := callback(value); err != nil {
+				if err := cb(value); err != nil {
 					h.logger.Errorf("failed to proceed message")
 				}
 			}(callback)
@@ -63,6 +63,7 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 	if _, ok := k.consumer[topic]; !ok {
 		consumer, err := sarama.NewConsumerGroup(k.option.Host, k.option.ConsumerGroup, k.config)
 		if err != nil {
+			k.mu.Unlock()
 			return errors.Wrapf(err, "Failed to Create Consumer Topic %s!", topic)
 		}
 		k.consumer[topic] = consumer
@@ -70,15 +71,11 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 	k.mu.Unlock()
 
 	consumer := k.consumer[topic]
-
-	defer func() {
-		if err := consumer.Close(); err != nil {
-			k.log.Error(err)
-		}
-	}()
-
-	handler := &handler{}
-	if err := consumer.Consume(context.Background(), []string{topic}, handler); err != nil {
+	handler := handler{
+		callbacks:callbacks,
+		logger: k.log,
+	}
+	if err := consumer.Consume(context.Background(), []string{topic}, &handler); err != nil {
 		k.log.Error(err)
 		return errors.WithStack(err)
 	}
