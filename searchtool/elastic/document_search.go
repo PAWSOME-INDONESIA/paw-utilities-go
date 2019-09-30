@@ -80,7 +80,7 @@ func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, que
 			wg.Done()
 		})
 		defer func() {
-			_ = p.Release()
+			p.Release()
 		}()
 
 		wg.Add(int(totalPage - 1))
