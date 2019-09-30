@@ -138,7 +138,7 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 	config.ClientID = option.ConsumerGroup
 
 	// - consumer config
-	config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	config.Consumer.Return.Errors = true
 
