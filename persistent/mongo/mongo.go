@@ -462,6 +462,9 @@ type(
 	IndexView interface {
 		List(ctx context.Context, opts ...*options.ListIndexesOptions) (Cursor, error)
 		CreateMany(ctx context.Context, models []mgo.IndexModel, opts ...*options.CreateIndexesOptions) ([]string, error)
+		CreateOne(ctx context.Context, model mgo.IndexModel, opts ...*options.CreateIndexesOptions) (string, error)
+		DropOne(ctx context.Context, name string, opts ...*options.DropIndexesOptions) (bson.Raw, error)
+		DropAll(ctx context.Context, opts ...*options.DropIndexesOptions) (bson.Raw, error)
 	}
 
 	indexviewimplementation struct {
@@ -483,4 +486,18 @@ func (i *indexviewimplementation) CreateMany(ctx context.Context, models []mgo.I
 	opts ...*options.CreateIndexesOptions) ([]string, error)  {
 	return i.indexview.CreateMany(ctx, models, opts...)
 }
+
+func (i *indexviewimplementation) CreateOne(ctx context.Context, model mgo.IndexModel,
+	opts ...*options.CreateIndexesOptions) (string, error) {
+	return i.indexview.CreateOne(ctx, model, opts...)
+}
+
+func (i *indexviewimplementation) DropOne(ctx context.Context, name string, opts ...*options.DropIndexesOptions) (bson.Raw, error){
+	return i.indexview.DropOne(ctx, name, opts...)
+}
+
+func (i *indexviewimplementation) DropAll(ctx context.Context, opts ...*options.DropIndexesOptions) (bson.Raw, error) {
+	return i.indexview.DropAll(ctx, opts...)
+}
+
 
