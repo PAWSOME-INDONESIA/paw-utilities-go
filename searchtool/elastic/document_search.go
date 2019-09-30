@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/esapi"
-	"github.com/panjf2000/ants"
+	"github.com/digitalysin/ants"
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 	"strings"
