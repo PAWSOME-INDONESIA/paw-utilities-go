@@ -121,7 +121,7 @@ func (k *kafka) Close() error {
 }
 
 func (k *kafka) Ping() error {
-	return k.Ping()
+	return nil
 }
 
 func getOption(option *Option) error {

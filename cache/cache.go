@@ -64,7 +64,10 @@ func New(option *Option) (Cache, error) {
 }
 
 func (c *cache) Ping() error {
-	return c.Ping()
+	if _, err :=  c.r.Ping().Result(); err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
 }
 
 func (c *cache) SetWithExpiration(key string, value interface{}, duration time.Duration) error {

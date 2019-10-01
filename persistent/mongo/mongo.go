@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -100,7 +101,10 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 }
 
 func (i *implementation) Ping() error {
-	return i.Ping()
+	parentCtx := context.Background()
+	ctx, cancel := context.WithTimeout(parentCtx, time.Second)
+	defer cancel()
+	return i.client.Ping(ctx, readpref.Primary())
 }
 
 func (i *implementation) Client() *mgo.Client {

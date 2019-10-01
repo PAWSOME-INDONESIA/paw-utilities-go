@@ -93,7 +93,7 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 }
 
 func (k *kafka) Ping() error {
-	return k.Ping()
+	return nil
 }
 
 func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []messaging.CallbackFunc) error {

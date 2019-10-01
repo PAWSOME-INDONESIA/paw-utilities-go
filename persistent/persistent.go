@@ -53,7 +53,7 @@ type (
 )
 
 func (o *Impl) Ping() error {
-	return o.Ping()
+	return o.Database.DB().Ping()
 }
 
 func (o *Impl) Close() error {
