@@ -92,6 +92,10 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 	}, nil
 }
 
+func (k *kafka) Ping() error {
+	return k.Ping()
+}
+
 func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []messaging.CallbackFunc) error {
 	if len(callbacks) < 1 {
 		return errors.New("At least 1 callbacks is required")

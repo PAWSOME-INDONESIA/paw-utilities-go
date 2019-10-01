@@ -102,3 +102,7 @@ func New(option *Option) (searchtool.SearchTool, error) {
 
 	return &es, nil
 }
+
+func (e *ElasticSearch) Ping() error {
+	return e.Ping()
+}

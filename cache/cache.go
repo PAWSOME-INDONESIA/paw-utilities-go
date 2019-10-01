@@ -3,6 +3,7 @@ package cache
 import (
 	"encoding"
 	"fmt"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
 	"time"
 
 	"github.com/pkg/errors"
@@ -22,6 +23,7 @@ type (
 	}
 
 	Cache interface {
+		util.Ping
 		SetWithExpiration(string, interface{}, time.Duration) error
 		Set(string, interface{}) error
 		Get(string, interface{}) error
@@ -59,6 +61,10 @@ func New(option *Option) (Cache, error) {
 	}
 
 	return &cache{r: client}, nil
+}
+
+func (c *cache) Ping() error {
+	return c.Ping()
 }
 
 func (c *cache) SetWithExpiration(key string, value interface{}, duration time.Duration) error {

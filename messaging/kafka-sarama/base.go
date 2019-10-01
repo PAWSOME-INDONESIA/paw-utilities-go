@@ -120,6 +120,10 @@ func (k *kafka) Close() error {
 	return err
 }
 
+func (k *kafka) Ping() error {
+	return k.Ping()
+}
+
 func getOption(option *Option) error {
 	if option.ProducerRetryMax == 0 {
 		option.ProducerRetryMax = 3

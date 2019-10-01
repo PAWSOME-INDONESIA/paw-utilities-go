@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -60,6 +61,7 @@ type (
 		Indexes(string) mongo.IndexView
 		Client() *mgo.Client
 		DB() *mgo.Database
+		util.Ping
 	}
 
 	implementation struct {
@@ -95,6 +97,10 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 	database := client.Database(name)
 
 	return &implementation{client, database, logger}, nil
+}
+
+func (i *implementation) Ping() error {
+	return i.Ping()
 }
 
 func (i *implementation) Client() *mgo.Client {

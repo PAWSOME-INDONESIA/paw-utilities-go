@@ -2,6 +2,7 @@ package searchtool
 
 import (
 	"context"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
 )
 
 type SearchOption struct {
@@ -10,6 +11,8 @@ type SearchOption struct {
 }
 
 type SearchTool interface {
+	util.Ping
+
 	IndexExist(string) error
 	IndexExistWithContext(context.Context, string) error
 	CreateIndex(string, string, string) error

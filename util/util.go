@@ -5,6 +5,9 @@ import (
 )
 
 type (
+	Ping interface {
+		Ping() error
+	}
 	AppError struct {
 		Code           string
 		Message        string
