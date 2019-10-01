@@ -116,10 +116,12 @@ func (e *ElasticSearch) Ping() error {
 		Human: true,
 	}
 	res, err := req.Do(ctx, e.Client)
-
-	var r map[string]interface{}
-	if err := e.do("Ping", res, err, &r); err != nil {
-		return errors.Wrap(err, "failed to ping elastic")
+	if err != nil {
+		return errors.WithStack(err)
 	}
-	return nil
+
+	if res.StatusCode == 200 {
+		return nil
+	}
+	return errors.New("ping fail")
 }
