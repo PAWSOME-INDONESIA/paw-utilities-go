@@ -39,6 +39,7 @@ type Option struct {
 	HeartbeatInterval time.Duration
 	ReadBackoffMin    time.Duration
 	ReadBackoffMax    time.Duration
+	CommitInterval    time.Duration
 	CompressionCodec  Compression
 }
 
@@ -112,6 +113,7 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 			HeartbeatInterval: k.option.HeartbeatInterval,
 			ReadBackoffMin:    k.option.ReadBackoffMin,
 			ReadBackoffMax:    k.option.ReadBackoffMax,
+			CommitInterval:    k.option.CommitInterval,
 		})
 		k.readers[topic] = reader
 	}
