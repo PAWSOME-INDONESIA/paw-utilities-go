@@ -120,6 +120,10 @@ func (k *kafka) Close() error {
 	return err
 }
 
+func (k *kafka) Ping() error {
+	return nil
+}
+
 func getOption(option *Option) error {
 	if option.ProducerRetryMax == 0 {
 		option.ProducerRetryMax = 3
@@ -138,7 +142,7 @@ func New(option Option, log logs.Logger) (messaging.Queue, error) {
 	config.ClientID = option.ConsumerGroup
 
 	// - consumer config
-	config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	config.Consumer.Return.Errors = true
 

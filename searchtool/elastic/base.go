@@ -1,10 +1,13 @@
 package elastic
 
 import (
+	"context"
 	"github.com/elastic/go-elasticsearch"
+	"github.com/elastic/go-elasticsearch/esapi"
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
+	"time"
 )
 
 const (
@@ -101,4 +104,24 @@ func New(option *Option) (searchtool.SearchTool, error) {
 	es.Client = client
 
 	return &es, nil
+}
+
+func (e *ElasticSearch) Ping() error {
+	parentCtx := context.Background()
+	ctx, cancel := context.WithTimeout(parentCtx, time.Second)
+	defer cancel()
+
+	req := esapi.PingRequest{
+		ErrorTrace: true,
+		Human: true,
+	}
+	res, err := req.Do(ctx, e.Client)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if res.StatusCode == 200 {
+		return nil
+	}
+	return errors.New("ping fail")
 }

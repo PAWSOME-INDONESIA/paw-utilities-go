@@ -2,8 +2,11 @@ package mongo
 
 import (
 	"context"
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	mgo "go.mongodb.org/mongo-driver/mongo"
@@ -58,6 +61,7 @@ type (
 		Indexes(string) IndexView
 		Client() *mgo.Client
 		DB() Database
+		util.Ping
 	}
 
 	implementation struct {
@@ -95,6 +99,13 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 	return &implementation{client, database, logger}, nil
 }
 
+func (i *implementation) Ping() error {
+	parentCtx := context.Background()
+	ctx, cancel := context.WithTimeout(parentCtx, time.Second)
+	defer cancel()
+	return i.client.Ping(ctx, readpref.Primary())
+}
+
 func (i *implementation) Client() *mgo.Client {
 	return i.client
 }
@@ -118,7 +129,7 @@ func (i *implementation) FindOneWithContext(ctx context.Context, collection stri
 }
 
 func (i *implementation) FindOne(collection string, filter interface{}, object interface{}, options ...*options.FindOneOptions) error {
-	return i.FindOneWithContext(context.TODO(), collection, filter, object, options...)
+	return i.FindOneWithContext(context.Background(), collection, filter, object, options...)
 }
 
 func (i *implementation) FindWithContext(ctx context.Context,
@@ -424,41 +435,41 @@ func (c *collectionimplementation) DeleteOne(ctx context.Context, filter interfa
 }
 
 func (c *collectionimplementation) DeleteMany(ctx context.Context, filter interface{},
-opts ...*options.DeleteOptions) (*mgo.DeleteResult, error) {
+	opts ...*options.DeleteOptions) (*mgo.DeleteResult, error) {
 	return c.collection.DeleteMany(ctx, filter, opts...)
 }
 
 func (c *collectionimplementation) UpdateMany(ctx context.Context, filter interface{}, update interface{},
 	opts ...*options.UpdateOptions) (*mgo.UpdateResult, error) {
-		return c.collection.UpdateMany(ctx, filter, update, opts...)
+	return c.collection.UpdateMany(ctx, filter, update, opts...)
 }
 
 func (c *collectionimplementation) UpdateOne(ctx context.Context, filter interface{}, update interface{},
 	opts ...*options.UpdateOptions) (*mgo.UpdateResult, error) {
-		return c.collection.UpdateOne(ctx, filter, update, opts...)
+	return c.collection.UpdateOne(ctx, filter, update, opts...)
 }
 
 func (c *collectionimplementation) InsertMany(ctx context.Context, documents []interface{},
 	opts ...*options.InsertManyOptions) (*mgo.InsertManyResult, error) {
-		return c.collection.InsertMany(ctx, documents, opts...)
+	return c.collection.InsertMany(ctx, documents, opts...)
 }
 
 func (c *collectionimplementation) InsertOne(ctx context.Context, document interface{},
-	opts ...*options.InsertOneOptions) (*mgo.InsertOneResult, error)  {
+	opts ...*options.InsertOneOptions) (*mgo.InsertOneResult, error) {
 	return c.collection.InsertOne(ctx, document, opts...)
 }
 
 func (c *collectionimplementation) FindOneAndUpdate(ctx context.Context, filter interface{},
-	update interface{}, opts ...*options.FindOneAndUpdateOptions) *mgo.SingleResult  {
+	update interface{}, opts ...*options.FindOneAndUpdateOptions) *mgo.SingleResult {
 	return c.collection.FindOneAndUpdate(ctx, filter, update, opts...)
 }
 
 func (c *collectionimplementation) FindOneAndDelete(ctx context.Context, filter interface{},
 	opts ...*options.FindOneAndDeleteOptions) *mgo.SingleResult {
-		return c.collection.FindOneAndDelete(ctx, filter, opts...)
+	return c.collection.FindOneAndDelete(ctx, filter, opts...)
 }
 
-type(
+type (
 	IndexView interface {
 		List(ctx context.Context, opts ...*options.ListIndexesOptions) (Cursor, error)
 		CreateMany(ctx context.Context, models []mgo.IndexModel, opts ...*options.CreateIndexesOptions) ([]string, error)
@@ -470,11 +481,10 @@ type(
 	indexviewimplementation struct {
 		indexview mgo.IndexView
 	}
-
 )
 
-func NewIndexView(indexview mgo.IndexView) IndexView  {
-	return &indexviewimplementation{indexview:indexview}
+func NewIndexView(indexview mgo.IndexView) IndexView {
+	return &indexviewimplementation{indexview: indexview}
 }
 
 func (i *indexviewimplementation) List(ctx context.Context,
@@ -483,7 +493,7 @@ func (i *indexviewimplementation) List(ctx context.Context,
 }
 
 func (i *indexviewimplementation) CreateMany(ctx context.Context, models []mgo.IndexModel,
-	opts ...*options.CreateIndexesOptions) ([]string, error)  {
+	opts ...*options.CreateIndexesOptions) ([]string, error) {
 	return i.indexview.CreateMany(ctx, models, opts...)
 }
 
@@ -492,12 +502,10 @@ func (i *indexviewimplementation) CreateOne(ctx context.Context, model mgo.Index
 	return i.indexview.CreateOne(ctx, model, opts...)
 }
 
-func (i *indexviewimplementation) DropOne(ctx context.Context, name string, opts ...*options.DropIndexesOptions) (bson.Raw, error){
+func (i *indexviewimplementation) DropOne(ctx context.Context, name string, opts ...*options.DropIndexesOptions) (bson.Raw, error) {
 	return i.indexview.DropOne(ctx, name, opts...)
 }
 
 func (i *indexviewimplementation) DropAll(ctx context.Context, opts ...*options.DropIndexesOptions) (bson.Raw, error) {
 	return i.indexview.DropAll(ctx, opts...)
 }
-
-

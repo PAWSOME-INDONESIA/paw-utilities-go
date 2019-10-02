@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/esapi"
-	"github.com/panjf2000/ants"
+	"github.com/digitalysin/ants"
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 	"strings"
@@ -80,7 +80,7 @@ func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, que
 			wg.Done()
 		})
 		defer func() {
-			_ = p.Release()
+			p.Release()
 		}()
 
 		wg.Add(int(totalPage - 1))

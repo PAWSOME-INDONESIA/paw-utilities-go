@@ -3,6 +3,7 @@ package persistent
 import (
 	"database/sql"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -11,6 +12,7 @@ import (
 
 type (
 	ORM interface {
+		util.Ping
 		Close() error
 
 		Set(string, interface{}) ORM
@@ -49,6 +51,10 @@ type (
 		LogMode                              bool
 	}
 )
+
+func (o *Impl) Ping() error {
+	return o.Database.DB().Ping()
+}
 
 func (o *Impl) Close() error {
 	if err := o.Database.Close(); err != nil {
