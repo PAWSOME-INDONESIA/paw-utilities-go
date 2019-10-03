@@ -9,7 +9,6 @@ import (
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/persistent/mongo"
 	"go.mongodb.org/mongo-driver/bson"
-	mgo "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -29,7 +28,7 @@ func (n *nosql) Up() error {
 	migrated := make([]nosqlcollection, 0)
 
 	// - get all migration from database
-	callback := func(cursor *mgo.Cursor, err error) error {
+	callback := func(cursor mongo.Cursor, err error) error {
 		if err != nil {
 			return errors.Wrap(err, "")
 		}
@@ -109,7 +108,7 @@ func (n *nosql) Down() error {
 	migrated := make([]nosqlcollection, 0)
 
 	// - get all migration from database
-	callback := func(cursor *mgo.Cursor, err error) error {
+	callback := func(cursor mongo.Cursor, err error) error {
 		if err != nil {
 			return errors.Wrap(err, "")
 		}
@@ -178,7 +177,7 @@ func (n *nosql) Check() error {
 		versions = append(versions, k)
 	}
 
-	err := n.orm.Find(TableName, bson.D{}, func(cursor *mgo.Cursor, err error) error {
+	err := n.orm.Find(TableName, bson.D{}, func(cursor mongo.Cursor, err error) error {
 		if err != nil {
 			return err
 		}
