@@ -10,14 +10,13 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	mgo "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type (
-	FindCallback func(*mgo.Cursor, error) error
+	FindCallback func(Cursor, error) error
 
 	Mongo interface {
 		FindOneWithContext(context.Context, string, interface{}, interface{}, ...*options.FindOneOptions) error
@@ -59,15 +58,15 @@ type (
 		Count(string, ...*options.CountOptions) (int64, error)
 
 		// - DDL
-		Indexes(string) mongo.IndexView
+		Indexes(string) IndexView
 		Client() *mgo.Client
-		DB() *mgo.Database
+		DB() Database
 		util.Ping
 	}
 
 	implementation struct {
 		client   *mgo.Client
-		database *mgo.Database
+		database Database
 		logger   logs.Logger
 	}
 )
@@ -95,7 +94,7 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 		return nil, errors.Wrap(err, "failed to ping mongo")
 	}
 
-	database := client.Database(name)
+	database := NewDatabase(client.Database(name))
 
 	return &implementation{client, database, logger}, nil
 }
@@ -111,7 +110,7 @@ func (i *implementation) Client() *mgo.Client {
 	return i.client
 }
 
-func (i *implementation) DB() *mgo.Database {
+func (i *implementation) DB() Database {
 	return i.database
 }
 
@@ -122,7 +121,7 @@ func (i *implementation) FindOneWithContext(ctx context.Context, collection stri
 		return errors.Wrap(err, "FindOne failed!")
 	}
 
-	if err := sr.Decode(&object); err != nil {
+	if err := sr.Decode(object); err != nil {
 		return errors.Wrap(err, "FindOne decode failed!")
 	}
 
@@ -134,7 +133,12 @@ func (i *implementation) FindOne(collection string, filter interface{}, object i
 }
 
 func (i *implementation) FindWithContext(ctx context.Context, collection string, filter interface{}, callback FindCallback, options ...*options.FindOptions) error {
-	cursor, err := i.database.Collection(collection).Find(ctx, filter, options...)
+	coll, err := i.database.Collection(collection).Find(ctx, filter, options...)
+	if err != nil {
+		return err
+	}
+
+	cursor, err := NewCursor(coll)
 
 	defer func() {
 		if cursor == nil {
@@ -311,7 +315,7 @@ func (i *implementation) Delete(collection string, filter interface{}, options .
 	return i.DeleteWithContext(context.Background(), collection, filter, options...)
 }
 
-func (i *implementation) Indexes(collection string) mongo.IndexView {
+func (i *implementation) Indexes(collection string) IndexView {
 	return i.database.Collection(collection).Indexes()
 }
 
@@ -325,4 +329,182 @@ func (i *implementation) BulkDocumentWithContext(ctx context.Context, collection
 
 func (i *implementation) BulkDocument(collection string, data []mgo.WriteModel) error {
 	return i.BulkDocumentWithContext(context.Background(), collection, data)
+}
+
+type (
+	Cursor interface {
+		Next(context.Context) bool
+		Close(ctx context.Context) error
+		Decode(val interface{}) error
+	}
+
+	cursorImplementation struct {
+		cursor *mgo.Cursor
+	}
+)
+
+func NewCursor(curr *mgo.Cursor) (Cursor, error) {
+	return &cursorImplementation{cursor: curr}, nil
+}
+
+func (c *cursorImplementation) Next(ctx context.Context) bool {
+	return c.cursor.Next(ctx)
+}
+
+func (c *cursorImplementation) Close(ctx context.Context) error {
+	return c.cursor.Close(ctx)
+}
+
+func (c *cursorImplementation) Decode(val interface{}) error {
+	return c.cursor.Decode(val)
+}
+
+type (
+	Database interface {
+		Collection(name string, opts ...*options.CollectionOptions) Collection
+	}
+
+	databaseimplementation struct {
+		database *mgo.Database
+	}
+)
+
+func NewDatabase(database *mgo.Database) Database {
+	return &databaseimplementation{database: database}
+}
+
+func (d *databaseimplementation) Collection(name string, opts ...*options.CollectionOptions) Collection {
+	return NewCollection(d.database.Collection(name, opts...))
+}
+
+type (
+	Collection interface {
+		Indexes() IndexView
+		Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (*mgo.Cursor, error)
+		FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mgo.SingleResult
+		BulkWrite(ctx context.Context, models []mgo.WriteModel, opts ...*options.BulkWriteOptions) (*mgo.BulkWriteResult, error)
+		CountDocuments(ctx context.Context, filter interface{}, opts ...*options.CountOptions) (int64, error)
+		DeleteOne(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mgo.DeleteResult, error)
+		DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mgo.DeleteResult, error)
+		UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mgo.UpdateResult, error)
+		UpdateOne(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mgo.UpdateResult, error)
+		InsertMany(ctx context.Context, documents []interface{}, opts ...*options.InsertManyOptions) (*mgo.InsertManyResult, error)
+		InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (*mgo.InsertOneResult, error)
+		FindOneAndUpdate(ctx context.Context, filter interface{}, update interface{}, opts ...*options.FindOneAndUpdateOptions) *mgo.SingleResult
+		FindOneAndDelete(ctx context.Context, filter interface{}, opts ...*options.FindOneAndDeleteOptions) *mgo.SingleResult
+	}
+
+	collectionimplementation struct {
+		collection *mgo.Collection
+	}
+)
+
+func NewCollection(collection *mgo.Collection) Collection {
+	coll := collectionimplementation{collection: collection}
+	return &coll
+}
+
+func (c *collectionimplementation) Indexes() IndexView {
+	return NewIndexView(c.collection.Indexes())
+}
+
+func (c *collectionimplementation) Find(ctx context.Context, filter interface{},
+	opts ...*options.FindOptions) (*mgo.Cursor, error) {
+	return c.collection.Find(ctx, filter, opts...)
+}
+
+func (c *collectionimplementation) FindOne(ctx context.Context, filter interface{},
+	opts ...*options.FindOneOptions) *mgo.SingleResult {
+	return c.collection.FindOne(ctx, filter, opts...)
+}
+
+func (c *collectionimplementation) BulkWrite(ctx context.Context, models []mgo.WriteModel,
+	opts ...*options.BulkWriteOptions) (*mgo.BulkWriteResult, error) {
+	return c.collection.BulkWrite(ctx, models, opts...)
+}
+
+func (c *collectionimplementation) CountDocuments(ctx context.Context, filter interface{},
+	opts ...*options.CountOptions) (int64, error) {
+	return c.collection.CountDocuments(ctx, filter, opts...)
+}
+
+func (c *collectionimplementation) DeleteOne(ctx context.Context, filter interface{},
+	opts ...*options.DeleteOptions) (*mgo.DeleteResult, error) {
+	return c.collection.DeleteOne(ctx, filter, opts...)
+}
+
+func (c *collectionimplementation) DeleteMany(ctx context.Context, filter interface{},
+	opts ...*options.DeleteOptions) (*mgo.DeleteResult, error) {
+	return c.collection.DeleteMany(ctx, filter, opts...)
+}
+
+func (c *collectionimplementation) UpdateMany(ctx context.Context, filter interface{}, update interface{},
+	opts ...*options.UpdateOptions) (*mgo.UpdateResult, error) {
+	return c.collection.UpdateMany(ctx, filter, update, opts...)
+}
+
+func (c *collectionimplementation) UpdateOne(ctx context.Context, filter interface{}, update interface{},
+	opts ...*options.UpdateOptions) (*mgo.UpdateResult, error) {
+	return c.collection.UpdateOne(ctx, filter, update, opts...)
+}
+
+func (c *collectionimplementation) InsertMany(ctx context.Context, documents []interface{},
+	opts ...*options.InsertManyOptions) (*mgo.InsertManyResult, error) {
+	return c.collection.InsertMany(ctx, documents, opts...)
+}
+
+func (c *collectionimplementation) InsertOne(ctx context.Context, document interface{},
+	opts ...*options.InsertOneOptions) (*mgo.InsertOneResult, error) {
+	return c.collection.InsertOne(ctx, document, opts...)
+}
+
+func (c *collectionimplementation) FindOneAndUpdate(ctx context.Context, filter interface{},
+	update interface{}, opts ...*options.FindOneAndUpdateOptions) *mgo.SingleResult {
+	return c.collection.FindOneAndUpdate(ctx, filter, update, opts...)
+}
+
+func (c *collectionimplementation) FindOneAndDelete(ctx context.Context, filter interface{},
+	opts ...*options.FindOneAndDeleteOptions) *mgo.SingleResult {
+	return c.collection.FindOneAndDelete(ctx, filter, opts...)
+}
+
+type (
+	IndexView interface {
+		List(ctx context.Context, opts ...*options.ListIndexesOptions) (Cursor, error)
+		CreateMany(ctx context.Context, models []mgo.IndexModel, opts ...*options.CreateIndexesOptions) ([]string, error)
+		CreateOne(ctx context.Context, model mgo.IndexModel, opts ...*options.CreateIndexesOptions) (string, error)
+		DropOne(ctx context.Context, name string, opts ...*options.DropIndexesOptions) (bson.Raw, error)
+		DropAll(ctx context.Context, opts ...*options.DropIndexesOptions) (bson.Raw, error)
+	}
+
+	indexviewimplementation struct {
+		indexview mgo.IndexView
+	}
+)
+
+func NewIndexView(indexview mgo.IndexView) IndexView {
+	return &indexviewimplementation{indexview: indexview}
+}
+
+func (i *indexviewimplementation) List(ctx context.Context,
+	opts ...*options.ListIndexesOptions) (Cursor, error) {
+	return i.indexview.List(ctx, opts...)
+}
+
+func (i *indexviewimplementation) CreateMany(ctx context.Context, models []mgo.IndexModel,
+	opts ...*options.CreateIndexesOptions) ([]string, error) {
+	return i.indexview.CreateMany(ctx, models, opts...)
+}
+
+func (i *indexviewimplementation) CreateOne(ctx context.Context, model mgo.IndexModel,
+	opts ...*options.CreateIndexesOptions) (string, error) {
+	return i.indexview.CreateOne(ctx, model, opts...)
+}
+
+func (i *indexviewimplementation) DropOne(ctx context.Context, name string, opts ...*options.DropIndexesOptions) (bson.Raw, error) {
+	return i.indexview.DropOne(ctx, name, opts...)
+}
+
+func (i *indexviewimplementation) DropAll(ctx context.Context, opts ...*options.DropIndexesOptions) (bson.Raw, error) {
+	return i.indexview.DropAll(ctx, opts...)
 }
