@@ -36,6 +36,8 @@ type Option struct {
 	Interval          int
 	RequiredAck       int
 	QueueCapacity     int
+	MinBytes          int
+	MaxBytes          int
 	HeartbeatInterval time.Duration
 	ReadBackoffMin    time.Duration
 	ReadBackoffMax    time.Duration
@@ -114,6 +116,8 @@ func (k *kafka) ReadWithContext(ctx context.Context, topic string, callbacks []m
 			ReadBackoffMin:    k.option.ReadBackoffMin,
 			ReadBackoffMax:    k.option.ReadBackoffMax,
 			CommitInterval:    k.option.CommitInterval,
+			MinBytes:          k.option.MinBytes,
+			MaxBytes:          k.option.MaxBytes,
 		})
 		k.readers[topic] = reader
 	}
