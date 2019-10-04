@@ -17,9 +17,11 @@ type (
 		Password     string
 		DB           int
 		PoolSize     int
+		MinIdleConns int
 		PoolTimeout  time.Duration
 		ReadTimeout  time.Duration
 		WriteTimeout time.Duration
+		MaxConnAge   time.Duration
 	}
 
 	Cache interface {
@@ -54,6 +56,8 @@ func New(option *Option) (Cache, error) {
 		PoolTimeout:  option.PoolTimeout,
 		ReadTimeout:  option.ReadTimeout,
 		WriteTimeout: option.WriteTimeout,
+		MinIdleConns: option.MinIdleConns,
+		MaxConnAge:   option.MaxConnAge,
 	})
 
 	if _, err := client.Ping().Result(); err != nil {
@@ -64,7 +68,7 @@ func New(option *Option) (Cache, error) {
 }
 
 func (c *cache) Ping() error {
-	if _, err :=  c.r.Ping().Result(); err != nil {
+	if _, err := c.r.Ping().Result(); err != nil {
 		return errors.WithStack(err)
 	}
 	return nil
