@@ -157,17 +157,18 @@ func check(c *redisClient) error {
 }
 
 func (c *redisClient) SetZSetWithExpiration(key string, duration time.Duration, data ...redis.Z) error {
-	if err := c.SetZSetWith(key, data...); err != nil {
+	if err := c.SetZSet(key, data...); err != nil {
 		return err
 	}
 
 	if _, err := c.r.Expire(key, duration).Result(); err != nil {
+		c.r.Del(key)
 		return errors.Wrapf(err, "failed to zadd cache with key %s!", key)
 	}
 	return nil
 }
 
-func (c *redisClient) SetZSetWith(key string, data ...redis.Z) error {
+func (c *redisClient) SetZSet(key string, data ...redis.Z) error {
 	if err := check(c); err != nil {
 		return err
 	}
@@ -180,6 +181,10 @@ func (c *redisClient) SetZSetWith(key string, data ...redis.Z) error {
 }
 
 func (c *redisClient) GetZSet(key string) ([]redis.Z, error) {
+	if err := check(c); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	data, err := c.r.ZRangeWithScores(key, 0, -1).Result()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to run zrange command")
@@ -190,4 +195,116 @@ func (c *redisClient) GetZSet(key string) ([]redis.Z, error) {
 	}
 
 	return data, nil
+}
+
+func (c *redisClient) HMSetWithExpiration(key string, value map[string]interface{}, ttl time.Duration) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	if _, err := c.r.HMSet(key, value).Result(); err != nil {
+		return errors.Wrapf(err, "failed to HMSet cache with key %s!", key)
+	}
+
+	if _, err := c.r.Expire(key, ttl).Result(); err != nil {
+		c.r.Del(key)
+		return errors.Wrapf(err, "failed to HMSet cache with key %s!", key)
+	}
+	return nil
+}
+
+func (c *redisClient) HMSet(key string, value map[string]interface{}) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	if _, err := c.r.HMSet(key, value).Result(); err != nil {
+		return errors.Wrapf(err, "failed to HMSet cache with key %s!", key)
+	}
+	return nil
+}
+
+func (c *redisClient) HSetWithExpiration(key, field string, value interface{}, ttl time.Duration) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	if _, err := c.r.HSet(key, field, value).Result(); err != nil {
+		return errors.Wrapf(err, "failed to HSet cache with key %s!", key)
+	}
+	if _, err := c.r.Expire(key, ttl).Result(); err != nil {
+		c.r.Del(key)
+		return errors.Wrapf(err, "failed to HMSet cache with key %s!", key)
+	}
+	return nil
+}
+
+func (c *redisClient) HSet(key, field string, value interface{}) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	if _, err := c.r.HSet(key, field, value).Result(); err != nil {
+		return errors.Wrapf(err, "failed to HSet cache with key %s!", key)
+	}
+	return nil
+}
+
+func (c *redisClient) HMGet(key string, fields ...string) ([]interface{}, error) {
+	if err := check(c); err != nil {
+		return nil, err
+	}
+
+	val, err := c.r.HMGet(key, fields...).Result()
+	if err == redis.Nil {
+		return nil, errors.Wrapf(err, "key %s does not exits", key)
+	}
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get key %s!", key)
+	}
+
+	return val, nil
+}
+
+func (c *redisClient) HGetAll(key string) (map[string]string, error) {
+	if err := check(c); err != nil {
+		return nil, err
+	}
+
+	val, err := c.r.HGetAll(key).Result()
+	if err == redis.Nil {
+		return nil, errors.Wrapf(err, "key %s does not exits", key)
+	}
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get key %s!", key)
+	}
+
+	return val, nil
+}
+
+func (c *redisClient) HGet(key, field string, response interface{}) error {
+	if _, ok := response.(encoding.BinaryUnmarshaler); !ok {
+		return errors.New(fmt.Sprintf("failed to get cache with key %s!: redis: can't unmarshal (implement encoding.BinaryUnmarshaler)", key))
+	}
+
+	if err := check(c); err != nil {
+		return err
+	}
+
+	val, err := c.r.HGet(key, field).Result()
+	if err == redis.Nil {
+		return errors.Wrapf(err, "key %s does not exits", key)
+	}
+
+	if err != nil {
+		return errors.Wrapf(err, "failed to get key %s!", key)
+	}
+
+	if err := response.(encoding.BinaryUnmarshaler).UnmarshalBinary([]byte(val)); err != nil {
+		return err
+	}
+
+	return nil
 }
