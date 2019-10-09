@@ -8,6 +8,12 @@ import (
 )
 
 type (
+	Pipe interface {
+		Set(key string, value interface{}) error
+		SetWithExpiration(key string, value interface{}, expired time.Duration) error
+		Get(key string, object interface{}) error
+		Exec() error
+	}
 	Cache interface {
 		util.Ping
 		SetWithExpiration(string, interface{}, time.Duration) error
@@ -30,5 +36,7 @@ type (
 		FlushDatabase() error
 		FlushAll() error
 		Close() error
+
+		Pipeline() Pipe
 	}
 )

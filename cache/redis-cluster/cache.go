@@ -308,3 +308,6 @@ func (c *redisClusterClient) HGet(key, field string, response interface{}) error
 
 	return nil
 }
+func (c *redisClusterClient) Pipeline() cache.Pipe {
+	return &pipe{instance: c.r.Pipeline()}
+}
