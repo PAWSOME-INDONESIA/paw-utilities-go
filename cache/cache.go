@@ -46,5 +46,6 @@ type (
 	Pool interface {
 		Use(callback PoolCallback)
 		Client() Cache
+		Close() error
 	}
 )

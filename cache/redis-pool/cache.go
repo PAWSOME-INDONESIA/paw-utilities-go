@@ -84,3 +84,8 @@ func (p *pool) Use(callback cache.PoolCallback) {
 func (p *pool) Client() cache.Cache {
 	return p.client
 }
+
+func (p *pool) Close() error {
+	p.antsPool.Release()
+	return p.client.Close()
+}
