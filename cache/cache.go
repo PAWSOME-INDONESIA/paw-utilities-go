@@ -40,11 +40,4 @@ type (
 		Pipeline() Pipe
 		Client() Cache
 	}
-
-	PoolCallback func(client Cache)
-
-	Pool interface {
-		Use(callback PoolCallback)
-		Client() Cache
-	}
 )
