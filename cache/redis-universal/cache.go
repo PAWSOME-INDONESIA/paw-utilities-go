@@ -309,6 +309,11 @@ func (c *redisUniversalClient) HGet(key, field string, response interface{}) err
 
 	return nil
 }
+
+func (c *redisUniversalClient) Client() cache.Cache {
+	return c
+}
+
 func (c *redisUniversalClient) Pipeline() cache.Pipe {
 	return &pipe{instance: c.r.Pipeline()}
 }
