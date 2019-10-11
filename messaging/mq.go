@@ -17,7 +17,10 @@ type Queue interface {
 }
 
 type MessagingQueue interface {
+	NewProducer() error
 	AddTopicListener(string, CallbackFunc)
 	Listen()
 	Publish(string, string)
+	Close() error
+	CheckSession() (state bool)
 }

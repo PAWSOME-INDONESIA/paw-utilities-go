@@ -41,8 +41,6 @@ type Option struct {
 	Log                  logs.Logger
 }
 
-var Log logs.Logger
-
 func getOption(option *Option) {
 	if option.Log == nil {
 		logger, _ := logs.DefaultLog()
@@ -76,7 +74,6 @@ func getOption(option *Option) {
 
 func New(option *Option) (messaging.MessagingQueue, error) {
 	getOption(option)
-	Log = option.Log
 
 	l := Kafka{
 		Option:            option,
@@ -84,6 +81,29 @@ func New(option *Option) (messaging.MessagingQueue, error) {
 		mu:                &sync.Mutex{},
 	}
 
+	err := l.NewListener(option)
+	if err != nil {
+		return nil, err
+	}
+
+	err = l.NewProducer()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &l, nil
+}
+
+func (l *Kafka) CheckSession() (state bool) {
+	state = true
+	if l.Producer == nil || l.Producer.Input() == nil {
+		state = false
+	}
+	return
+}
+
+func (l *Kafka) NewListener(option *Option) error {
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
 	config.Group.Return.Notifications = true
@@ -93,10 +113,14 @@ func New(option *Option) (messaging.MessagingQueue, error) {
 	consumer, err := cluster.NewConsumer(brokers, l.Option.ConsumerGroup, l.Option.ListTopics, config)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to Create Consumer! %+v", l.Option)
+		return errors.Wrapf(err, "Failed to Create Consumer! %+v", l.Option)
 	}
 	l.Consumer = consumer
 
+	return err
+}
+
+func (l *Kafka) NewProducer() error {
 	configProducer := sarama.NewConfig()
 	configProducer.Version = sarama.V0_10_0_0
 	configProducer.Producer.Return.Errors = true
@@ -104,23 +128,30 @@ func New(option *Option) (messaging.MessagingQueue, error) {
 	configProducer.Producer.MaxMessageBytes = l.Option.ProducerMaxBytes
 	configProducer.Producer.Retry.Max = l.Option.ProducerRetryMax
 	configProducer.Producer.Retry.Backoff = time.Duration(l.Option.ProducerRetryBackoff) * time.Millisecond
-	producer, err := sarama.NewAsyncProducer(l.Option.Host, configProducer)
+	client, err := sarama.NewClient(l.Option.Host, configProducer)
+	l.Producer, err = sarama.NewAsyncProducerFromClient(client)
 
 	if err != nil {
-		return nil, errors.Wrapf(err, "Failed to Create Producer! %+v", l.Option)
+		return errors.Wrapf(err, "Failed to Create Producer! %+v", l.Option)
 	}
-	l.Producer = producer
+	//l.Producer = producer
 
-	return &l, nil
+	//defer func() {
+	//	if err := l.Producer.Close(); err != nil {
+	//		l.Option.Log.Error(err)
+	//	}
+	//}()
+	//err = producer.Close()
+	//if err != nil {
+	//	return errors.Wrapf(err, "Failed to Close", l.Option)
+	//}
+
+	return nil
 }
 
-func (l Kafka) Close() error {
+func (l *Kafka) Close() error {
 	if err := l.Consumer.Close(); err != nil {
 		return errors.Wrapf(err, "Failed to Close Consumer")
-	}
-
-	if err := l.Producer.Close(); err != nil {
-		return errors.Wrapf(err, "Failed to Close Producer")
 	}
 	return nil
 }
