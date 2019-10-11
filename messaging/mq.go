@@ -15,3 +15,9 @@ type Queue interface {
 	Publish(string, string) error
 	Close() error
 }
+
+type MessagingQueue interface {
+	AddTopicListener(string, CallbackFunc)
+	Listen()
+	Publish(string, string)
+}
