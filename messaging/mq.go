@@ -20,5 +20,5 @@ type QueueV2 interface {
 	AddTopicListener(string, CallbackFunc)
 	Listen()
 	Close() error
-	Publish(string, string)
+	Publish(string, string) error
 }
