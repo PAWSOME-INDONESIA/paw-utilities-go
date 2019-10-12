@@ -23,8 +23,8 @@ const (
 type Kafka struct {
 	Option            *Option
 	Consumer          *cluster.Consumer
-	Producer          sarama.AsyncProducer
 	CallbackFunctions map[string][]messaging.CallbackFunc
+	Client            sarama.Client
 	mu                *sync.Mutex
 }
 
@@ -72,7 +72,8 @@ func getOption(option *Option) {
 	}
 }
 
-func New(option *Option) (messaging.MessagingQueue, error) {
+func New(option *Option) (messaging.QueueV2, error) {
+	var err error
 	getOption(option)
 
 	l := Kafka{
@@ -81,13 +82,12 @@ func New(option *Option) (messaging.MessagingQueue, error) {
 		mu:                &sync.Mutex{},
 	}
 
-	err := l.NewListener(option)
+	l.Consumer, err = l.NewListener(option)
 	if err != nil {
 		return nil, err
 	}
 
-	err = l.NewProducer()
-
+	l.Client, err = l.NewClient()
 	if err != nil {
 		return nil, err
 	}
@@ -95,32 +95,17 @@ func New(option *Option) (messaging.MessagingQueue, error) {
 	return &l, nil
 }
 
-func (l *Kafka) CheckSession() (state bool) {
-	state = true
-	if l.Producer == nil || l.Producer.Input() == nil {
-		state = false
-	}
-	return
-}
-
-func (l *Kafka) NewListener(option *Option) error {
+func (l *Kafka) NewListener(option *Option) (*cluster.Consumer, error) {
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
 	config.Group.Return.Notifications = true
 	config.Group.PartitionStrategy = l.Option.Strategy
 	config.Group.Heartbeat.Interval = time.Duration(l.Option.Heartbeat) * time.Second
 	brokers := l.Option.Host
-	consumer, err := cluster.NewConsumer(brokers, l.Option.ConsumerGroup, l.Option.ListTopics, config)
-
-	if err != nil {
-		return errors.Wrapf(err, "Failed to Create Consumer! %+v", l.Option)
-	}
-	l.Consumer = consumer
-
-	return err
+	return cluster.NewConsumer(brokers, l.Option.ConsumerGroup, l.Option.ListTopics, config)
 }
 
-func (l *Kafka) NewProducer() error {
+func (l *Kafka) NewClient() (sarama.Client, error) {
 	configProducer := sarama.NewConfig()
 	configProducer.Version = sarama.V0_10_0_0
 	configProducer.Producer.Return.Errors = true
@@ -128,30 +113,15 @@ func (l *Kafka) NewProducer() error {
 	configProducer.Producer.MaxMessageBytes = l.Option.ProducerMaxBytes
 	configProducer.Producer.Retry.Max = l.Option.ProducerRetryMax
 	configProducer.Producer.Retry.Backoff = time.Duration(l.Option.ProducerRetryBackoff) * time.Millisecond
-	client, err := sarama.NewClient(l.Option.Host, configProducer)
-	l.Producer, err = sarama.NewAsyncProducerFromClient(client)
-
-	if err != nil {
-		return errors.Wrapf(err, "Failed to Create Producer! %+v", l.Option)
-	}
-	//l.Producer = producer
-
-	//defer func() {
-	//	if err := l.Producer.Close(); err != nil {
-	//		l.Option.Log.Error(err)
-	//	}
-	//}()
-	//err = producer.Close()
-	//if err != nil {
-	//	return errors.Wrapf(err, "Failed to Close", l.Option)
-	//}
-
-	return nil
+	return sarama.NewClient(l.Option.Host, configProducer)
 }
 
 func (l *Kafka) Close() error {
 	if err := l.Consumer.Close(); err != nil {
 		return errors.Wrapf(err, "Failed to Close Consumer")
+	}
+	if err := l.Client.Close(); err != nil {
+		return errors.Wrapf(err, "Failed to Close Producer")
 	}
 	return nil
 }

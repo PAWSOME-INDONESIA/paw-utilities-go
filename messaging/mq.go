@@ -16,11 +16,9 @@ type Queue interface {
 	Close() error
 }
 
-type MessagingQueue interface {
-	NewProducer() error
+type QueueV2 interface {
 	AddTopicListener(string, CallbackFunc)
 	Listen()
-	Publish(string, string)
 	Close() error
-	CheckSession() (state bool)
+	Publish(string, string)
 }
