@@ -12,11 +12,17 @@ func (l *Kafka) AddTopicListener(topic string, callback messaging.CallbackFunc) 
 	functions := l.CallbackFunctions[topic]
 	functions = append(functions, callback)
 	l.CallbackFunctions[topic] = functions
+	l.Option.ListTopics = append(l.Option.ListTopics, topic)
 }
 
 func (l *Kafka) Listen() {
-	if l.Consumer == nil {
-		l.Option.Log.Info("Cannot Listen to Messaging")
+	if l.Consumer != nil {
+		return
+	}
+
+	var err error
+	l.Consumer, err = l.NewListener(l.Option)
+	if err != nil {
 		return
 	}
 

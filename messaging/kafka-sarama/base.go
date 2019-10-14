@@ -18,6 +18,7 @@ const (
 	DefaultProducerMaxBytes     = 1000000
 	DefaultProducerRetryMax     = 3
 	DefaultProducerRetryBackoff = 100
+	DefaultMaxWait              = 10 * time.Second
 )
 
 type Kafka struct {
@@ -38,6 +39,7 @@ type Option struct {
 	ProducerRetryMax     int
 	ProducerRetryBackoff int
 	ListTopics           []string
+	MaxWait              time.Duration
 	Log                  logs.Logger
 }
 
@@ -70,6 +72,10 @@ func getOption(option *Option) {
 	if option.ProducerRetryBackoff == 0 {
 		option.ProducerRetryBackoff = DefaultProducerRetryBackoff
 	}
+
+	if option.MaxWait == 0 {
+		option.MaxWait = DefaultMaxWait
+	}
 }
 
 func New(option *Option) (messaging.QueueV2, error) {
@@ -80,11 +86,6 @@ func New(option *Option) (messaging.QueueV2, error) {
 		Option:            option,
 		CallbackFunctions: make(map[string][]messaging.CallbackFunc),
 		mu:                &sync.Mutex{},
-	}
-
-	l.Consumer, err = l.NewListener(option)
-	if err != nil {
-		return nil, err
 	}
 
 	l.Client, err = l.NewClient()
@@ -98,6 +99,7 @@ func New(option *Option) (messaging.QueueV2, error) {
 func (l *Kafka) NewListener(option *Option) (*cluster.Consumer, error) {
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
+	config.Consumer.MaxWaitTime = l.Option.MaxWait
 	config.Group.Return.Notifications = true
 	config.Group.PartitionStrategy = l.Option.Strategy
 	config.Group.Heartbeat.Interval = time.Duration(l.Option.Heartbeat) * time.Second
