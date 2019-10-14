@@ -119,11 +119,16 @@ func (l *Kafka) NewClient() (sarama.Client, error) {
 }
 
 func (l *Kafka) Close() error {
-	if err := l.Consumer.Close(); err != nil {
-		return errors.Wrapf(err, "Failed to Close Consumer")
+	if l.Consumer != nil {
+		if err := l.Consumer.Close(); err != nil {
+			return errors.Wrapf(err, "Failed to Close Consumer")
+		}
 	}
-	if err := l.Client.Close(); err != nil {
-		return errors.Wrapf(err, "Failed to Close Producer")
+
+	if l.Client != nil {
+		if err := l.Client.Close(); err != nil {
+			return errors.Wrapf(err, "Failed to Close Producer")
+		}
 	}
 	return nil
 }
