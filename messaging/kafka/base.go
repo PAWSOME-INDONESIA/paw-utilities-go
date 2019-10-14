@@ -171,6 +171,7 @@ func (k *kafka) PublishWithContext(ctx context.Context, topic, message string) e
 	k.mu.Unlock()
 
 	w := k.writers[topic]
+	defer func() { _ = w.Close() }()
 
 	if err := w.WriteMessages(context.Background(), kfk.Message{Value: []byte(message)}); err != nil {
 		k.log.Error(err)
