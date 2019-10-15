@@ -37,13 +37,18 @@ type Option struct {
 	Heartbeat            int
 	ProducerMaxBytes     int
 	ProducerRetryMax     int
-	ProducerRetryBackoff int
+	ProducerRetryBackOff int
+	KafkaVersion         string
 	ListTopics           []string
 	MaxWait              time.Duration
 	Log                  logs.Logger
 }
 
-func getOption(option *Option) {
+func getOption(option *Option) error {
+	if option.KafkaVersion == "" {
+		return errors.New("invalid kafka version")
+	}
+
 	if option.Log == nil {
 		logger, _ := logs.DefaultLog()
 		option.Log = logger
@@ -69,18 +74,21 @@ func getOption(option *Option) {
 		option.ProducerRetryMax = DefaultProducerRetryMax
 	}
 
-	if option.ProducerRetryBackoff == 0 {
-		option.ProducerRetryBackoff = DefaultProducerRetryBackoff
+	if option.ProducerRetryBackOff == 0 {
+		option.ProducerRetryBackOff = DefaultProducerRetryBackoff
 	}
 
 	if option.MaxWait == 0 {
 		option.MaxWait = DefaultMaxWait
 	}
+	return nil
 }
 
 func New(option *Option) (messaging.QueueV2, error) {
 	var err error
-	getOption(option)
+	if err := getOption(option); err != nil {
+		return nil, errors.WithStack(err)
+	}
 
 	l := Kafka{
 		Option:            option,
@@ -108,13 +116,18 @@ func (l *Kafka) NewListener(option *Option) (*cluster.Consumer, error) {
 }
 
 func (l *Kafka) NewClient() (sarama.Client, error) {
+	kfkVersion, err := sarama.ParseKafkaVersion(l.Option.KafkaVersion)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	configProducer := sarama.NewConfig()
-	configProducer.Version = sarama.V0_10_0_0
+	configProducer.Version = kfkVersion
 	configProducer.Producer.Return.Errors = true
 	configProducer.Producer.Return.Successes = true
 	configProducer.Producer.MaxMessageBytes = l.Option.ProducerMaxBytes
 	configProducer.Producer.Retry.Max = l.Option.ProducerRetryMax
-	configProducer.Producer.Retry.Backoff = time.Duration(l.Option.ProducerRetryBackoff) * time.Millisecond
+	configProducer.Producer.Retry.Backoff = time.Duration(l.Option.ProducerRetryBackOff) * time.Millisecond
 	return sarama.NewClient(l.Option.Host, configProducer)
 }
 
