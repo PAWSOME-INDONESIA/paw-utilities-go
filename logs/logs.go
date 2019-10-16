@@ -16,6 +16,10 @@ type (
 		Debugf(string, ...interface{})
 		Error(...interface{})
 		Errorf(string, ...interface{})
+		Warning(...interface{})
+		Warningf(string, ...interface{})
+		Fatal(...interface{})
+		Fatalf(string, ...interface{})
 		Print(...interface{})
 		Printf(string, ...interface{})
 		Instance() interface{}
@@ -66,6 +70,22 @@ func (l *logger) Error(args ...interface{}) {
 
 func (l *logger) Errorf(format string, args ...interface{}) {
 	l.instance.Errorf(format, args...)
+}
+
+func (l *logger) Warning(args ...interface{}) {
+	l.instance.Warning(args...)
+}
+
+func (l *logger) Warningf(format string, args ...interface{}) {
+	l.instance.Warningf(format, args...)
+}
+
+func (l *logger) Fatal(args ...interface{}) {
+	l.instance.Fatal(args...)
+}
+
+func (l *logger) Fatalf(format string, args ...interface{}) {
+	l.instance.Fatalf(format, args...)
 }
 
 func (l *logger) Print(args ...interface{}) {
