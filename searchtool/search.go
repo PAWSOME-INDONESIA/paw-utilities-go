@@ -30,8 +30,8 @@ type SearchTool interface {
 
 	BulkCreateDocument(string, string, []string, interface{}) error
 	BulkCreateDocumentWithContext(context.Context, string, string, []string, interface{}) error
-	BulkUpdateDocument(string, string, []string, interface{}, bool) error
-	BulkUpdateDocumentWithContext(context.Context, string, string, []string, interface{}, bool) error
+	BulkUpdateDocument(string, string, []string, interface{}, interface{}, bool) error
+	BulkUpdateDocumentWithContext(context.Context, string, string, []string, interface{}, interface{}, bool) error
 	BulkDeleteDocument(string, string, []string) error
 	BulkDeleteDocumentWithContext(context.Context, string, string, []string) error
 
