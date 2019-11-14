@@ -12,8 +12,6 @@ import (
 
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/TIX-HOTEL-TESTING-ENGINE-BE/util"
 
-	"github.com/tidwall/gjson"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -37,7 +35,7 @@ type (
 
 	// Filter ...
 	Filter struct {
-		PaymentOptions []string `json:"paymentOptions"`
+		PaymentOptions []string `json:"paymentOptions,omitempty"`
 	}
 
 	// Expected ...
@@ -111,6 +109,7 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		logAvailRoom             = make([]string, 0)
 		logNameEmpty             = make([]string, 0)
 		logFilterPaymentOption   = make([]string, 0)
+		location                 string
 	)
 
 	// Get Data
@@ -156,77 +155,41 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 
 	// 1. Check Status code
 	if statusCode != 200 {
-		log.Warning("1. Status Code must be 200 ", constant.SuccessMessage[false])
+		log.Warning("#. Status Code must be 200 ", constant.SuccessMessage[false])
 		log.Warning("\nResponse : ", respBody)
 	} else {
-		log.Info("1. Status Code must be 200", constant.SuccessMessage[true])
+		log.Info("#. Status Code must be 200", constant.SuccessMessage[true])
 	}
 
 	// 2. Check hotel list must have data (>0)
 	err = json.Unmarshal([]byte(respBody), &hotelSearchResp)
 	if err != nil {
-		log.Warning("2. Check hotel list must > 0", constant.SuccessMessage[false])
+		log.Warning("#. Check hotel list must > 0", constant.SuccessMessage[false])
 		log.Warning(err.Error())
 		log.Warning("\nResponse : ", respBody)
 		return
 	}
 
-	var locationDetail []string
-	result2 := gjson.Get(respBody, "data.searchDetail.searchLocation").Array()
-	for _, v := range result2 {
-		locationDetail = append(locationDetail, v.String())
-	}
-
-	result3 := gjson.Get(respBody, "data.contents").Array()
-	locationInIndonesia := util.StringContaintsInSlice("indonesia", locationDetail)
-	if !locationInIndonesia && util.StringContaintsInSlice(constant.PaymentMethod[1], data.Filter.PaymentOptions) {
-		if len(result3) > 0 {
-			log.Info("2. Expected Response if paymentOptions is ['" + constant.PaymentMethod[1] + "'] and country other than Indonesia : List Hotels Must Null " + constant.SuccessMessage[false])
-		} else {
-			log.Info("2. Expected Response if paymentOptions is ['" + constant.PaymentMethod[1] + "'] and country other than Indonesia : List Hotels Must Null " + constant.SuccessMessage[true])
-		}
-
-		if len(hotelSearchResp.Data.ContentList) > 0 {
-			for _, value := range hotelSearchResp.Data.ContentList {
-				// check if filter pay_at_hotel, should not have data here because it's not indo
-				if value.PaymentOption == constant.PaymentMethod[1] {
-					logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
-					checkFilterPaymentOption = false
-				}
-			}
-
-			log.Info("3. Check Hotel list should not have payment options : ["+constant.PaymentMethod[1]+"] "+strings.Join(data.Filter.PaymentOptions, ","),
-				constant.SuccessMessage[checkFilterPaymentOption])
-			if !checkFilterPaymentOption {
-				log.Warning("Log Message :")
-				log.Warning(logFilterPaymentOption)
-			}
-		}
-
-		return
-
-	}
-
 	if len(hotelSearchResp.Data.ContentList) == 0 {
-		log.Warning("2. Check hotel list must > 0", constant.SuccessMessage[false])
+		log.Warning("#. Check hotel list must > 0", constant.SuccessMessage[false])
 		log.Warning("\nResponse : ", hotelSearchResp)
 		checkAvailRoom, checkFilterPaymentOption, checkMatchSearchType, checkNameEmpty = false, false, false, false
 	} else {
-		log.Info("2. Check hotel list must > 0", constant.SuccessMessage[true])
+		log.Info("#. Check hotel list must > 0", constant.SuccessMessage[true])
 	}
 
 	// 3. Check Response Message Success
 	if strings.ToUpper(hotelSearchResp.Message) != constant.SUCCESS {
-		log.Warning("3. Check Response Code must success ", constant.SuccessMessage[false])
+		log.Warning("#. Check Response Code must success ", constant.SuccessMessage[false])
 	} else {
-		log.Info("3. Check Response Code must success ", constant.SuccessMessage[true])
+		log.Info("#. Check Response Code must success ", constant.SuccessMessage[true])
 	}
 
 	// Check
 	// 4. Check hotel list should match search type (REGION, POI, etc ...)
 	// 5. Available Room must be (>= req.room)
 
-	for _, value := range hotelSearchResp.Data.ContentList {
+	for key, value := range hotelSearchResp.Data.ContentList {
 
 		// Check Match search type
 		switch searchType := data.SearchType; searchType {
@@ -287,26 +250,27 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 				logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
 				checkFilterPaymentOption = false
 			}
-		} else {
-			if !locationInIndonesia {
-				// check pay_at_hotel should not in list of other indo
-				if value.PaymentOption == constant.PaymentMethod[1] {
-					logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
-					checkFilterPaymentOption = false
-				}
-			}
 		}
 
+		if value.Country.ID != "indonesia" && value.PaymentOption == constant.PaymentMethod[1] {
+			// check pay_at_hotel should not in list of other indo
+			logFilterPaymentOption = append(logFilterPaymentOption, "\nHotel ID ", value.ID, value.PaymentOption)
+			checkFilterPaymentOption = false
+		}
+
+		if key == 0 {
+			location = value.Country.ID
+		}
 	}
 
-	log.Info("4. Check hotel list should match search type (", data.SearchType, ")",
+	log.Info("#. Check hotel list should match search type (", data.SearchType, ")",
 		constant.SuccessMessage[checkMatchSearchType])
 	if !checkMatchSearchType {
 		log.Warning("Log Message :")
 		log.Warning(logMatchSearchType)
 	}
 
-	log.Info("5. Check Available Room should >= (", data.Room, ")",
+	log.Info("#. Check Available Room should >= (", data.Room, ")",
 		constant.SuccessMessage[checkAvailRoom])
 	if !checkAvailRoom {
 		log.Warning("Log Message :")
@@ -314,13 +278,13 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 	}
 
 	if len(expectedResponse) > 0 {
-		log.Info("6. Check Expected response:")
+		log.Info("#. Check Expected response:")
 		for keyexpect := range expectedResponse {
 			log.Info("Expected response ", (keyexpect + 1), constant.SuccessMessage[checkExpected[keyexpect]])
 		}
 	}
 
-	log.Info("7. Check Hotel Name is not empty",
+	log.Info("#. Check Hotel Name is not empty",
 		constant.SuccessMessage[checkNameEmpty])
 	if !checkNameEmpty {
 		log.Warning("Log Message :")
@@ -328,21 +292,21 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 	}
 
 	if len(data.Filter.PaymentOptions) > 0 {
-		log.Info("8. Check Hotel should match with filter payment options : "+strings.Join(data.Filter.PaymentOptions, ","),
+		log.Info("#. Check Hotel should match with filter payment options : "+strings.Join(data.Filter.PaymentOptions, ","),
 			constant.SuccessMessage[checkFilterPaymentOption])
 		if !checkFilterPaymentOption {
 			log.Warning("Log Message :")
 			log.Warning(logFilterPaymentOption)
 		}
-	} else {
-		if !locationInIndonesia {
-			// check pay_at_hotel should not in list of other indo
-			log.Info("8. Check Hotel should not have payment options : "+constant.PaymentMethod[1],
-				constant.SuccessMessage[checkFilterPaymentOption])
-			if !checkFilterPaymentOption {
-				log.Warning("Log Message :")
-				log.Warning(logFilterPaymentOption)
-			}
+	}
+
+	if location != "" && location != "indonesia" {
+		// check pay_at_hotel should not in list of other indo
+		log.Info("#. Check Hotel should not have payment options : "+constant.PaymentMethod[1],
+			constant.SuccessMessage[checkFilterPaymentOption])
+		if !checkFilterPaymentOption {
+			log.Warning("Log Message :")
+			log.Warning(logFilterPaymentOption)
 		}
 	}
 
@@ -383,16 +347,16 @@ func (d *CommandSearch) Test(contentList structs.ContentList) {
 		priorityRank := false
 		if len(searchID) > 0 {
 			if hotelSearchResp.Data.ContentList[0].ID != searchID[0] {
-				log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+				log.Info("#. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
 			} else {
 				priorityRank = reflect.DeepEqual(searchID, foundID)
-				log.Info("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+				log.Info("#. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
 			}
 			if !priorityRank {
 				log.Info("Priority Ranking must be : ", strings.Join(foundID, "\n"))
 			}
 		} else {
-			log.Warn("9. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
+			log.Warn("#. Check Priority Ranking : ", constant.SuccessMessage[priorityRank])
 			log.Warn("Priority Ranking must be : ", strings.Join(priorityList.PublicID, "\n"))
 		}
 	}
