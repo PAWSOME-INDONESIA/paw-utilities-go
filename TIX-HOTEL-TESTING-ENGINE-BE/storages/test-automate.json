@@ -251,6 +251,34 @@
         "page": 1,
         "priorityRankingType": "NORMAL_SEARCH",
         "room": 1,
+        "searchType": "coordinate",
+        "searchValue": "115.17406440350709,-8.709510803222656",
+        "sort": "popularity",
+        "startDate": "now"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1",
+        "version": "3"
+      },
+      "expected": {}
+    },
+    {
+      "command": "search",
+      "data": {
+        "adult": 2,
+        "night": 1,
+        "page": 1,
+        "priorityRankingType": "NORMAL_SEARCH",
+        "room": 1,
         "searchType": "poi",
         "searchValue": "monumen-nasional-110001539700829179",
         "sort": "popularity",
@@ -720,6 +748,146 @@
         "x-forwarded-host": "192.168.1.1",
         "version": "3"
       }
+    },
+    {
+      "command": "search",
+      "data": {
+        "adult": 2,
+        "night": 1,
+        "page": 1,
+        "priorityRankingType": "NORMAL_SEARCH",
+        "room": 1,
+        "searchType": "region",
+        "searchValue": "bali-108001534490276212",
+        "sort": "lowest_price",
+        "startDate": "now"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1",
+        "version": "3"
+      },
+      "expected": {}
+    },
+    {
+      "command": "search",
+      "data": {
+        "adult": 2,
+        "night": 1,
+        "page": 1,
+        "priorityRankingType": "NORMAL_SEARCH",
+        "room": 1,
+        "searchType": "city",
+        "searchValue": "badung-108001534490276266",
+        "sort": "lowest_price",
+        "startDate": "now"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1",
+        "version": "3"
+      },
+      "expected": {}
+    },
+    {
+      "command": "search",
+      "data": {
+        "adult": 2,
+        "night": 1,
+        "page": 1,
+        "priorityRankingType": "NORMAL_SEARCH",
+        "room": 1,
+        "searchType": "area",
+        "searchValue": "kuta-108001534490276350",
+        "sort": "lowest_price",
+        "startDate": "now"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1",
+        "version": "3"
+      },
+      "expected": {}
+    },
+    {
+      "command": "search",
+      "data": {
+        "adult": 2,
+        "night": 1,
+        "page": 1,
+        "priorityRankingType": "NORMAL_SEARCH",
+        "room": 1,
+        "searchType": "coordinate",
+        "searchValue": "115.17406440350709,-8.709510803222656",
+        "sort": "lowest_price",
+        "startDate": "now"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1",
+        "version": "3"
+      },
+      "expected": {}
+    },
+    {
+      "command": "search",
+      "data": {
+        "adult": 2,
+        "night": 1,
+        "page": 1,
+        "priorityRankingType": "NORMAL_SEARCH",
+        "room": 1,
+        "searchType": "poi",
+        "searchValue": "monumen-nasional-110001539700829179",
+        "sort": "lowest_price",
+        "startDate": "now"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1",
+        "version": "3"
+      },
+      "expected": {}
     }
   ]
 }
