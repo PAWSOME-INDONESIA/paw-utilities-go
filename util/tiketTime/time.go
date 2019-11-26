@@ -8,6 +8,6 @@ type (
 	}
 )
 
-func (t *Time) UnixMilli() int64 {
+func (t Time) UnixMilli() int64 {
 	return t.UnixNano() / int64(time.Millisecond)
 }
