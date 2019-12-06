@@ -6,6 +6,8 @@ require (
 	cloud.google.com/go v0.37.4
 	github.com/Shopify/sarama v1.23.1
 	github.com/bsm/sarama-cluster v2.1.15+incompatible
+	github.com/chromedp/cdproto v0.0.0-20191114225735-6626966fbae4
+	github.com/chromedp/chromedp v0.5.2
 	github.com/digitalysin/ants v1.5.0
 	github.com/eapache/go-resiliency v1.2.0 // indirect
 	github.com/elastic/go-elasticsearch v0.0.0
@@ -35,7 +37,6 @@ require (
 	go.mongodb.org/mongo-driver v1.0.3
 	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect
 	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
-	golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb // indirect
 	google.golang.org/appengine v1.6.1 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.0
