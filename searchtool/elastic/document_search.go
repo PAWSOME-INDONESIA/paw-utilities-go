@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/esapi"
-	"github.com/digitalysin/ants"
-	"github.com/pkg/errors"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 	"strings"
 	"sync"
+
+	"github.com/digitalysin/ants"
+	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/pkg/errors"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 )
 
 type SearchData struct {
@@ -91,6 +92,26 @@ func (e *ElasticSearch) SearchWithContext(ctx context.Context, index, _type, que
 	}
 
 	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if err := json.Unmarshal([]byte("["+strings.Join(jsons.jsons, ",")+"]"), &data); err != nil {
+		return errors.Wrap(err, "failed to unmarshal document")
+	}
+	return nil
+}
+
+func (e *ElasticSearch) SearchWithCustomQuery(ctx context.Context, index, _type, query string, data interface{}) error {
+	jsons := SearchData{jsons: make([]string, 0)}
+
+	searchResponse, err := e.search(ctx, index, _type, query)
+	if err != nil {
+		return errors.Wrap(err, "failed to search document")
+	}
+	jsonResponse, err := e.getResponse(searchResponse)
+	if err == nil {
+		jsons.append(jsonResponse...)
+	} else {
 		return errors.WithStack(err)
 	}
 

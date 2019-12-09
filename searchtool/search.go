@@ -2,6 +2,7 @@ package searchtool
 
 import (
 	"context"
+
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
 )
 
@@ -40,4 +41,5 @@ type SearchTool interface {
 
 	Search(string, string, string, interface{}, ...SearchOption) error
 	SearchWithContext(context.Context, string, string, string, interface{}, ...SearchOption) error
+	SearchWithCustomQuery(context.Context, string, string, string, interface{}) error
 }
