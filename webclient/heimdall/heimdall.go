@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gojek/heimdall/httpclient"
-	"github.com/tiket/TIX-HOTEL-VOUCHER-ENGINE/shared/webclient"
+	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/webclient"
 )
 
 type (
