@@ -4,7 +4,7 @@ type (
 	File struct {
 		Mode        Mode
 		Name, Path  string
-		Content     []byte
+		Content     []byte `swaggertype:"string" format:"base64" example:"U3dhZ2dlciByb2Nrcw=="`
 		ContentType string
 	}
 
