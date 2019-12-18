@@ -26,6 +26,7 @@ require (
 	github.com/labstack/gommon v0.2.9
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
+	github.com/newrelic/go-agent v3.0.0+incompatible
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/pelletier/go-toml v1.4.0 // indirect
