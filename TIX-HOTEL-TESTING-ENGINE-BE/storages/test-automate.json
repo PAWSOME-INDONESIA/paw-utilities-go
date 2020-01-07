@@ -1,20 +1,9 @@
 {
   "testing": [
     {
-      "command": "search",
+      "command": "autocomplete",
       "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now",
-        "filter": {
-          "hotelName": "Best Western"
-        }
+        "query": "Singapura"
       },
       "header": {
         "channelId": "WEB",
@@ -26,55 +15,458 @@
         "storeId": "TIKETCOM",
         "user-agent": "Chrome",
         "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
+        "x-forwarded-host": "192.168.1.1"
       },
       "expected": {
+        "statusCode": 200,
         "responseData": [
           {
-            "id": "best-western-resort-kuta-108001534490276103",
-            "name": "Best Western Resort Kuta",
-            "address": "Jl. Kubu Anyar, No. 118",
-            "postalCode": "80361",
-            "starRating": 4,
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "singapore-108001534490299035",
+            "name": "Singapore",
+            "location": "Singapore",
+            "country": {
+              "id": "singapore",
+              "name": "Singapore"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "HOTEL BOROBUDUR"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "HOTEL",
+            "label": "HOTEL",
             "country": {
               "id": "indonesia",
               "name": "Indonesia"
-            },
-            "region": {
-              "id": "bali-108001534490276212",
-              "name": "Bali"
-            },
-            "city": {
-              "id": "badung-108001534490276266",
-              "name": "Badung"
-            },
-            "area": {
-              "id": "kuta-108001534490276350",
-              "name": "Kuta"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 115.17194,
-                "latitude": -8.73183
-              }
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Hongkong"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "hong-kong-island-108001534490323601",
+            "name": "Hong Kong Island",
+            "location": "HongKong",
+            "country": {
+              "id": "hongkong",
+              "name": "HongKong"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "W"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "HOTEL",
+            "label": "HOTEL",
+            "name": "W Hotel"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "JW Mariott"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "HOTEL",
+            "label": "HOTEL",
+            "publicId": "jw-marriott-hotel-surabaya-108001534490358740"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Faves hotel"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "HOTEL",
+            "label": "HOTEL",
+            "name": "Favehotel Melawai"
+          }
+        ]
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Yogyakartaa"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "yogyakarta-province-108001534490276304",
+            "name": "Yogyakarta Province",
+            "location": "Indonesia",
+            "country": {
+              "id": "indonesia",
+              "name": "Indonesia"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Yogyakart"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "yogyakarta-province-108001534490276304",
+            "name": "Yogyakarta Province",
+            "location": "Indonesia",
+            "country": {
+              "id": "indonesia",
+              "name": "Indonesia"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Makasar"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "AREA",
+            "label": "AREA",
+            "publicId": "makasar-108001534490385379",
+            "name": "Makasar",
+            "location": "East Jakarta, Jakarta, Indonesia",
+            "country": {
+              "id": "indonesia",
+              "name": "Indonesia"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "mandapa ubud"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "HOTEL",
+            "label": "HOTEL",
+            "publicId": "mandapa-a-ritzcarlton-reserve-108001534517851729",
+            "name": "Mandapa, A Ritz-Carlton Reserve",
+            "location": "Ubud, Gianyar, Bali, Indonesia",
+            "country": {
+              "id": "indonesia",
+              "name": "Indonesia"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Padma resort gianyar"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "HOTEL",
+            "label": "HOTEL",
+            "publicId": "padma-resort-ubud-108001534490367508",
+            "name": "Padma Resort Ubud",
+            "location": "Ubud, Gianyar, Bali, Indonesia",
+            "country": {
+              "id": "indonesia",
+              "name": "Indonesia"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Santika semar"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "HOTEL",
+            "label": "HOTEL",
+            "publicId": "hotel-santika-premiere-semarang-108001534490277173",
+            "name": "Hotel Santika Premiere Semarang",
+            "location": "Semarang Timur, Semarang, Central Java, Indonesia",
+            "country": {
+              "id": "indonesia",
+              "name": "Indonesia"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "monas"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "POI",
+            "label": "POI",
+            "publicId": "monumen-nasional-110001539700829179",
+            "name": "Monumen Nasional",
+            "location": "Central Jakarta, Jakarta, Indonesia",
+            "country": {
+              "id": "indonesia",
+              "name": "Indonesia"
+            }
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "central park vancouver"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "name": "central park",
+            "country": {
+              "id": "canada",
+              "name": "canada"
             }
           }
         ]
       }
     },
     {
-      "command": "search",
+      "command": "autocomplete",
       "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now"
+        "query": "soekarno hatta"
       },
       "header": {
         "channelId": "WEB",
@@ -86,808 +478,25 @@
         "storeId": "TIKETCOM",
         "user-agent": "Chrome",
         "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
+        "x-forwarded-host": "192.168.1.1"
       },
       "expected": {
+        "statusCode": 200,
         "responseData": [
           {
-            "id": "best-western-resort-kuta-108001534490276103",
-            "name": "Best Western Resort Kuta",
-            "address": "Jl. Kubu Anyar, No. 118",
-            "postalCode": "80361",
-            "starRating": 4,
+            "type": "POI",
+            "label": "POI",
+            "publicId": "jakarta-soekarnohatta-apt-108001535385139209",
+            "name": "Solaria Soekarno Hatta",
+            "location": "West Jakarta, Jakarta, Indonesia",
             "country": {
               "id": "indonesia",
               "name": "Indonesia"
-            },
-            "region": {
-              "id": "bali-108001534490276212",
-              "name": "Bali"
-            },
-            "city": {
-              "id": "badung-108001534490276266",
-              "name": "Badung"
-            },
-            "area": {
-              "id": "kuta-108001534490276350",
-              "name": "Kuta"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 115.17194,
-                "latitude": -8.73183
-              }
             }
           }
-        ]
+        ],
+        "exactResponse": true
       }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "city",
-        "searchValue": "badung-108001534490276266",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {
-        "responseData": [
-          {
-            "id": "best-western-resort-kuta-108001534490276103",
-            "name": "Best Western Resort Kuta",
-            "address": "Jl. Kubu Anyar, No. 118",
-            "postalCode": "80361",
-            "starRating": 4,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            },
-            "region": {
-              "id": "bali-108001534490276212",
-              "name": "Bali"
-            },
-            "city": {
-              "id": "badung-108001534490276266",
-              "name": "Badung"
-            },
-            "area": {
-              "id": "kuta-108001534490276350",
-              "name": "Kuta"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 115.17194,
-                "latitude": -8.73183
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "area",
-        "searchValue": "kuta-108001534490276350",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {
-        "responseData": [
-          {
-            "id": "best-western-resort-kuta-108001534490276103",
-            "name": "Best Western Resort Kuta",
-            "address": "Jl. Kubu Anyar, No. 118",
-            "postalCode": "80361",
-            "starRating": 4,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            },
-            "region": {
-              "id": "bali-108001534490276212",
-              "name": "Bali"
-            },
-            "city": {
-              "id": "badung-108001534490276266",
-              "name": "Badung"
-            },
-            "area": {
-              "id": "kuta-108001534490276350",
-              "name": "Kuta"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 115.17194,
-                "latitude": -8.73183
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "coordinate",
-        "searchValue": "115.17406440350709,-8.709510803222656",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {}
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "poi",
-        "searchValue": "monumen-nasional-110001539700829179",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {
-        "responseData": [
-          {
-            "id": "menara-peninsula-hotel-108001534490266880",
-            "name": "Menara Peninsula Hotel",
-            "address": "Jl. Let. Jend. S. Parman 78, Slipi, Jakarta",
-            "postalCode": "11410",
-            "starRating": 4,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            },
-            "region": {
-              "id": "jakarta-108001534490276204",
-              "name": "Jakarta"
-            },
-            "city": {
-              "id": "west-jakarta-108001534490276536",
-              "name": "West Jakarta"
-            },
-            "area": {
-              "id": "palmerah-108001534490276609",
-              "name": "Palmerah"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 106.797813,
-                "latitude": -6.189976
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "poi",
-        "searchValue": "gambir-110001539700829312",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {
-        "responseData": [
-          {
-            "id": "menara-peninsula-hotel-108001534490266880",
-            "name": "Menara Peninsula Hotel",
-            "address": "Jl. Let. Jend. S. Parman 78, Slipi, Jakarta",
-            "postalCode": "11410",
-            "starRating": 4,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            },
-            "region": {
-              "id": "jakarta-108001534490276204",
-              "name": "Jakarta"
-            },
-            "city": {
-              "id": "west-jakarta-108001534490276536",
-              "name": "West Jakarta"
-            },
-            "area": {
-              "id": "palmerah-108001534490276609",
-              "name": "Palmerah"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 106.797813,
-                "latitude": -6.189976
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "poi",
-        "searchValue": "rumah-sakit-saint-carolus-110001539700831285",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {
-        "responseData": [
-          {
-            "id": "menara-peninsula-hotel-108001534490266880",
-            "name": "Menara Peninsula Hotel",
-            "address": "Jl. Let. Jend. S. Parman 78, Slipi, Jakarta",
-            "postalCode": "11410",
-            "starRating": 4,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            },
-            "region": {
-              "id": "jakarta-108001534490276204",
-              "name": "Jakarta"
-            },
-            "city": {
-              "id": "west-jakarta-108001534490276536",
-              "name": "West Jakarta"
-            },
-            "area": {
-              "id": "palmerah-108001534490276609",
-              "name": "Palmerah"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 106.797813,
-                "latitude": -6.189976
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "poi",
-        "searchValue": "rumah-sakit-saint-carolus-110001539700831285",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {
-        "responseData": [
-          {
-            "id": "menara-peninsula-hotel-108001534490266880",
-            "name": "Menara Peninsula Hotel",
-            "address": "Jl. Let. Jend. S. Parman 78, Slipi, Jakarta",
-            "postalCode": "11410",
-            "starRating": 4,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            },
-            "region": {
-              "id": "jakarta-108001534490276204",
-              "name": "Jakarta"
-            },
-            "city": {
-              "id": "west-jakarta-108001534490276536",
-              "name": "West Jakarta"
-            },
-            "area": {
-              "id": "palmerah-108001534490276609",
-              "name": "Palmerah"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 106.797813,
-                "latitude": -6.189976
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 3,
-        "night": 2,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 2,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 2,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 2,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now",
-        "filter": {
-          "maxPrice": 2000000,
-          "minPrice": 1000000
-        }
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now",
-        "filter": {
-          "starRatings": [
-            4
-          ]
-        }
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {
-        "responseData": [
-          {
-            "id": "best-western-resort-kuta-108001534490276103",
-            "name": "Best Western Resort Kuta",
-            "address": "Jl. Kubu Anyar, No. 118",
-            "postalCode": "80361",
-            "starRating": 4,
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            },
-            "region": {
-              "id": "bali-108001534490276212",
-              "name": "Bali"
-            },
-            "city": {
-              "id": "badung-108001534490276266",
-              "name": "Badung"
-            },
-            "area": {
-              "id": "kuta-108001534490276350",
-              "name": "Kuta"
-            },
-            "location": {
-              "coordinates": {
-                "longitude": 115.17194,
-                "latitude": -8.73183
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now",
-        "filter": {
-          "maxPrice": 2000000,
-          "minPrice": 1000000,
-          "starRatings": [
-            4
-          ]
-        }
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "HOTEL_NOW",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "popularity",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      }
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "region",
-        "searchValue": "bali-108001534490276212",
-        "sort": "lowest_price",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {}
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "city",
-        "searchValue": "badung-108001534490276266",
-        "sort": "lowest_price",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {}
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "area",
-        "searchValue": "kuta-108001534490276350",
-        "sort": "lowest_price",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {}
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "coordinate",
-        "searchValue": "115.17406440350709,-8.709510803222656",
-        "sort": "lowest_price",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {}
-    },
-    {
-      "command": "search",
-      "data": {
-        "adult": 2,
-        "night": 1,
-        "page": 1,
-        "priorityRankingType": "NORMAL_SEARCH",
-        "room": 1,
-        "searchType": "poi",
-        "searchValue": "monumen-nasional-110001539700829179",
-        "sort": "lowest_price",
-        "startDate": "now"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1",
-        "version": "3"
-      },
-      "expected": {}
     }
   ]
 }

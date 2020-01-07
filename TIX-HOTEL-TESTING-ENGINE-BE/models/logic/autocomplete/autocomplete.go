@@ -19,9 +19,10 @@ type (
 	CommandAutocomplete struct{}
 
 	Expected struct {
-		HotelCount   int         `json:"hotelCount"`
-		StatusCode   int         `json:"statusCode"`
-		ResponseData interface{} `json:"responseData"`
+		HotelCount    int         `json:"hotelCount"`
+		StatusCode    int         `json:"statusCode"`
+		ResponseData  interface{} `json:"responseData"`
+		ExactResponse bool        `json:"exactResponse"`
 	}
 
 	// HotelSearchResponse ...
@@ -56,11 +57,12 @@ func (d *CommandAutocomplete) Test(contentList structs.ContentList) {
 		expectedResponse     []ContentlList
 		expected             Expected
 		autocompleteResponse AutocompleteResponse
+		check = true
 	)
 
 	dataByte, _ := json.Marshal(contentList.Expected)
 
-	url := constant.BASEURL + constant.URLCommand[contentList.Command]
+	url := constant.BASEURL_AUTOCOMPLETE + constant.URLCommand[contentList.Command]
 
 	res := util.CallRest("POST", contentList.Data, contentList.Header, url)
 	statusCode := util.GetStatusCode(res)
@@ -68,6 +70,7 @@ func (d *CommandAutocomplete) Test(contentList structs.ContentList) {
 
 	//Check Status Code must == 200
 	if statusCode != int(expectStatusCode) {
+		log.Error(expectStatusCode)
 		log.Error(res.Body)
 		os.Exit(1)
 		return
@@ -151,19 +154,37 @@ func (d *CommandAutocomplete) Test(contentList structs.ContentList) {
 		checkExpected[k] = false
 	}
 
-	for _, value := range autocompleteResponse.Data {
+	for key, value := range autocompleteResponse.Data {
 		// Check response
-		for keyexpect, valueExpect := range expectedResponse {
-			if util.CheckSimilarStruct(valueExpect, value) {
-				checkExpected[keyexpect] = true
+		if expected.ExactResponse {
+			for keyexpect, valueExpect := range expectedResponse {
+				if util.CheckSimilarStruct(valueExpect, value) && key == keyexpect {
+					checkExpected[keyexpect] = true
+				}
+			}
+		} else {
+			for keyexpect, valueExpect := range expectedResponse {
+				if util.CheckSimilarStruct(valueExpect, value) {
+					checkExpected[keyexpect] = true
+				}
 			}
 		}
+
 	}
 
 	if len(expectedResponse) > 0 {
 		log.Info("4. Check Expected response:")
 		for keyexpect := range expectedResponse {
-			log.Info("Expected response ", (keyexpect + 1), constant.SuccessMessage[checkExpected[keyexpect]])
+			expect := checkExpected[keyexpect]
+			log.Info("Expected response ", (keyexpect + 1), constant.SuccessMessage[expect])
+			if !expect {
+				check = false
+			}
+		}
+
+		if !check {
+			mar, _ := json.Marshal(autocompleteResponse.Data)
+			log.Infof("response %s", string(mar))
 		}
 	}
 
