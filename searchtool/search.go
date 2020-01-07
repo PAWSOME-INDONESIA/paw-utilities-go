@@ -42,4 +42,7 @@ type SearchTool interface {
 	Search(string, string, string, interface{}, ...SearchOption) error
 	SearchWithContext(context.Context, string, string, string, interface{}, ...SearchOption) error
 	SearchWithCustomQuery(context.Context, string, string, string, interface{}) error
+
+	UpdateDocumentByQuery(string, string, string, interface{}) error
+	UpdateDocumentByQueryWithContext(context.Context, string, string, string, interface{}) error
 }
