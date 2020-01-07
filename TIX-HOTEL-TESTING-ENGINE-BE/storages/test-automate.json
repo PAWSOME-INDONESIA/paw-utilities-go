@@ -24,12 +24,7 @@
             "type": "REGION",
             "label": "REGION",
             "publicId": "singapore-108001534490299035",
-            "name": "Singapore",
-            "location": "Singapore",
-            "country": {
-              "id": "singapore",
-              "name": "Singapore"
-            }
+            "name": "Singapore"
           }
         ],
         "exactResponse": true
@@ -58,13 +53,10 @@
           {
             "type": "HOTEL",
             "label": "HOTEL",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "publicId": "hotel-borobudur-jakarta-210001570706593032",
+            "name": "Hotel Borobudur Jakarta"
           }
-        ],
-        "exactResponse": true
+        ]
       }
     },
     {
@@ -91,41 +83,7 @@
             "type": "REGION",
             "label": "REGION",
             "publicId": "hong-kong-island-108001534490323601",
-            "name": "Hong Kong Island",
-            "location": "HongKong",
-            "country": {
-              "id": "hongkong",
-              "name": "HongKong"
-            }
-          }
-        ],
-        "exactResponse": true
-      }
-    },
-    {
-      "command": "autocomplete",
-      "data": {
-        "query": "W"
-      },
-      "header": {
-        "channelId": "WEB",
-        "currency": "IDR",
-        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
-        "lang": "en",
-        "requestId": "23123123",
-        "serviceId": "gateway",
-        "storeId": "TIKETCOM",
-        "user-agent": "Chrome",
-        "username": "username",
-        "x-forwarded-host": "192.168.1.1"
-      },
-      "expected": {
-        "statusCode": 200,
-        "responseData": [
-          {
-            "type": "HOTEL",
-            "label": "HOTEL",
-            "name": "W Hotel"
+            "name": "Hong Kong Island"
           }
         ],
         "exactResponse": true
@@ -212,12 +170,7 @@
             "type": "REGION",
             "label": "REGION",
             "publicId": "yogyakarta-province-108001534490276304",
-            "name": "Yogyakarta Province",
-            "location": "Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "name": "Yogyakarta Province"
           }
         ],
         "exactResponse": true
@@ -247,12 +200,7 @@
             "type": "REGION",
             "label": "REGION",
             "publicId": "yogyakarta-province-108001534490276304",
-            "name": "Yogyakarta Province",
-            "location": "Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "name": "Yogyakarta Province"
           }
         ],
         "exactResponse": true
@@ -279,15 +227,10 @@
         "statusCode": 200,
         "responseData": [
           {
-            "type": "AREA",
-            "label": "AREA",
-            "publicId": "makasar-108001534490385379",
-            "name": "Makasar",
-            "location": "East Jakarta, Jakarta, Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "makassar-108001534490277183",
+            "name": "Makassar"
           }
         ],
         "exactResponse": true
@@ -317,12 +260,7 @@
             "type": "HOTEL",
             "label": "HOTEL",
             "publicId": "mandapa-a-ritzcarlton-reserve-108001534517851729",
-            "name": "Mandapa, A Ritz-Carlton Reserve",
-            "location": "Ubud, Gianyar, Bali, Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "name": "Mandapa, A Ritz-Carlton Reserve"
           }
         ],
         "exactResponse": true
@@ -352,12 +290,7 @@
             "type": "HOTEL",
             "label": "HOTEL",
             "publicId": "padma-resort-ubud-108001534490367508",
-            "name": "Padma Resort Ubud",
-            "location": "Ubud, Gianyar, Bali, Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "name": "Padma Resort Ubud"
           }
         ],
         "exactResponse": true
@@ -387,12 +320,7 @@
             "type": "HOTEL",
             "label": "HOTEL",
             "publicId": "hotel-santika-premiere-semarang-108001534490277173",
-            "name": "Hotel Santika Premiere Semarang",
-            "location": "Semarang Timur, Semarang, Central Java, Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "name": "Hotel Santika Premiere Semarang"
           }
         ],
         "exactResponse": true
@@ -422,12 +350,7 @@
             "type": "POI",
             "label": "POI",
             "publicId": "monumen-nasional-110001539700829179",
-            "name": "Monumen Nasional",
-            "location": "Central Jakarta, Jakarta, Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "name": "Monumen Nasional"
           }
         ],
         "exactResponse": true
@@ -487,12 +410,907 @@
             "type": "POI",
             "label": "POI",
             "publicId": "jakarta-soekarnohatta-apt-108001535385139209",
-            "name": "Solaria Soekarno Hatta",
-            "location": "West Jakarta, Jakarta, Indonesia",
-            "country": {
-              "id": "indonesia",
-              "name": "Indonesia"
-            }
+            "name": "Solaria Soekarno Hatta"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "seminy"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "AREA",
+            "label": "AREA",
+            "publicId": "seminyak-108001534490276671",
+            "name": "Seminyak"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Vancouver"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "greater-vancouver-108001534517512376",
+            "name": "Greater Vancouver"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "rome"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "roma-108001534490400646",
+            "name": "Rome"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Munich"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "munchen-108001534490401785",
+            "name": "München"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Port Phillip"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "port-phillip-west-108001534516911184",
+            "name": "Port Phillip - West"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Frankfurt"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "frankfurt-am-main-108001534490390095",
+            "name": "Frankfurt Am Main"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Nuremberg"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "nurnberg-108001534517301032",
+            "name": "Nürnberg"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Zurich"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "zurich-108001534490390842",
+            "name": "Zürich"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Makati"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "makati-city-108001534516925377",
+            "name": "Makati City"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Copenhagen"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "kbenhavn-108001534516929653",
+            "name": "København"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Vienna"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "wien-108001534516978283",
+            "name": "Wien"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Toyako"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "toyako-108001534517595631",
+            "name": "Tōyako"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Prague"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "prague-108001534516936585",
+            "name": "Prague"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Paranaque"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "paranaque-108001534517153907",
+            "name": "Parañaque"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Nikko"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "nikko-108001534517389973",
+            "name": "Nikkō"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Cordoba"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "cordoba-108001534490451235",
+            "name": "Córdoba"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Geneva"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "geneva-211001574362217062",
+            "name": "Geneva"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Merkez"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "merkez-108001534517012730",
+            "name": "Merkez"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Seville"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "sevilla-108001534516900439",
+            "name": "Sevilla"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Venice"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "venezia-108001534490371981",
+            "name": "Venice"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Siem Reap"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "siem-reab-108001534516907870",
+            "name": "Siem Reab"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Sanya"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "sanya-108001534517168415",
+            "name": "Sanya"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Lucerne"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "lucerne-108001534517568332",
+            "name": "Lucerne"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Cape Town"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "city-of-cape-town-108001534516893495",
+            "name": "City Of Cape Town"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Budapest"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "budapest-108001534516927840",
+            "name": "Budapest"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Edam"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "edamvolendam-108001534562997100",
+            "name": "Edam-Volendam"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Ozu"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "ozu-108001534517804042",
+            "name": "Ōzu"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Puket"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "REGION",
+            "label": "REGION",
+            "publicId": "phuket-108001534490293543",
+            "name": "Phuket"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Koh Samui"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "ko-samui-108001534490299371",
+            "name": "Ko Samui"
+          }
+        ],
+        "exactResponse": true
+      }
+    },
+    {
+      "command": "autocomplete",
+      "data": {
+        "query": "Koh Samui"
+      },
+      "header": {
+        "channelId": "WEB",
+        "currency": "IDR",
+        "customerSessionId": "d41d8cd98f00b204e9800998ecf8427e",
+        "lang": "en",
+        "requestId": "23123123",
+        "serviceId": "gateway",
+        "storeId": "TIKETCOM",
+        "user-agent": "Chrome",
+        "username": "username",
+        "x-forwarded-host": "192.168.1.1"
+      },
+      "expected": {
+        "statusCode": 200,
+        "responseData": [
+          {
+            "type": "CITY",
+            "label": "CITY",
+            "publicId": "ko-samui-108001534490299371",
+            "name": "Ko Samui"
           }
         ],
         "exactResponse": true
