@@ -18,6 +18,10 @@ type (
 	FindCallback func(Cursor, error) error
 
 	Mongo interface {
+
+		AggregateWithContext(ctx context.Context,
+			collection string, pipeline interface{}, callback FindCallback, options ...*options.AggregateOptions) error
+
 		FindOneWithContext(context.Context, string, interface{}, interface{}, ...*options.FindOneOptions) error
 		FindOne(string, interface{}, interface{}, ...*options.FindOneOptions) error
 
@@ -70,6 +74,34 @@ type (
 		logger   logs.Logger
 	}
 )
+
+
+
+func (i *implementation) AggregateWithContext(ctx context.Context,
+	collection string, pipeline interface{}, callback FindCallback, options ...*options.AggregateOptions) error {
+	coll, err := i.database.Collection(collection).Aggregate(ctx, pipeline, options...)
+	if err != nil {
+		return err
+	}
+
+	cursor, err := NewCursor(coll)
+
+	defer func() {
+		if cursor == nil {
+			return
+		}
+
+		if err := cursor.Close(ctx); err != nil {
+			i.logger.Errorf("failed to close cursor %s", err)
+		}
+	}()
+
+	if err != nil {
+		return callback(nil, err)
+	} else {
+		return callback(cursor, nil)
+	}
+}
 
 func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, error) {
 	if uri == "" {
@@ -381,6 +413,7 @@ func (d *databaseimplementation) Collection(name string, opts ...*options.Collec
 type (
 	Collection interface {
 		Indexes() IndexView
+		Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (*mgo.Cursor, error)
 		Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (*mgo.Cursor, error)
 		FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mgo.SingleResult
 		BulkWrite(ctx context.Context, models []mgo.WriteModel, opts ...*options.BulkWriteOptions) (*mgo.BulkWriteResult, error)
@@ -407,6 +440,11 @@ func NewCollection(collection *mgo.Collection) Collection {
 
 func (c *collectionimplementation) Indexes() IndexView {
 	return NewIndexView(c.collection.Indexes())
+}
+
+func (c *collectionimplementation) Aggregate(ctx context.Context, pipeline interface{},
+	opts ...*options.AggregateOptions) (*mgo.Cursor, error) {
+	return c.collection.Aggregate(ctx, pipeline, opts...)
 }
 
 func (c *collectionimplementation) Find(ctx context.Context, filter interface{},
