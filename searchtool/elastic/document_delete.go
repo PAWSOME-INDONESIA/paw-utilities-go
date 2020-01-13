@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/pkg/errors"
 
-	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/elastic/go-elasticsearch/v7/esapi"
 )
 
 func (e *ElasticSearch) DeleteDocument(index, _type, id string) error {
