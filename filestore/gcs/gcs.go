@@ -18,8 +18,7 @@ type (
 	}
 )
 
-func (w *writer) Open(path string, mode filestore.Mode) (*filestore.File, error) {
-	ctx := context.Background()
+func (w *writer) Open(ctx context.Context, path string, mode filestore.Mode) (*filestore.File, error) {
 	var data []byte
 
 	//open connection to gcs
@@ -60,9 +59,7 @@ func (w *writer) Open(path string, mode filestore.Mode) (*filestore.File, error)
 	}, err
 }
 
-func (w *writer) Write(file *filestore.File) error {
-	ctx := context.Background()
-
+func (w *writer) Write(ctx context.Context, file *filestore.File) error {
 	//open connection to gcs
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -83,9 +80,8 @@ func (w *writer) Write(file *filestore.File) error {
 	return nil
 }
 
-func (w *writer) Delete(file *filestore.File) error {
+func (w *writer) Delete(ctx context.Context, file *filestore.File) error {
 	// - delete logic
-	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		return errors.Wrap(err, "DELETE - could not open connection to gcs")
@@ -99,9 +95,8 @@ func (w *writer) Delete(file *filestore.File) error {
 	return nil
 }
 
-func (w *writer) Close(file *filestore.File) error {
+func (w *writer) Close(ctx context.Context, file *filestore.File) error {
 	// - close logic
-	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		return errors.Wrap(err, "CLOSE - could not open connection to gcs")

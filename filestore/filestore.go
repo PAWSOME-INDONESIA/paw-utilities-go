@@ -1,5 +1,7 @@
 package filestore
 
+import "context"
+
 type (
 	File struct {
 		Mode        Mode
@@ -9,10 +11,10 @@ type (
 	}
 
 	Writer interface {
-		Open(path string, mode Mode) (*File, error)
-		Write(file *File) error
-		Delete(file *File) error
-		Close(file *File) error
+		Open(ctx context.Context, path string, mode Mode) (*File, error)
+		Write(ctx context.Context, file *File) error
+		Delete(ctx context.Context, file *File) error
+		Close(ctx context.Context, file *File) error
 	}
 
 	Mode uint
