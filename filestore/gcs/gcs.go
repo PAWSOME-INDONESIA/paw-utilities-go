@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 
 	"cloud.google.com/go/storage"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/filestore"
@@ -59,7 +60,7 @@ func (w *writer) Open(ctx context.Context, path string, mode filestore.Mode) (*f
 	}, err
 }
 
-func (w *writer) Write(ctx context.Context, file *filestore.File) error {
+func (w *writer) Write(ctx context.Context, file *filestore.File, maxAge int) error {
 	//open connection to gcs
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -69,6 +70,7 @@ func (w *writer) Write(ctx context.Context, file *filestore.File) error {
 	wc := client.Bucket(w.bucket).Object(file.Name).NewWriter(ctx)
 
 	wc.ContentType = file.ContentType
+	wc.CacheControl = "public, max-age=" + strconv.Itoa(maxAge)
 
 	if _, err := wc.Write(file.Content); err != nil {
 		return errors.Wrapf(err, "WRITE - unable to write data to bucket %q, file %q: %v", w.bucket, file.Name, err)
