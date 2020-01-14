@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/pkg/errors"
 )
 

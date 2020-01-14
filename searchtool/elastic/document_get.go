@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/pkg/errors"
 
-	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/elastic/go-elasticsearch/v7/esapi"
 )
 
 func (e *ElasticSearch) FindById(index, _type, id string, data interface{}) error {

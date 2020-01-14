@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/digitalysin/ants"
-	"github.com/elastic/go-elasticsearch/esapi"
+	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 )
