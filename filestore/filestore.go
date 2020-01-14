@@ -12,7 +12,7 @@ type (
 
 	Writer interface {
 		Open(ctx context.Context, path string, mode Mode) (*File, error)
-		Write(ctx context.Context, file *File) error
+		Write(ctx context.Context, file *File, maxAge int) error
 		Delete(ctx context.Context, file *File) error
 		Close(ctx context.Context, file *File) error
 	}
