@@ -362,3 +362,37 @@ func (m MultiMatchQuery) Source() map[string]interface{} {
 	response["multi_match"] = query
 	return response
 }
+
+type FuzzyQuery struct {
+	Type           string
+	Value          string
+	Fuzziness      int
+	PrefixLength   int
+	Transpositions bool
+	MaxExpansions  int
+}
+
+func NewFuzzyQuery(field, value string, fuzziness, prefixLength, maxExpansions int, transpositions bool) Query {
+	return &FuzzyQuery{
+		Type:           field,
+		Value:          value,
+		Fuzziness:      fuzziness,
+		PrefixLength:   prefixLength,
+		MaxExpansions:  maxExpansions,
+		Transpositions: transpositions,
+	}
+}
+
+func (f FuzzyQuery) Source() map[string]interface{} {
+	var response = make(map[string]interface{})
+	var queryType = make(map[string]interface{})
+	var query = make(map[string]interface{})
+	query["value"] = f.Value
+	query["fuzziness"] = f.Fuzziness
+	query["prefix_length"] = f.PrefixLength
+	query["max_expansions"] = f.MaxExpansions
+	query["transpositions"] = f.Transpositions
+	queryType[f.Type] = query
+	response["fuzzy"] = queryType
+	return response
+}
