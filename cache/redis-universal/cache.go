@@ -105,6 +105,14 @@ func (c *redisUniversalClient) Get(key string, data interface{}) error {
 	return nil
 }
 
+func (c *redisUniversalClient) Keys(pattern string) ([]string, error) {
+	if err := check(c); err != nil {
+		return []string{}, err
+	}
+
+	return c.r.Keys(pattern).Result()
+}
+
 func (c *redisUniversalClient) Remove(key string) error {
 	if err := check(c); err != nil {
 		return err
