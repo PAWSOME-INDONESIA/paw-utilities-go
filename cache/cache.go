@@ -33,6 +33,7 @@ type (
 		HGet(key, field string, response interface{}) error
 
 		Remove(string) error
+		RemoveByPattern(string, int64) error
 		FlushDatabase() error
 		FlushAll() error
 		Close() error

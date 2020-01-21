@@ -117,6 +117,32 @@ func (c *redisUniversalClient) Remove(key string) error {
 	return nil
 }
 
+func (c *redisUniversalClient) RemoveByPattern(pattern string, countPerLoop int64) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	iteration := 1
+	for {
+		keys, _, err := c.r.Scan(0, pattern, countPerLoop).Result()
+		if err != nil {
+			return errors.Wrapf(err, "failed to scan redis pattern %s!", pattern)
+		}
+
+		if len(keys) == 0 {
+			break
+		}
+
+		if _, err := c.r.Del(keys...).Result(); err != nil {
+			return errors.Wrapf(err, "failed iteration-%d to remove key with pattern %s", iteration, pattern)
+		}
+
+		iteration++
+	}
+
+	return nil
+}
+
 func (c *redisUniversalClient) FlushDatabase() error {
 	if err := check(c); err != nil {
 		return err
