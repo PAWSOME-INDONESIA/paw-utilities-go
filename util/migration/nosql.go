@@ -52,7 +52,7 @@ func (n *nosql) Up() error {
 		last = migrated[0].Version
 	}
 
-	if last == getLatestNoSqlMigrationVersion(n) {
+	if last >= getLatestNoSqlMigrationVersion(n) {
 		n.logger.Infof("%s migration already up to date!", NoSqlUpTag)
 	}
 
@@ -72,12 +72,15 @@ func (n *nosql) Up() error {
 	} else {
 		start := 0
 		for i, key := range keys {
-			if key == last {
-				start = i + 1
+			if key > last {
+				start = i
 				break
 			}
 		}
-		versions = keys[start:]
+
+		if start != 0 {
+			versions = keys[start:]
+		}
 	}
 
 	for _, version := range versions {
