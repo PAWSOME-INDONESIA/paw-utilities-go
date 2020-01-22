@@ -21,6 +21,9 @@ type (
 		Where(interface{}, ...interface{}) ORM
 		First(interface{}) error
 		All(interface{}) error
+		Order(interface{}) ORM
+		Limit(interface{}) ORM
+		Offset(interface{}) ORM
 
 		Create(interface{}) error
 		Update(interface{}) error
@@ -53,6 +56,7 @@ type (
 )
 
 func (o *Impl) Ping() error {
+
 	return o.Database.DB().Ping()
 }
 
@@ -100,6 +104,21 @@ func (o *Impl) All(object interface{}) error {
 	}
 
 	return nil
+}
+
+func (o *Impl) Order(args interface{}) ORM {
+	db := o.Database.Order(args)
+	return &Impl{Database: db, Err: db.Error}
+}
+
+func (o *Impl) Limit(args interface{}) ORM {
+	db := o.Database.Limit(args)
+	return &Impl{Database: db, Err: db.Error}
+}
+
+func (o *Impl) Offset(args interface{}) ORM {
+	db := o.Database.Offset(args)
+	return &Impl{Database: db, Err: db.Error}
 }
 
 func (o *Impl) Create(object interface{}) error {
