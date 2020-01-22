@@ -25,6 +25,10 @@ func NewNoSqlMigration(mongo mongo.Mongo, migrations map[int]*NoSqlScript, logge
 }
 
 func (n *nosql) Up() error {
+	if isNoSqlMigrationsEmpty(n) {
+		return nil
+	}
+
 	migrated := make([]nosqlcollection, 0)
 
 	// - get all migration from database
