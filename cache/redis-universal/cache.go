@@ -105,6 +105,14 @@ func (c *redisUniversalClient) Get(key string, data interface{}) error {
 	return nil
 }
 
+func (c *redisUniversalClient) Keys(pattern string) ([]string, error) {
+	if err := check(c); err != nil {
+		return []string{}, err
+	}
+
+	return c.r.Keys(pattern).Result()
+}
+
 func (c *redisUniversalClient) Remove(key string) error {
 	if err := check(c); err != nil {
 		return err
@@ -112,6 +120,32 @@ func (c *redisUniversalClient) Remove(key string) error {
 
 	if _, err := c.r.Del(key).Result(); err != nil {
 		return errors.Wrapf(err, "failed to remove key %s!", key)
+	}
+
+	return nil
+}
+
+func (c *redisUniversalClient) RemoveByPattern(pattern string, countPerLoop int64) error {
+	if err := check(c); err != nil {
+		return err
+	}
+
+	iteration := 1
+	for {
+		keys, _, err := c.r.Scan(0, pattern, countPerLoop).Result()
+		if err != nil {
+			return errors.Wrapf(err, "failed to scan redis pattern %s!", pattern)
+		}
+
+		if len(keys) == 0 {
+			break
+		}
+
+		if _, err := c.r.Del(keys...).Result(); err != nil {
+			return errors.Wrapf(err, "failed iteration-%d to remove key with pattern %s", iteration, pattern)
+		}
+
+		iteration++
 	}
 
 	return nil
