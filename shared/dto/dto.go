@@ -38,6 +38,7 @@ type (
 		CustomerSessionId string `json:"customerSessionId,omitempty"`
 		Currency          string `json:"currency,omitempty"`
 		ResellerID        string `json:"resellerId,omitempty"`
+		PreviousOrderID   string `json:"prevOrderId,omitempty"`
 	}
 )
 
