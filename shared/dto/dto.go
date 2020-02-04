@@ -1,9 +1,5 @@
 package dto
 
-import (
-	"github.com/labstack/echo/v4"
-)
-
 type (
 	AppContext struct {
 		echo.Context
@@ -38,6 +34,7 @@ type (
 		CustomerSessionId string `json:"customerSessionId,omitempty"`
 		Currency          string `json:"currency,omitempty"`
 		ResellerID        string `json:"resellerId,omitempty"`
+		PreviousOrderID   string `json:"prevOrderId,omitempty"`
 	}
 )
 
