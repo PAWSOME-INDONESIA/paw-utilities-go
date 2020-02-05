@@ -18,12 +18,14 @@ type (
 	FindCallback func(Cursor, error) error
 
 	Mongo interface {
-
 		AggregateWithContext(ctx context.Context,
 			collection string, pipeline interface{}, callback FindCallback, options ...*options.AggregateOptions) error
 
 		FindOneWithContext(context.Context, string, interface{}, interface{}, ...*options.FindOneOptions) error
 		FindOne(string, interface{}, interface{}, ...*options.FindOneOptions) error
+
+		FindAllWithContext(ctx context.Context, collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error
+		FindAll(collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error
 
 		FindWithContext(ctx context.Context,
 			collection string, filter interface{}, callback FindCallback, options ...*options.FindOptions) error
@@ -74,8 +76,6 @@ type (
 		logger   logs.Logger
 	}
 )
-
-
 
 func (i *implementation) AggregateWithContext(ctx context.Context,
 	collection string, pipeline interface{}, callback FindCallback, options ...*options.AggregateOptions) error {
@@ -144,6 +144,24 @@ func (i *implementation) Client() *mgo.Client {
 
 func (i *implementation) DB() Database {
 	return i.database
+}
+
+func (i *implementation) FindAllWithContext(ctx context.Context, collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error {
+	rs, err := i.database.Collection(collection).Find(ctx, filter, options...)
+
+	if err != nil {
+		return errors.Wrap(err, "failed to find all with context")
+	}
+
+	if err := rs.All(ctx, results); err != nil {
+		return errors.Wrap(err, "failed to decode all")
+	}
+
+	return nil
+}
+
+func (i *implementation) FindAll(collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error {
+	return i.FindAllWithContext(context.Background(), collection, filter, results, options...)
 }
 
 func (i *implementation) FindOneWithContext(ctx context.Context, collection string, filter, object interface{}, options ...*options.FindOneOptions) error {
