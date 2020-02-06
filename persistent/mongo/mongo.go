@@ -2,12 +2,17 @@ package mongo
 
 import (
 	"context"
+	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsoncodec"
+	"go.mongodb.org/mongo-driver/bson/bsonrw"
+	"go.mongodb.org/mongo-driver/bson/bsontype"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	mgo "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -18,12 +23,14 @@ type (
 	FindCallback func(Cursor, error) error
 
 	Mongo interface {
-
 		AggregateWithContext(ctx context.Context,
 			collection string, pipeline interface{}, callback FindCallback, options ...*options.AggregateOptions) error
 
 		FindOneWithContext(context.Context, string, interface{}, interface{}, ...*options.FindOneOptions) error
 		FindOne(string, interface{}, interface{}, ...*options.FindOneOptions) error
+
+		FindAllWithContext(ctx context.Context, collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error
+		FindAll(collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error
 
 		FindWithContext(ctx context.Context,
 			collection string, filter interface{}, callback FindCallback, options ...*options.FindOptions) error
@@ -73,9 +80,33 @@ type (
 		database Database
 		logger   logs.Logger
 	}
+
+	decoder struct {
+	}
 )
 
+func (d decoder) DecodeValue(dctx bsoncodec.DecodeContext, vr bsonrw.ValueReader, val reflect.Value) error {
+	if !val.CanSet() || val.Kind() != reflect.String {
+		return errors.New("bad type or not settable")
+	}
+	var str string
+	var err error
+	switch vr.Type() {
+	case bsontype.String:
+		if str, err = vr.ReadString(); err != nil {
+			return err
+		}
+	case bsontype.Null: // THIS IS THE MISSING PIECE TO HANDLE NULL!
+		if err = vr.ReadNull(); err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("cannot decode %v into a string type", vr.Type())
+	}
 
+	val.SetString(str)
+	return nil
+}
 
 func (i *implementation) AggregateWithContext(ctx context.Context,
 	collection string, pipeline interface{}, callback FindCallback, options ...*options.AggregateOptions) error {
@@ -116,7 +147,15 @@ func New(ctx context.Context, uri, name string, logger logs.Logger) (Mongo, erro
 		return nil, errors.New("logger is required!")
 	}
 
-	client, err := mgo.Connect(ctx, options.Client().ApplyURI(uri))
+	opts := options.Client().
+		ApplyURI(uri).
+		SetRegistry(
+			bson.NewRegistryBuilder().
+				RegisterDecoder(reflect.TypeOf(""), decoder{}).
+				Build(),
+		)
+
+	client, err := mgo.Connect(ctx, opts)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to mongo!")
@@ -144,6 +183,24 @@ func (i *implementation) Client() *mgo.Client {
 
 func (i *implementation) DB() Database {
 	return i.database
+}
+
+func (i *implementation) FindAllWithContext(ctx context.Context, collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error {
+	rs, err := i.database.Collection(collection).Find(ctx, filter, options...)
+
+	if err != nil {
+		return errors.Wrap(err, "failed to find all with context")
+	}
+
+	if err := rs.All(ctx, results); err != nil {
+		return errors.Wrap(err, "failed to decode all")
+	}
+
+	return nil
+}
+
+func (i *implementation) FindAll(collection string, filter interface{}, results interface{}, options ...*options.FindOptions) error {
+	return i.FindAllWithContext(context.Background(), collection, filter, results, options...)
 }
 
 func (i *implementation) FindOneWithContext(ctx context.Context, collection string, filter, object interface{}, options ...*options.FindOneOptions) error {
