@@ -30,8 +30,8 @@ type (
 		NumberOfChild int      `json:"numberOfChild"`
 		ChildAges     string   `json:"childAges"`
 		PackageRate   int      `json:"packageRate"`
-		RoomID        string   `json:"roomId" validate:"required"`
-		RateCode      string   `json:"rateCode" validate:"required"`
+		RoomID        string   `json:"roomId"`
+		RateCode      string   `json:"rateCode"`
 	}
 
 	HotelB2bAvailabilityResponseDto []AvailabilityResponseDto
