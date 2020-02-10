@@ -343,6 +343,23 @@ func (c *redisClusterClient) HGet(key, field string, response interface{}) error
 	return nil
 }
 
+func (c *redisClusterClient) MGet(key []string) ([]interface{}, error) {
+	if err := check(c); err != nil {
+		return nil, err
+	}
+
+	val, err := c.r.MGet(key...).Result()
+	if err == redis.Nil {
+		return nil, errors.Wrapf(err, "key %s does not exits", key)
+	}
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get key %s!", key)
+	}
+
+	return val, nil
+}
+
 func (c *redisClusterClient) Client() cache.Cache {
 	return c
 }

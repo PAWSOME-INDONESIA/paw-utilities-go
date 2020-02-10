@@ -150,11 +150,13 @@ func New(code string, err error) ErrorStandard {
 	if code == SUCCESS {
 		errCode := responseCodes[SUCCESS].code
 		errMessage := responseCodes[SUCCESS].message
+		errHTTPStatus := responseCodes[SUCCESS].httpStatus
 
 		return &tiketError{
-			Errors:  []string{},
-			Code:    errCode,
-			Message: errMessage,
+			Errors:     []string{},
+			Code:       errCode,
+			Message:    errMessage,
+			HTTPStatus: errHTTPStatus,
 		}
 	}
 

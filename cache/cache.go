@@ -32,6 +32,8 @@ type (
 		HGetAll(key string) (map[string]string, error)
 		HGet(key, field string, response interface{}) error
 
+		MGet(key []string) ([]interface{}, error)
+
 		Keys(string) ([]string, error)
 
 		Remove(string) error
