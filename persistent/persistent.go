@@ -246,7 +246,7 @@ func (o *Impl) Table(tableName string) ORM {
 
 func (o *Impl) Search(tableName string, criteria []Criteria, results interface{}) error {
 	var (
-		db = o.Database
+		db = o.Database.Table(tableName)
 	)
 
 	for _, crit := range criteria {
