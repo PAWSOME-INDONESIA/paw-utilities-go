@@ -59,7 +59,6 @@ type (
 
 		//Bulk Upsert
 		BulkUpsert(string, int, []interface{}) error
-		constructBulkQuery(string, []string, []string, []string, []map[string]interface{}) error
 
 		//Search
 		Search(string, []Criteria, interface{}) error
