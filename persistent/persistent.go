@@ -62,7 +62,7 @@ type (
 		constructBulkQuery(string, []string, []string, []string, []map[string]interface{}) error
 
 		//Search
-		Search(criteria []Criteria, result interface{}) error
+		Search(string, []Criteria, interface{}) error
 
 		Table(string) ORM
 		Begin() ORM
@@ -244,7 +244,7 @@ func (o *Impl) Table(tableName string) ORM {
 	return &Impl{Database: copied, Err: copied.Error}
 }
 
-func (o *Impl) Search(criteria []Criteria, results interface{}) error {
+func (o *Impl) Search(tableName string, criteria []Criteria, results interface{}) error {
 	var (
 		db = o.Database
 	)
