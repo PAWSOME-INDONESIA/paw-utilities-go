@@ -21,16 +21,16 @@ type (
 	}
 
 	HotelB2bAvailabilityRequestDto struct {
-		HotelID            []string          `json:"hotelId" validate:"required"`
-		MapVendorIDHotelID map[string]string `json:"mapVendorIdHotelId" validate:"required"`
-		StartDate          string            `json:"startDate" validate:"required"`
-		EndDate            string            `json:"endDate" validate:"required"`
-		NumberOfNight      int               `json:"numberOfNights" validate:"required"`
-		NumberOfRooms      int               `json:"numberOfRoom" validate:"required"`
-		NumberOfAdult      int               `json:"numberOfAdults" validate:"required"`
-		NumberOfChild      int               `json:"numberOfChild"`
-		ChildAges          string            `json:"childAges"`
-		PackageRate        int               `json:"packageRate"`
+		HotelID         []string          `json:"hotelId" validate:"required"`
+		MapVendorCoreID map[string]string `json:"mapVendorCoreID" validate:"required"`
+		StartDate       string            `json:"startDate" validate:"required"`
+		EndDate         string            `json:"endDate" validate:"required"`
+		NumberOfNight   int               `json:"numberOfNights" validate:"required"`
+		NumberOfRooms   int               `json:"numberOfRoom" validate:"required"`
+		NumberOfAdult   int               `json:"numberOfAdults" validate:"required"`
+		NumberOfChild   int               `json:"numberOfChild"`
+		ChildAges       string            `json:"childAges"`
+		PackageRate     int               `json:"packageRate"`
 	}
 
 	HotelB2bAvailabilityResponseDto []AvailabilityResponseDto
