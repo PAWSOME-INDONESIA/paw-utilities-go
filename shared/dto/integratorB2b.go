@@ -1,27 +1,27 @@
 package dto
 
 type (
-	IntegratorB2bRequestDto struct {
+	IntegratorB2BRequestDto struct {
 		Vendor                   string                         `json:"vendor"`
 		Code                     *string                        `json:"code"`
 		Message                  *string                        `json:"message"`
 		Error                    *string                        `json:"error"`
 		MandatoryRequest         MandatoryRequestDto            `json:"mandatoryRequest"`
-		HotelAvailabilityRequest HotelAvailabilityB2bRequestDto `json:"hotelAvailabilityRequest"`
+		HotelAvailabilityRequest HotelAvailabilityB2BRequestDto `json:"hotelAvailabilityRequest"`
 	}
 
-	IntegratorB2bResponseDto struct {
+	IntegratorB2BResponseDto struct {
 		Vendor                    string                          `json:"vendor"`
 		Code                      *string                         `json:"code"`
 		Message                   *string                         `json:"message"`
 		Error                     *string                         `json:"error"`
 		MandatoryRequest          MandatoryRequestDto             `json:"mandatoryRequest"`
-		HotelAvailabilityRequest  HotelAvailabilityB2bRequestDto  `json:"hotelAvailabilityRequest"`
-		HotelAvailabilityResponse HotelAvailabilityB2bResponseDto `json:"hotelAvailabilityResponse"`
+		HotelAvailabilityRequest  HotelAvailabilityB2BRequestDto  `json:"hotelAvailabilityRequest"`
+		HotelAvailabilityResponse HotelAvailabilityB2BResponseDto `json:"hotelAvailabilityResponse"`
 	}
 
-	HotelAvailabilityB2bRequestDto struct {
-		HotelID         []string          `json:"hotelId" validate:"required"`
+	HotelAvailabilityB2BRequestDto struct {
+		HotelIDs        []string          `json:"hotelIds" validate:"required"`
 		MapVendorCoreID map[string]string `json:"mapVendorCoreID" validate:"required"`
 		StartDate       string            `json:"startDate" validate:"required"`
 		EndDate         string            `json:"endDate" validate:"required"`
@@ -33,26 +33,26 @@ type (
 		PackageRate     int               `json:"packageRate"`
 	}
 
-	HotelAvailabilityB2bResponseDto []AvailabilityB2bResponseDto
+	HotelAvailabilityB2BResponseDto []AvailabilityB2BResponseDto
 
-	AvailabilityB2bResponseDto struct {
+	AvailabilityB2BResponseDto struct {
 		HotelID   string               `json:"hotelId"`
-		HotelRoom []RoomB2bResponseDto `json:"hotelRoom"`
+		HotelRoom []RoomB2BResponseDto `json:"hotelRoom"`
 	}
 
-	RoomB2bResponseDto struct {
-		RateCode                   string                            `json:"rateCode"`
-		RoomID                     string                             `json:"roomId"`
+	RoomB2BResponseDto struct {
+		RateCode                   string                               `json:"rateCode"`
+		RoomID                     string                               `json:"roomId"`
 		RateKey                    string                               `json:"rateKey"`
 		CurrentAllotment           int                                  `json:"currentAllotment"`
 		RateOccupancyPerRoom       int                                  `json:"rateOccupancyPerRoom"`
 		SupplierType               string                               `json:"supplierType"`
 		CancellationPolicy         string                               `json:"cancellationPolicy"`
-		CancellationPolicies       []HotelB2bRoomCancellationPolicies   `json:"cancellationPolicies"`
-		CancellationPoliciesV2     []HotelB2bRoomCancellationPoliciesV2 `json:"cancellationPoliciesV2"`
-		CancellationPolicyInfo     []HotelB2bRoomCancellationPolicyInfo `json:"cancellationPolicyInfo"`
-		CancellationDetails        []HotelB2bRoomCancellationDetails    `json:"cancellationDetails"`
-		RateInfo                   HotelB2bRoomRateInfo                 `json:"rateInfo"`
+		CancellationPolicies       []HotelB2BRoomCancellationPolicies   `json:"cancellationPolicies"`
+		CancellationPoliciesV2     []HotelB2BRoomCancellationPoliciesV2 `json:"cancellationPoliciesV2"`
+		CancellationPolicyInfo     []HotelB2BRoomCancellationPolicyInfo `json:"cancellationPolicyInfo"`
+		CancellationDetails        []HotelB2BRoomCancellationDetails    `json:"cancellationDetails"`
+		RateInfo                   HotelB2BRoomRateInfo                 `json:"rateInfo"`
 		FreeBreakfast              bool                                 `json:"freeBreakfast"`
 		BreakfastPax               interface{}                          `json:"breakfastPax"`
 		FreeBreakfastDesc          string                               `json:"freeBreakfastDesc"`
@@ -63,17 +63,17 @@ type (
 		CrossSellRate              bool                                 `json:"crossSellRate"`
 	}
 
-	HotelB2bRoomCancellationPolicies struct {
+	HotelB2BRoomCancellationPolicies struct {
 		DaysBefore int     `json:"daysBefore"`
 		Amount     float64 `json:"amount"`
 	}
 
-	HotelB2bRoomCancellationPoliciesV2 struct {
+	HotelB2BRoomCancellationPoliciesV2 struct {
 		Time   string  `json:"time"`
 		Amount float64 `json:"amount"`
 	}
 
-	HotelB2bRoomCancellationPolicyInfo struct {
+	HotelB2BRoomCancellationPolicyInfo struct {
 		VersionID           int      `json:"versionId"`
 		CancelTime          string   `json:"cancelTime"`
 		StartWindowHours    int      `json:"startWindowHours"`
@@ -84,47 +84,47 @@ type (
 		TimeZoneDescription string   `json:"timeZoneDescription"`
 	}
 
-	HotelB2bRoomCancellationDetails struct {
+	HotelB2BRoomCancellationDetails struct {
 		Days                 int     `json:"days"`
 		ChargeAmount         float64 `json:"chargeAmount"`
 		RefundCustomerAmount float64 `json:"refundCustomerAmount"`
 		RefundHotelAmount    float64 `json:"refundHotelAmount"`
 	}
 
-	HotelB2bRoomRateInfo struct {
+	HotelB2BRoomRateInfo struct {
 		Currency     string                           `json:"currency"`
 		Refundable   bool                             `json:"refundable"`
-		Price        HotelB2bRoomRateInfoPrice        `json:"price"`
+		Price        HotelB2BRoomRateInfoPrice        `json:"price"`
 		TixPoint     interface{}                      `json:"tixPoint"`
-		PriceSummary HotelB2bRoomRateInfoPriceSummary `json:"priceSummary"`
+		PriceSummary HotelB2BRoomRateInfoPriceSummary `json:"priceSummary"`
 	}
 
-	HotelB2bRoomRateInfoPrice struct {
+	HotelB2BRoomRateInfoPrice struct {
 		BaseRateWithTax      float64 `json:"baseRateWithTax"`
 		RateWithTax          float64 `json:"rateWithTax"`
 		TotalBaseRateWithTax float64 `json:"totalBaseRateWithTax"`
 		TotalRateWithTax     float64 `json:"totalRateWithTax"`
 	}
 
-	HotelB2bRoomRateInfoPriceSummary struct {
-		Total                 float64                           `json:"total"`
+	HotelB2BRoomRateInfoPriceSummary struct {
+		Total                 float64                              `json:"total"`
 		TotalWithoutTax       float64                              `json:"totalWithoutTax"`
 		TaxAndOtherFee        float64                              `json:"taxAndOtherFee"`
 		TotalCompulsory       float64                              `json:"totalCompulsory"`
 		TotalSellingRateAddOn float64                              `json:"totalSellingRateAddOn"`
 		Net                   float64                              `json:"net"`
 		MarkupPercentage      float64                              `json:"markupPercentage"`
-		Surcharge             []HotelB2bRoomRateInfoPriceSurcharge `json:"surcharge"`
+		Surcharge             []HotelB2BRoomRateInfoPriceSurcharge `json:"surcharge"`
 		Compulsory            interface{}                          `json:"compulsory"`
-		PricePerNight         []HotelB2bRoomRateInfoPricePerNight  `json:"pricePerNight"`
-		TotalObject           HotelB2bRoomRateInfoPriceTotalObject `json:"totalObject"`
+		PricePerNight         []HotelB2BRoomRateInfoPricePerNight  `json:"pricePerNight"`
+		TotalObject           HotelB2BRoomRateInfoPriceTotalObject `json:"totalObject"`
 		SubsidyPrice          float64                              `json:"subsidyPrice"`
 		MarkupID              []string                             `json:"markupId"`
 		SubsidyID             []string                             `json:"subsidyId"`
 		VendorIncentive       float64                              `json:"vendorIncentive"`
 	}
 
-	HotelB2bRoomRateInfoPriceSurcharge struct {
+	HotelB2BRoomRateInfoPriceSurcharge struct {
 		Type       string  `json:"type"`
 		Name       string  `json:"name"`
 		Rate       float64 `json:"rate"`
@@ -132,12 +132,12 @@ type (
 		Code       string  `json:"code,omitempty"`
 	}
 
-	HotelB2bRoomRateInfoPricePerNight struct {
+	HotelB2BRoomRateInfoPricePerNight struct {
 		StayingDate string  `json:"stayingDate"`
 		Rate        float64 `json:"rate"`
 	}
 
-	HotelB2bRoomRateInfoPriceTotalObject struct {
+	HotelB2BRoomRateInfoPriceTotalObject struct {
 		Label string  `json:"label"`
 		Value float64 `json:"value"`
 	}
