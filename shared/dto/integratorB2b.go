@@ -21,8 +21,8 @@ type (
 	}
 
 	HotelAvailabilityB2BRequestDto struct {
-		HotelIDs        []string          `json:"hotelIds" validate:"required"`
-		MapVendorCoreID map[string]string `json:"mapVendorCoreID" validate:"required"`
+		HotelIDs        []string          `json:"hotelIds"`
+		MapVendorCoreID map[string]string `json:"mapVendorCoreId"`
 		StartDate       string            `json:"startDate" validate:"required"`
 		EndDate         string            `json:"endDate" validate:"required"`
 		NumberOfNight   int               `json:"numberOfNights" validate:"required"`
