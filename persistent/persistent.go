@@ -414,10 +414,14 @@ func (o *Impl) constructBulkQuery(tableName string, fieldNames, primaryField, ex
 
 					jsonBData, _ := json.Marshal(row[value])
 
-					row[value] = fmt.Sprintf("%v", string(jsonBData))
+					row[value] = fmt.Sprintf("%v", strings.ReplaceAll(string(jsonBData), "'", "`"))
 				}
-				data += fmt.Sprintf("%s%v%s", `'`, row[value], `'`)
 
+				if row[value] == nil {
+					data += fmt.Sprintf("%v", row[value])
+				} else {
+					data += fmt.Sprintf("%s%v%s", `'`, row[value], `'`)
+				}
 			}
 
 			if countField < fieldNum-1 {
@@ -434,7 +438,7 @@ func (o *Impl) constructBulkQuery(tableName string, fieldNames, primaryField, ex
 
 	bulkQuery := fmt.Sprintf(UpsertQuery, tableName, fieldQuery, insertQuery, primaryQuery, conflictQuery)
 
-	fmt.Println(bulkQuery)
+	o.Logger.Debug(bulkQuery)
 
 	err := o.Exec(bulkQuery)
 
