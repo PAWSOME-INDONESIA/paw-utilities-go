@@ -24,5 +24,5 @@ func New(uri string, option *persistent.Option, logger logs.Logger) (persistent.
 	db.DB().SetMaxOpenConns(option.MaxOpenConnection)
 	db.DB().SetConnMaxLifetime(option.ConnMaxLifetime)
 
-	return &persistent.Impl{Database: db}, nil
+	return &persistent.Impl{Database: db, Logger: logger}, nil
 }
