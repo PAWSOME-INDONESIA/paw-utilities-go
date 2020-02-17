@@ -63,6 +63,14 @@ type (
 		//Search
 		Search(string, []Criteria, interface{}) error
 
+		HasTable(string) bool
+
+		CreateTable(interface{}) error
+		CreateTableWithName(string, interface{}) error
+
+		DropTable(interface{}) error
+		DropTableWithName(string, interface{}) error
+
 		Table(string) ORM
 		Begin() ORM
 		Commit() error
@@ -443,4 +451,24 @@ func (o *Impl) constructBulkQuery(tableName string, fieldNames, primaryField, ex
 	err := o.Exec(bulkQuery)
 
 	return err
+}
+
+func (o *Impl) CreateTable(data interface{}) error {
+	return o.Database.CreateTable(data).Error
+}
+
+func (o *Impl) CreateTableWithName(tableName string, data interface{}) error {
+	return o.Database.Table(tableName).CreateTable(data).Error
+}
+
+func (o *Impl) DropTable(data interface{}) error {
+	return o.Database.DropTableIfExists(data).Error
+}
+
+func (o *Impl) DropTableWithName(tableName string, data interface{}) error {
+	return o.Database.Table(tableName).DropTableIfExists(data).Error
+}
+
+func (o *Impl) HasTable(tableName string) bool {
+	return o.Database.HasTable(tableName)
 }
