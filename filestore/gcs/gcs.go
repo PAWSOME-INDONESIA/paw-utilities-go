@@ -109,6 +109,24 @@ func (w *writer) Close(ctx context.Context, file *filestore.File) error {
 	return nil
 }
 
+func (w *writer) Exist(ctx context.Context, path string) (bool, error) {
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		return false, errors.Wrap(err, "EXIST - could not open connection to gcs")
+	}
+
+	bk := client.Bucket(w.bucket)
+	_, err = bk.Object(path).Attrs(ctx)
+	if err == storage.ErrObjectNotExist {
+		return false, nil
+	}
+	if err != nil {
+		return false, errors.Wrapf(err, "EXIST - unable to check file existence %s", path)
+	}
+
+	return true, nil
+}
+
 func NewWriter(bucket string) (filestore.Writer, error) {
 	return &writer{bucket: bucket}, nil
 }
