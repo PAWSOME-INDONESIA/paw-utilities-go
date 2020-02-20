@@ -446,8 +446,6 @@ func (o *Impl) constructBulkQuery(tableName string, fieldNames, primaryField, ex
 
 	bulkQuery := fmt.Sprintf(UpsertQuery, tableName, fieldQuery, insertQuery, primaryQuery, conflictQuery)
 
-	o.Logger.Debug(bulkQuery)
-
 	err := o.Exec(bulkQuery)
 
 	return err
