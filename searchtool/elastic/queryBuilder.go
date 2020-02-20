@@ -197,7 +197,7 @@ type MatchQuery struct {
 }
 
 func NewMatchQuery(field, value string, boost float64) Query {
-	return &MatchPhraseQuery{
+	return &MatchQuery{
 		field: field,
 		value: value,
 		boost: boost,
