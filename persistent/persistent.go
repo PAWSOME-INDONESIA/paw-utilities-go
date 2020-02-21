@@ -20,6 +20,7 @@ const (
 		values %s 
 		on conflict (%s) 
 			do update set %s`
+	DeleteQuery        string = `delete from %s where %s`
 	RawVarcharTemplate string = `%s%s%s`
 	ExcludedQuery      string = ` "%s" = excluded."%s" `
 )
@@ -48,6 +49,7 @@ type (
 		Create(interface{}) error
 		Update(interface{}) error
 		Delete(interface{}) error
+		BulkDelete(string, []interface{}) error
 		SoftDelete(interface{}) error
 
 		// Exec is used to execute sql Create, Update or Delete
@@ -61,7 +63,7 @@ type (
 		BulkUpsert(string, int, []interface{}) error
 
 		//Search
-		Search(string, []Criteria, interface{}) error
+		Search(string, []string, []Criteria, interface{}) error
 
 		HasTable(string) bool
 
@@ -185,6 +187,140 @@ func (o *Impl) Delete(object interface{}) error {
 	return nil
 }
 
+func (o *Impl) BulkDelete(tableName string, bulkData []interface{}) error {
+
+	if len(bulkData) == 0 {
+		return errors.New("Bulk delete cannot empty")
+	}
+
+	deleteData := make([]map[string]interface{}, 0)
+
+	var err error
+
+	for i := 0; i < len(bulkData); i++ {
+		data := bulkData[i]
+
+		values := reflect.ValueOf(data)
+		fields := reflect.TypeOf(data)
+
+		fieldNum := reflect.TypeOf(data).NumField()
+
+		temp := make(map[string]interface{})
+		for i := 0; i < fieldNum; i++ {
+			isPrimary := false
+			name := fields.Field(i).Name
+			if tag, ok := fields.Field(i).Tag.Lookup("gorm"); ok {
+				tagParam := strings.Split(tag, ";")
+				for _, param := range tagParam {
+					paramMap := strings.Split(param, ":")
+					if len(paramMap) == 2 {
+						if paramMap[0] == "column" {
+							name = paramMap[1]
+						}
+					} else if len(paramMap) == 1 {
+						if paramMap[0] == "primary_key" {
+							isPrimary = true
+						}
+					}
+				}
+			}
+
+			if isPrimary {
+				temp[name] = values.Field(i).Interface()
+			}
+		}
+
+		deleteData = append(deleteData, temp)
+	}
+
+	if len(deleteData) > 0 {
+		err = o.constructBulkDeleteQuery(tableName, deleteData)
+		if err != nil {
+			err = errors.Wrap(err, "error on bulk delete")
+		}
+	}
+
+	return err
+}
+
+func (o *Impl) constructBulkDeleteQuery(tableName string, deleteData []map[string]interface{}) error {
+
+	numericType := map[string]bool{
+		"int8":       true,
+		"uint8":      true,
+		"int16":      true,
+		"uint16":     true,
+		"int32":      true,
+		"uint32":     true,
+		"int64":      true,
+		"uint64":     true,
+		"int":        true,
+		"uint":       true,
+		"uintptr":    true,
+		"float32":    true,
+		"float64":    true,
+		"complex64":  true,
+		"complex128": true,
+		"bool":       true,
+	}
+
+	deleteValues := make([]string, 0)
+
+	for _, row := range deleteData {
+		data := "("
+
+		fieldNum := len(row)
+		countField := 0
+		for name, value := range row {
+			if name == "created_date" || name == "updated_date" {
+				fieldNum = fieldNum - 1
+				continue
+			}
+
+			data += `"` + name + `" = `
+
+			typeName := reflect.TypeOf(value).Name()
+
+			if _, ok := numericType[typeName]; ok {
+				data += fmt.Sprintf("%v", value)
+			} else {
+				if typeName == "Time" {
+					value = value.(time.Time).Format("2006-01-02 15:04:05.999999")
+				} else if typeName == "Jsonb" {
+
+					jsonBData, _ := json.Marshal(value)
+
+					value = fmt.Sprintf("%v", strings.ReplaceAll(string(jsonBData), "'", "`"))
+				}
+
+				if value == nil {
+					data += fmt.Sprintf("%v", value)
+				} else {
+					data += fmt.Sprintf("%s%v%s", `'`, value, `'`)
+				}
+			}
+
+			if countField < fieldNum-1 {
+				data += " and "
+			}
+			countField++
+		}
+		data += ")"
+
+		deleteValues = append(deleteValues, data)
+	}
+
+	insertQuery := strings.Join(deleteValues, " or ")
+
+	bulkQuery := fmt.Sprintf(DeleteQuery, tableName, insertQuery)
+
+	err := o.Exec(bulkQuery)
+
+	o.Commit()
+
+	return err
+}
+
 func (o *Impl) SoftDelete(object interface{}) error {
 	res := o.Database.Delete(object)
 
@@ -250,10 +386,14 @@ func (o *Impl) Table(tableName string) ORM {
 	return &Impl{Database: copied, Err: copied.Error, Logger: o.Logger}
 }
 
-func (o *Impl) Search(tableName string, criteria []Criteria, results interface{}) error {
+func (o *Impl) Search(tableName string, selectField []string, criteria []Criteria, results interface{}) error {
 	var (
 		db = o.Database.Table(tableName)
 	)
+
+	if len(selectField) > 0 {
+		db = db.Select(selectField)
+	}
 
 	for _, crit := range criteria {
 		db = db.Where(crit.Field+" "+crit.Operator+" ?", crit.Value)
@@ -284,7 +424,7 @@ func (o *Impl) BulkUpsert(tableName string, chunkSize int, bulkData []interface{
 		if len(insertData) >= chunkSize {
 			//go func bulk upsert background
 
-			itErr := o.constructBulkQuery(tableName, fieldNames, primaryField, excludeField, insertData)
+			itErr := o.constructBulkSearchQuery(tableName, fieldNames, primaryField, excludeField, insertData)
 			if itErr != nil {
 				if err == nil {
 					err = itErr
@@ -342,7 +482,7 @@ func (o *Impl) BulkUpsert(tableName string, chunkSize int, bulkData []interface{
 
 	//bulk insert the rest
 	if len(insertData) > 0 {
-		itErr := o.constructBulkQuery(tableName, fieldNames, primaryField, excludeField, insertData)
+		itErr := o.constructBulkSearchQuery(tableName, fieldNames, primaryField, excludeField, insertData)
 		if itErr != nil {
 			if err == nil {
 				err = itErr
@@ -355,7 +495,7 @@ func (o *Impl) BulkUpsert(tableName string, chunkSize int, bulkData []interface{
 	return errors.Wrap(err, "error on bulk insert")
 }
 
-func (o *Impl) constructBulkQuery(tableName string, fieldNames, primaryField, excludeField []string, data []map[string]interface{}) error {
+func (o *Impl) constructBulkSearchQuery(tableName string, fieldNames, primaryField, excludeField []string, data []map[string]interface{}) error {
 
 	numericType := map[string]bool{
 		"int8":       true,
