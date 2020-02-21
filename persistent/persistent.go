@@ -61,7 +61,7 @@ type (
 		BulkUpsert(string, int, []interface{}) error
 
 		//Search
-		Search(string, []Criteria, interface{}) error
+		Search(string, []string, []Criteria, interface{}) error
 
 		HasTable(string) bool
 
@@ -251,10 +251,14 @@ func (o *Impl) Table(tableName string) ORM {
 	return &Impl{Database: copied, Err: copied.Error}
 }
 
-func (o *Impl) Search(tableName string, criteria []Criteria, results interface{}) error {
+func (o *Impl) Search(tableName string, selectField []string, criteria []Criteria, results interface{}) error {
 	var (
 		db = o.Database.Table(tableName)
 	)
+
+	if len(selectField) > 0 {
+		db = db.Select(selectField)
+	}
 
 	for _, crit := range criteria {
 		db = db.Where(crit.Field+" "+crit.Operator+" ?", crit.Value)
