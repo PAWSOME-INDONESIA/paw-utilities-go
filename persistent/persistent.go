@@ -396,7 +396,11 @@ func (o *Impl) Search(tableName string, selectField []string, criteria []Criteri
 	}
 
 	for _, crit := range criteria {
-		db = db.Where(crit.Field+" "+crit.Operator+" ?", crit.Value)
+		mark := "?"
+		if strings.ToLower(crit.Operator) == "in" {
+			mark = "(?)"
+		}
+		db = db.Where(crit.Field+" "+crit.Operator+" "+mark, crit.Value)
 	}
 
 	res := db.Find(results)
