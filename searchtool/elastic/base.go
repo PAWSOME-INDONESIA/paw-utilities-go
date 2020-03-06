@@ -36,23 +36,24 @@ type (
 		Source          interface{} `json:"_source"`
 	}
 
-	SearchResponse struct {
-		Took    int         `json:"took"`
-		TimeOut bool        `json:"time_out"`
-		Shards  interface{} `json:"_shards"`
-		Hits    SearchHits  `json:"hits"`
-	}
-
-	SearchHits struct {
-		Total int64       `json:"total"`
-		Hits  interface{} `json:"hits"`
-	}
-
 	ElasticSearch struct {
 		Option *Option
 		Client *elasticsearch.Client
 	}
 )
+
+//easyjson:json
+type SearchResponse struct {
+	Took    int         `json:"took"`
+	TimeOut bool        `json:"time_out"`
+	Shards  interface{} `json:"_shards"`
+	Hits    SearchHits  `json:"hits"`
+}
+
+type SearchHits struct {
+	Total int64       `json:"total"`
+	Hits  interface{} `json:"hits"`
+}
 
 func getOption(option *Option) {
 	if option.Log == nil {
@@ -113,7 +114,7 @@ func (e *ElasticSearch) Ping() error {
 
 	req := esapi.PingRequest{
 		ErrorTrace: true,
-		Human: true,
+		Human:      true,
 	}
 	res, err := req.Do(ctx, e.Client)
 	if err != nil {

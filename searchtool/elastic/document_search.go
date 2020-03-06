@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"sync"
 
@@ -22,6 +23,17 @@ func (sd *SearchData) append(data ...string) {
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
 	sd.jsons = append(sd.jsons, data...)
+}
+
+type SearchDataInterface struct {
+	data []interface{}
+	mu   sync.Mutex
+}
+
+func (sd *SearchDataInterface) append(data ...interface{}) {
+	sd.mu.Lock()
+	defer sd.mu.Unlock()
+	sd.data = append(sd.data, data...)
 }
 
 func (e *ElasticSearch) Search(index, _type, query string, data interface{}, option ...searchtool.SearchOption) error {
@@ -121,6 +133,62 @@ func (e *ElasticSearch) SearchWithCustomQuery(ctx context.Context, index, _type,
 	return nil
 }
 
+func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query string, option ...searchtool.SearchOption) ([]interface{}, error) {
+	jsons := SearchDataInterface{data: make([]interface{}, 0)}
+
+	batchSize := int64(e.Option.MaxBatchSize)
+	sortQuery := `{ "_id" : "asc" }`
+	excludeFields := ""
+	if len(option) > 0 {
+		if len(option[0].Sort) > 0 {
+			sortQuery = strings.Join(option[0].Sort, ",")
+		}
+		if len(option[0].ExcludedField) > 0 {
+			excludeFields = "\"" + strings.Join(option[0].ExcludedField, "\",\"") + "\""
+		}
+	}
+
+	body := fmt.Sprintf(SearchTemplate, excludeFields, 0, batchSize, query, sortQuery)
+	searchResponse, err := e.searchDoc(ctx, index, _type, body)
+	if err != nil {
+		return jsons.data, errors.Wrap(err, "failed to search document")
+	}
+	jsons.data = searchResponse.Hits.Hits.([]interface{})
+
+	totalData := searchResponse.Hits.Total
+	totalPage := totalData / batchSize
+	if totalData%batchSize != 0 {
+		totalPage += 1
+	}
+
+	if totalPage > 1 {
+		var wg sync.WaitGroup
+
+		p, _ := ants.NewPoolWithFunc(e.Option.MaxPoolSize, func(i interface{}) {
+			page := i.(int64)
+			start := (page - 1) * batchSize
+			body := fmt.Sprintf(SearchTemplate, excludeFields, start, batchSize, query, sortQuery)
+			searchResponse, err = e.searchDoc(ctx, index, _type, body)
+			if err != nil {
+				err = errors.WithStack(err)
+			}
+			jsons.data = append(jsons.data, searchResponse.Hits.Hits.([]interface{}))
+			wg.Done()
+		})
+		defer func() {
+			p.Release()
+		}()
+
+		wg.Add(int(totalPage - 1))
+		for page := int64(2); page <= totalPage; page++ {
+			_ = p.Invoke(page)
+		}
+		wg.Wait()
+	}
+
+	return jsons.data, err
+}
+
 func (e *ElasticSearch) search(ctx context.Context, index, _type, query string) (*SearchResponse, error) {
 	req := esapi.SearchRequest{
 		Index:        []string{index},
@@ -134,6 +202,46 @@ func (e *ElasticSearch) search(ctx context.Context, index, _type, query string) 
 		return nil, errors.Wrapf(err, "failed to search elastic document with query %s", query)
 	}
 	return &r, nil
+}
+
+func (e ElasticSearch) searchDoc(ctx context.Context, index, _type, query string) (SearchResponse, error) {
+	req := esapi.SearchRequest{
+		Index:        []string{index},
+		DocumentType: []string{_type},
+		Body:         strings.NewReader(query),
+		Pretty:       true,
+	}
+	res, err := req.Do(ctx, e.Client)
+
+	var r SearchResponse
+	if err != nil {
+		e.Option.Log.Errorf("[Elastic Search] Error getting response: %+v", err)
+		return r, errors.Wrap(err, "[Elastic Search] Error getting response")
+	}
+
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			e.Option.Log.Errorf("[Elastic Search] failed to close response body %s", err)
+		}
+	}()
+
+	if res.IsError() {
+		e.Option.Log.Errorf("[Elastic Search] [%+v] Error", res.String())
+		return r, errors.Wrapf(err, "[Elastic Search] [%+v] Error", res.String())
+	}
+
+	resByte, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		e.Option.Log.Errorf("[Elastic Search] ioutil.ReadAll body %s", err.Error())
+		return r, errors.Wrapf(err, "[Elastic Search] [%+v] Error", res.String())
+	}
+
+	if err := r.UnmarshalJSON(resByte); err!= nil {
+		e.Option.Log.Errorf("[Elastic Search] easyjson Unmarshal %s", err.Error())
+		return r, errors.Wrapf(err, "[Elastic Search] [%+v] Error", res.String())
+	}
+
+	return r, nil
 }
 
 func (e *ElasticSearch) getResponse(r *SearchResponse) ([]string, error) {
