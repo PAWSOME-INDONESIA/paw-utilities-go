@@ -44,6 +44,7 @@ const (
 	METHOD_ARGUMENTS_NOT_VALID = "METHOD_ARGUMENTS_NOT_VALID"
 	TOO_MANY_REQUEST           = "TOO_MANY_REQUEST"
 	BAD_REQUEST                = "BAD_REQUEST"
+	UNAUTHORIZE                = "UNAUTHORIZE"
 )
 
 var (
@@ -102,6 +103,11 @@ var (
 			code:       BAD_REQUEST,
 			message:    "Bad request",
 			httpStatus: http.StatusBadRequest,
+		},
+		UNAUTHORIZE: ResponseCode{
+			code:       UNAUTHORIZE,
+			message:    "Unauthorize",
+			httpStatus: http.StatusUnauthorized,
 		},
 	}
 )
