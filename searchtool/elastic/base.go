@@ -55,6 +55,22 @@ type SearchHits struct {
 	Hits  interface{} `json:"hits"`
 }
 
+//type SearchResponseEasyJson struct {
+//	Took    int                `json:"took"`
+//	TimeOut bool               `json:"time_out"`
+//	Shards  interface{}        `json:"_shards"`
+//	Hits    SearchHitsEasyJson `json:"hits"`
+//}
+
+//type SearchHitsEasyJson struct {
+//	Total int64                    `json:"total"`
+//	Hits  []SearchDataHitsEasyJson `json:"hits"`
+//}
+//
+//type SearchDataHitsEasyJson struct {
+//	Source interface{} `json:"_source"`
+//}
+
 func getOption(option *Option) {
 	if option.Log == nil {
 		option.Log, _ = logs.DefaultLog()

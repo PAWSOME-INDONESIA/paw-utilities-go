@@ -30,10 +30,13 @@ type SearchDataInterface struct {
 	mu   sync.Mutex
 }
 
-func (sd *SearchDataInterface) append(data ...interface{}) {
+func (sd *SearchDataInterface) append(datas ...interface{}) {
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
-	sd.data = append(sd.data, data...)
+
+	for _, data := range datas {
+		sd.data = append(sd.data, data.(map[string]interface{})["_source"])
+	}
 }
 
 func (e *ElasticSearch) Search(index, _type, query string, data interface{}, option ...searchtool.SearchOption) error {
@@ -153,7 +156,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 	if err != nil {
 		return jsons.data, errors.Wrap(err, "failed to search document")
 	}
-	jsons.data = searchResponse.Hits.Hits.([]interface{})
+	jsons.data = append(jsons.data, searchResponse.Hits.Hits.([]interface{}))
 
 	totalData := searchResponse.Hits.Total
 	totalPage := totalData / batchSize
