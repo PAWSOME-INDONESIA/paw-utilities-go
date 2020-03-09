@@ -46,4 +46,6 @@ type SearchTool interface {
 
 	UpdateDocumentByQuery(string, string, string, interface{}) error
 	UpdateDocumentByQueryWithContext(context.Context, string, string, string, interface{}) error
+
+	SearchDo(context.Context, string, string, string, ...SearchOption) ([]byte, error)
 }

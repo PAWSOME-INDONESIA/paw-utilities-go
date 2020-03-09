@@ -192,6 +192,40 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 	return "[" + jsons.jsons + "]", err
 }
 
+func (e ElasticSearch) SearchDo(ctx context.Context, index, _type, query string, option ...searchtool.SearchOption) ([]byte, error) {
+	req := esapi.SearchRequest{
+		Index:        []string{index},
+		DocumentType: []string{_type},
+		Body:         strings.NewReader(query),
+		Pretty:       true,
+	}
+	res, err := req.Do(ctx, e.Client)
+
+	if err != nil {
+		e.Option.Log.Errorf("[Elastic Search] Error getting response: %+v", err)
+		return nil, errors.Wrap(err, "[Elastic Search] Error getting response")
+	}
+
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			e.Option.Log.Errorf("[Elastic Search] failed to close response body %s", err)
+		}
+	}()
+
+	if res.IsError() {
+		e.Option.Log.Errorf("[Elastic Search] [%+v] Error", res.String())
+		return nil, errors.Wrapf(err, "[Elastic Search] [%+v] Error", res.String())
+	}
+
+	resByte, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		e.Option.Log.Errorf("[Elastic Search] ioutil.ReadAll body %s", err.Error())
+		return nil, errors.Wrapf(err, "[Elastic Search] [%+v] Error", res.String())
+	}
+
+	return resByte, nil
+}
+
 func (e *ElasticSearch) search(ctx context.Context, index, _type, query string) (*SearchResponse, error) {
 	req := esapi.SearchRequest{
 		Index:        []string{index},
