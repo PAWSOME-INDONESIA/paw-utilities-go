@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(in *jlexer.Lexer, out *SearchResponse) {
+func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(in *jlexer.Lexer, out *SearchResponseEasyJson) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -60,7 +60,7 @@ func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(in
 		in.Consumed()
 	}
 }
-func easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(out *jwriter.Writer, in SearchResponse) {
+func easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(out *jwriter.Writer, in SearchResponseEasyJson) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -94,29 +94,29 @@ func easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(ou
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v SearchResponse) MarshalJSON() ([]byte, error) {
+func (v SearchResponseEasyJson) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v SearchResponse) MarshalEasyJSON(w *jwriter.Writer) {
+func (v SearchResponseEasyJson) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *SearchResponse) UnmarshalJSON(data []byte) error {
+func (v *SearchResponseEasyJson) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *SearchResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
+func (v *SearchResponseEasyJson) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic(l, v)
 }
-func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(in *jlexer.Lexer, out *SearchHits) {
+func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(in *jlexer.Lexer, out *SearchHitsEasyJson) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -138,12 +138,27 @@ func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(i
 		case "total":
 			out.Total = int64(in.Int64())
 		case "hits":
-			if m, ok := out.Hits.(easyjson.Unmarshaler); ok {
-				m.UnmarshalEasyJSON(in)
-			} else if m, ok := out.Hits.(json.Unmarshaler); ok {
-				_ = m.UnmarshalJSON(in.Raw())
+			if in.IsNull() {
+				in.Skip()
+				out.Hits = nil
 			} else {
-				out.Hits = in.Interface()
+				in.Delim('[')
+				if out.Hits == nil {
+					if !in.IsDelim(']') {
+						out.Hits = make([]SearchDataHitsEasyJson, 0, 2)
+					} else {
+						out.Hits = []SearchDataHitsEasyJson{}
+					}
+				} else {
+					out.Hits = (out.Hits)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 SearchDataHitsEasyJson
+					easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic2(in, &v1)
+					out.Hits = append(out.Hits, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
 			}
 		default:
 			in.SkipRecursive()
@@ -155,7 +170,7 @@ func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(i
 		in.Consumed()
 	}
 }
-func easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(out *jwriter.Writer, in SearchHits) {
+func easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(out *jwriter.Writer, in SearchHitsEasyJson) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -167,13 +182,62 @@ func easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(o
 	{
 		const prefix string = ",\"hits\":"
 		out.RawString(prefix)
-		if m, ok := in.Hits.(easyjson.Marshaler); ok {
-			m.MarshalEasyJSON(out)
-		} else if m, ok := in.Hits.(json.Marshaler); ok {
-			out.Raw(m.MarshalJSON())
+		if in.Hits == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
 		} else {
-			out.Raw(json.Marshal(in.Hits))
+			out.RawByte('[')
+			for v2, v3 := range in.Hits {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic2(out, v3)
+			}
+			out.RawByte(']')
 		}
+	}
+	out.RawByte('}')
+}
+func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic2(in *jlexer.Lexer, out *SearchDataHitsEasyJson) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "_source":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Source).UnmarshalJSON(data))
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson25720c23EncodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic2(out *jwriter.Writer, in SearchDataHitsEasyJson) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"_source\":"
+		out.RawString(prefix[1:])
+		out.Raw((in.Source).MarshalJSON())
 	}
 	out.RawByte('}')
 }

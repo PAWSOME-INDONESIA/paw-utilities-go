@@ -39,7 +39,7 @@ type SearchTool interface {
 	FindById(string, string, string, interface{}) error
 	FindByIdWithContext(context.Context, string, string, string, interface{}) error
 
-	SearchDocument(context.Context, string, string, string, ...SearchOption) ([]interface{}, error)
+	SearchDocument(context.Context, string, string, string, ...SearchOption) (string, error)
 	Search(string, string, string, interface{}, ...SearchOption) error
 	SearchWithContext(context.Context, string, string, string, interface{}, ...SearchOption) error
 	SearchWithCustomQuery(context.Context, string, string, string, interface{}) error

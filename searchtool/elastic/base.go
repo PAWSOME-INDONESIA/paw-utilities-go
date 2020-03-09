@@ -2,6 +2,7 @@ package elastic
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/pkg/errors"
@@ -42,7 +43,6 @@ type (
 	}
 )
 
-//easyjson:json
 type SearchResponse struct {
 	Took    int         `json:"took"`
 	TimeOut bool        `json:"time_out"`
@@ -51,25 +51,26 @@ type SearchResponse struct {
 }
 
 type SearchHits struct {
-	Total int64       `json:"total"`
+	Total int64           `json:"total"`
 	Hits  interface{} `json:"hits"`
 }
 
-//type SearchResponseEasyJson struct {
-//	Took    int                `json:"took"`
-//	TimeOut bool               `json:"time_out"`
-//	Shards  interface{}        `json:"_shards"`
-//	Hits    SearchHitsEasyJson `json:"hits"`
-//}
+//easyjson:json
+type SearchResponseEasyJson struct {
+	Took    int                `json:"took"`
+	TimeOut bool               `json:"time_out"`
+	Shards  interface{}        `json:"_shards"`
+	Hits    SearchHitsEasyJson `json:"hits"`
+}
 
-//type SearchHitsEasyJson struct {
-//	Total int64                    `json:"total"`
-//	Hits  []SearchDataHitsEasyJson `json:"hits"`
-//}
-//
-//type SearchDataHitsEasyJson struct {
-//	Source interface{} `json:"_source"`
-//}
+type SearchHitsEasyJson struct {
+	Total int64                    `json:"total"`
+	Hits  []SearchDataHitsEasyJson `json:"hits"`
+}
+
+type SearchDataHitsEasyJson struct {
+	Source json.RawMessage `json:"_source"`
+}
 
 func getOption(option *Option) {
 	if option.Log == nil {

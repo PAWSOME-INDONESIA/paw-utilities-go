@@ -26,17 +26,8 @@ func (sd *SearchData) append(data ...string) {
 }
 
 type SearchDataInterface struct {
-	data []interface{}
+	data string
 	mu   sync.Mutex
-}
-
-func (sd *SearchDataInterface) append(datas ...interface{}) {
-	sd.mu.Lock()
-	defer sd.mu.Unlock()
-
-	for _, data := range datas {
-		sd.data = append(sd.data, data.(map[string]interface{})["_source"])
-	}
 }
 
 func (e *ElasticSearch) Search(index, _type, query string, data interface{}, option ...searchtool.SearchOption) error {
@@ -136,8 +127,8 @@ func (e *ElasticSearch) SearchWithCustomQuery(ctx context.Context, index, _type,
 	return nil
 }
 
-func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query string, option ...searchtool.SearchOption) ([]interface{}, error) {
-	jsons := SearchDataInterface{data: make([]interface{}, 0)}
+func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query string, option ...searchtool.SearchOption) (string, error) {
+	jsons := SearchDataInterface{data: ""}
 
 	batchSize := int64(e.Option.MaxBatchSize)
 	sortQuery := `{ "_id" : "asc" }`
@@ -156,7 +147,10 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 	if err != nil {
 		return jsons.data, errors.Wrap(err, "failed to search document")
 	}
-	jsons.data = append(jsons.data, searchResponse.Hits.Hits.([]interface{}))
+
+	for _, v := range searchResponse.Hits.Hits {
+		jsons.data += string(v.Source)
+	}
 
 	totalData := searchResponse.Hits.Total
 	totalPage := totalData / batchSize
@@ -175,7 +169,12 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 			if err != nil {
 				err = errors.WithStack(err)
 			}
-			jsons.data = append(jsons.data, searchResponse.Hits.Hits.([]interface{}))
+			var mu sync.Mutex
+			for _, v := range searchResponse.Hits.Hits {
+				mu.Lock()
+				jsons.data += string(v.Source)
+				mu.Unlock()
+			}
 			wg.Done()
 		})
 		defer func() {
@@ -207,7 +206,7 @@ func (e *ElasticSearch) search(ctx context.Context, index, _type, query string) 
 	return &r, nil
 }
 
-func (e ElasticSearch) searchDoc(ctx context.Context, index, _type, query string) (SearchResponse, error) {
+func (e ElasticSearch) searchDoc(ctx context.Context, index, _type, query string) (SearchResponseEasyJson, error) {
 	req := esapi.SearchRequest{
 		Index:        []string{index},
 		DocumentType: []string{_type},
@@ -216,7 +215,7 @@ func (e ElasticSearch) searchDoc(ctx context.Context, index, _type, query string
 	}
 	res, err := req.Do(ctx, e.Client)
 
-	var r SearchResponse
+	var r SearchResponseEasyJson
 	if err != nil {
 		e.Option.Log.Errorf("[Elastic Search] Error getting response: %+v", err)
 		return r, errors.Wrap(err, "[Elastic Search] Error getting response")
