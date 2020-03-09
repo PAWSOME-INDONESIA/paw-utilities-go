@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
+	"sync"
 	"time"
 )
 
@@ -51,7 +52,7 @@ type SearchResponse struct {
 }
 
 type SearchHits struct {
-	Total int64           `json:"total"`
+	Total int64       `json:"total"`
 	Hits  interface{} `json:"hits"`
 }
 
@@ -65,11 +66,31 @@ type SearchResponseEasyJson struct {
 
 type SearchHitsEasyJson struct {
 	Total int64                    `json:"total"`
-	Hits  []SearchDataHitsEasyJson `json:"hits"`
+	Hits  SearchDataHitsEasyJsons `json:"hits"`
 }
+
+type SearchDataHitsEasyJsons []SearchDataHitsEasyJson
 
 type SearchDataHitsEasyJson struct {
 	Source json.RawMessage `json:"_source"`
+}
+
+func (s SearchDataHitsEasyJsons) ToSliceString() []string {
+	var sl = make([]string, 0)
+	if len(s) == 0 {
+		return sl
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(len(s))
+	for _, v := range s {
+		go func(sd SearchDataHitsEasyJson) {
+			sl = append(sl, string(sd.Source))
+			wg.Done()
+		}(v)
+	}
+
+	return sl
 }
 
 func getOption(option *Option) {

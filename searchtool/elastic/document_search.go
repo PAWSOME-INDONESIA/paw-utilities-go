@@ -25,17 +25,6 @@ func (sd *SearchData) append(data ...string) {
 	sd.jsons = append(sd.jsons, data...)
 }
 
-type SearchDataInterface struct {
-	data []string
-	mu   sync.Mutex
-}
-
-func (sd *SearchDataInterface) append(data string) {
-	sd.mu.Lock()
-	defer sd.mu.Unlock()
-	sd.data = append(sd.data, data)
-}
-
 func (e *ElasticSearch) Search(index, _type, query string, data interface{}, option ...searchtool.SearchOption) error {
 	return e.SearchWithContext(context.Background(), index, _type, query, data, option...)
 }
@@ -134,7 +123,7 @@ func (e *ElasticSearch) SearchWithCustomQuery(ctx context.Context, index, _type,
 }
 
 func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query string, option ...searchtool.SearchOption) (string, error) {
-	jsons := SearchDataInterface{data: make([]string, 0)}
+	jsons := SearchData{jsons: make([]string, 0)}
 
 	batchSize := int64(e.Option.MaxBatchSize)
 	sortQuery := `{ "_id" : "asc" }`
@@ -153,9 +142,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 	if err != nil {
 		return "", errors.Wrap(err, "failed to search document")
 	}
-	for _, v := range searchResponse.Hits.Hits {
-		jsons.data = append(jsons.data, string(v.Source))
-	}
+	jsons.append(searchResponse.Hits.Hits.ToSliceString()...)
 
 	totalData := searchResponse.Hits.Total
 	totalPage := totalData / batchSize
@@ -174,9 +161,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 			if err != nil {
 				err = errors.WithStack(err)
 			}
-			for _, v := range searchResponse.Hits.Hits {
-				jsons.data = append(jsons.data, string(v.Source))
-			}
+			jsons.append(searchResponse.Hits.Hits.ToSliceString()...)
 			wg.Done()
 		})
 		defer func() {
@@ -190,7 +175,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 		wg.Wait()
 	}
 
-	return "[" + strings.Join(jsons.data, ",") + "]", err
+	return "[" + strings.Join(jsons.jsons, ",") + "]", err
 }
 
 func (e *ElasticSearch) search(ctx context.Context, index, _type, query string) (*SearchResponse, error) {

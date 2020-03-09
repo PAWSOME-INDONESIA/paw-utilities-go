@@ -145,9 +145,9 @@ func easyjson25720c23DecodeGithubComTiketTIXHOTELUTILITIESGOSearchtoolElastic1(i
 				in.Delim('[')
 				if out.Hits == nil {
 					if !in.IsDelim(']') {
-						out.Hits = make([]SearchDataHitsEasyJson, 0, 2)
+						out.Hits = make(SearchDataHitsEasyJsons, 0, 2)
 					} else {
-						out.Hits = []SearchDataHitsEasyJson{}
+						out.Hits = SearchDataHitsEasyJsons{}
 					}
 				} else {
 					out.Hits = (out.Hits)[:0]
