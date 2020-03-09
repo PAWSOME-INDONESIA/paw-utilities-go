@@ -64,32 +64,12 @@ type SearchResponseEasyJson struct {
 }
 
 type SearchHitsEasyJson struct {
-	Total int64                    `json:"total"`
-	Hits  SearchDataHitsEasyJsons `json:"hits"`
+	Total int64                   `json:"total"`
+	Hits  []SearchDataHitsEasyJson `json:"hits"`
 }
-
-type SearchDataHitsEasyJsons []SearchDataHitsEasyJson
 
 type SearchDataHitsEasyJson struct {
 	Source json.RawMessage `json:"_source"`
-}
-
-func (s SearchDataHitsEasyJsons) ToSliceString() []string {
-	var sl = make([]string, 0)
-	if len(s) == 0 {
-		return sl
-	}
-
-	//var wg sync.WaitGroup
-	//wg.Add(len(s))
-	for _, v := range s {
-		//go func(sd SearchDataHitsEasyJson) {
-			sl = append(sl, string(v.Source))
-			//wg.Done()
-		//}(v)
-	}
-
-	return sl
 }
 
 func getOption(option *Option) {

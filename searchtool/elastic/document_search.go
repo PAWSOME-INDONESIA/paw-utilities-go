@@ -25,6 +25,15 @@ func (sd *SearchData) append(data ...string) {
 	sd.jsons = append(sd.jsons, data...)
 }
 
+func (sd *SearchData) appendEasyjson(data []SearchDataHitsEasyJson) {
+	sd.mu.Lock()
+	defer sd.mu.Unlock()
+
+	for _, v := range data {
+		sd.jsons = append(sd.jsons, string(v.Source))
+	}
+}
+
 func (e *ElasticSearch) Search(index, _type, query string, data interface{}, option ...searchtool.SearchOption) error {
 	return e.SearchWithContext(context.Background(), index, _type, query, data, option...)
 }
@@ -142,7 +151,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 	if err != nil {
 		return "", errors.Wrap(err, "failed to search document")
 	}
-	jsons.append(searchResponse.Hits.Hits.ToSliceString()...)
+	jsons.appendEasyjson(searchResponse.Hits.Hits)
 
 	totalData := searchResponse.Hits.Total
 	totalPage := totalData / batchSize
@@ -161,7 +170,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 			if err != nil {
 				err = errors.WithStack(err)
 			}
-			jsons.append(searchResponse.Hits.Hits.ToSliceString()...)
+			jsons.appendEasyjson(searchResponse.Hits.Hits)
 			wg.Done()
 		})
 		defer func() {
