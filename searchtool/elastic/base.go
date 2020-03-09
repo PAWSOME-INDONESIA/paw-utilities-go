@@ -8,7 +8,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
-	"sync"
 	"time"
 )
 
@@ -81,13 +80,13 @@ func (s SearchDataHitsEasyJsons) ToSliceString() []string {
 		return sl
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(len(s))
+	//var wg sync.WaitGroup
+	//wg.Add(len(s))
 	for _, v := range s {
-		go func(sd SearchDataHitsEasyJson) {
-			sl = append(sl, string(sd.Source))
-			wg.Done()
-		}(v)
+		//go func(sd SearchDataHitsEasyJson) {
+			sl = append(sl, string(v.Source))
+			//wg.Done()
+		//}(v)
 	}
 
 	return sl
