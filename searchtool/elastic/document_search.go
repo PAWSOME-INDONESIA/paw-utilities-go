@@ -25,12 +25,17 @@ func (sd *SearchData) append(data ...string) {
 	sd.jsons = append(sd.jsons, data...)
 }
 
-func (sd *SearchData) appendEasyjson(data []SearchDataHitsEasyJson) {
-	sd.mu.Lock()
-	defer sd.mu.Unlock()
+type SearchDataString struct {
+	jsons string
+}
 
+func (sd *SearchDataString) append(data []SearchDataHitsEasyJson) {
 	for _, v := range data {
-		sd.jsons = append(sd.jsons, string(v.Source))
+		if len(sd.jsons) == 0 {
+			sd.jsons += string(v.Source)
+		} else {
+			sd.jsons += "," + string(v.Source)
+		}
 	}
 }
 
@@ -132,7 +137,7 @@ func (e *ElasticSearch) SearchWithCustomQuery(ctx context.Context, index, _type,
 }
 
 func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query string, option ...searchtool.SearchOption) (string, error) {
-	jsons := SearchData{jsons: make([]string, 0)}
+	jsons := SearchDataString{jsons: ""}
 
 	batchSize := int64(e.Option.MaxBatchSize)
 	sortQuery := `{ "_id" : "asc" }`
@@ -151,7 +156,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 	if err != nil {
 		return "", errors.Wrap(err, "failed to search document")
 	}
-	jsons.appendEasyjson(searchResponse.Hits.Hits)
+	jsons.append(searchResponse.Hits.Hits)
 
 	totalData := searchResponse.Hits.Total
 	totalPage := totalData / batchSize
@@ -170,7 +175,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 			if err != nil {
 				err = errors.WithStack(err)
 			}
-			jsons.appendEasyjson(searchResponse.Hits.Hits)
+			jsons.append(searchResponse.Hits.Hits)
 			wg.Done()
 		})
 		defer func() {
@@ -184,7 +189,7 @@ func (e ElasticSearch) SearchDocument(ctx context.Context, index, _type, query s
 		wg.Wait()
 	}
 
-	return "[" + strings.Join(jsons.jsons, ",") + "]", err
+	return "[" + jsons.jsons + "]", err
 }
 
 func (e *ElasticSearch) search(ctx context.Context, index, _type, query string) (*SearchResponse, error) {
