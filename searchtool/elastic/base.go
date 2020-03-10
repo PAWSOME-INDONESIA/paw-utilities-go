@@ -2,6 +2,7 @@ package elastic
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/pkg/errors"
@@ -36,23 +37,40 @@ type (
 		Source          interface{} `json:"_source"`
 	}
 
-	SearchResponse struct {
-		Took    int         `json:"took"`
-		TimeOut bool        `json:"time_out"`
-		Shards  interface{} `json:"_shards"`
-		Hits    SearchHits  `json:"hits"`
-	}
-
-	SearchHits struct {
-		Total int64       `json:"total"`
-		Hits  interface{} `json:"hits"`
-	}
-
 	ElasticSearch struct {
 		Option *Option
 		Client *elasticsearch.Client
 	}
 )
+
+type SearchResponse struct {
+	Took    int         `json:"took"`
+	TimeOut bool        `json:"time_out"`
+	Shards  interface{} `json:"_shards"`
+	Hits    SearchHits  `json:"hits"`
+}
+
+type SearchHits struct {
+	Total int64       `json:"total"`
+	Hits  interface{} `json:"hits"`
+}
+
+//easyjson:json
+type SearchResponseEasyJson struct {
+	Took    int                `json:"took"`
+	TimeOut bool               `json:"time_out"`
+	Shards  interface{}        `json:"_shards"`
+	Hits    SearchHitsEasyJson `json:"hits"`
+}
+
+type SearchHitsEasyJson struct {
+	Total int64                   `json:"total"`
+	Hits  []SearchDataHitsEasyJson `json:"hits"`
+}
+
+type SearchDataHitsEasyJson struct {
+	Source json.RawMessage `json:"_source"`
+}
 
 func getOption(option *Option) {
 	if option.Log == nil {
@@ -113,7 +131,7 @@ func (e *ElasticSearch) Ping() error {
 
 	req := esapi.PingRequest{
 		ErrorTrace: true,
-		Human: true,
+		Human:      true,
 	}
 	res, err := req.Do(ctx, e.Client)
 	if err != nil {
