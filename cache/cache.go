@@ -14,6 +14,14 @@ type (
 		Get(key string, object interface{}) error
 		Exec() error
 	}
+
+	PubSub interface {
+		Receive() error
+		Publish(message string) error
+		Channel() <-chan *redis.Message
+		Close() error
+	}
+
 	Cache interface {
 		util.Ping
 		SetWithExpiration(string, interface{}, time.Duration) error
@@ -44,6 +52,7 @@ type (
 
 		Pipeline() Pipe
 		Client() Cache
+		Subscribe(channel string) (PubSub, error)
 	}
 
 	PoolCallback func(client Cache)

@@ -368,3 +368,7 @@ func (c *redisUniversalClient) Client() cache.Cache {
 func (c *redisUniversalClient) Pipeline() cache.Pipe {
 	return &pipe{instance: c.r.Pipeline()}
 }
+
+func (c *redisUniversalClient) Subscribe(channel string) (cache.PubSub, error) {
+	return nil, errors.New("pubsub not implemented in universal client")
+}

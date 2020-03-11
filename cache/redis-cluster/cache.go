@@ -6,6 +6,8 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/pkg/errors"
 	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/cache"
+	"log"
+	"sync"
 	"time"
 )
 
@@ -24,7 +26,9 @@ type (
 	}
 
 	redisClusterClient struct {
-		r *redis.ClusterClient
+		r        *redis.ClusterClient
+		mu       sync.Mutex
+		channels map[string]cache.PubSub
 	}
 )
 
@@ -48,7 +52,7 @@ func New(option *Option) (cache.Cache, error) {
 		return nil, errors.Wrap(err, "Failed to connect to redis!")
 	}
 
-	return &redisClusterClient{r: client}, nil
+	return &redisClusterClient{r: client, channels: make(map[string]cache.PubSub)}, nil
 }
 
 func (c *redisClusterClient) Ping() error {
@@ -175,6 +179,12 @@ func (c *redisClusterClient) FlushAll() error {
 }
 
 func (c *redisClusterClient) Close() error {
+	for channel, c := range c.channels {
+		if err := c.Close(); err != nil {
+			log.Printf("failed to close pubsub cn %s", channel)
+		}
+	}
+
 	if err := c.r.Close(); err != nil {
 		return errors.Wrap(err, "failed to close redis client")
 	}
@@ -366,4 +376,19 @@ func (c *redisClusterClient) Client() cache.Cache {
 
 func (c *redisClusterClient) Pipeline() cache.Pipe {
 	return &pipe{instance: c.r.Pipeline()}
+}
+
+func (c *redisClusterClient) Subscribe(channel string) (cache.PubSub, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	for c, p := range c.channels {
+		if c == channel {
+			return p, nil
+		}
+	}
+
+	p := c.r.Subscribe(channel)
+	c.channels[channel] = &pubsub{r: c.r, p: p, cn: channel}
+	return c.channels[channel], nil
 }
