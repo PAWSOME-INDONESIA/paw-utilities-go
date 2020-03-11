@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewNoSqlMigration(mongo mongo.Mongo, migrations map[int]*NoSqlScript, logger logs.Logger) (Tool, error) {
+func NewNoSqlMigration(mongo mongo.Mongo, migrations map[int64]*NoSqlScript, logger logs.Logger) (Tool, error) {
 	if mongo == nil {
 		return nil, errors.New("mongo is required!")
 	}
@@ -51,7 +51,7 @@ func (n *nosql) Up() error {
 		return err
 	}
 
-	last := 0
+	last := int64(0)
 	if len(migrated) != 0 {
 		last = migrated[0].Version
 	}
@@ -60,15 +60,17 @@ func (n *nosql) Up() error {
 		n.logger.Infof("%s migration already up to date!", NoSqlUpTag)
 	}
 
-	keys := make([]int, 0)
+	keys := make([]int64, 0)
 
 	for k := range n.migrations {
 		keys = append(keys, k)
 	}
 
-	sort.Ints(keys)
+	sort.Slice(keys, func(l, r int) bool {
+		return keys[l] < keys[r]
+	})
 
-	versions := make([]int, 0)
+	versions := make([]int64, 0)
 
 	// - first migration or migration table truncated
 	if last == 0 {
@@ -134,7 +136,7 @@ func (n *nosql) Down() error {
 		return err
 	}
 
-	version := 0
+	version := int64(0)
 
 	if len(migrated) != 0 {
 		version = migrated[0].Version
@@ -145,13 +147,15 @@ func (n *nosql) Down() error {
 		return nil
 	}
 
-	keys := make([]int, 0)
+	keys := make([]int64, 0)
 
 	for k := range n.migrations {
 		keys = append(keys, k)
 	}
 
-	sort.Ints(keys)
+	sort.Slice(keys, func(l, r int) bool {
+		return keys[l] < keys[r]
+	})
 
 	script := n.migrations[version]
 
@@ -176,8 +180,8 @@ func (n *nosql) Check() error {
 		return nil
 	}
 
-	versions := make([]int, 0)
-	notMigrated := make([]int, 0)
+	versions := make([]int64, 0)
+	notMigrated := make([]int64, 0)
 	migrated := make([]nosqlcollection, 0)
 
 	for k := range n.migrations {
@@ -249,19 +253,21 @@ func isNoSqlMigrationsEmpty(n *nosql) bool {
 	return false
 }
 
-func getLatestNoSqlMigrationVersion(n *nosql) int {
-	keys := make([]int, 0)
+func getLatestNoSqlMigrationVersion(n *nosql) int64 {
+	keys := make([]int64, 0)
 
 	for k := range n.migrations {
 		keys = append(keys, k)
 	}
 
-	sort.Ints(keys)
+	sort.Slice(keys, func(l, r int) bool {
+		return keys[l] < keys[r]
+	})
 
 	return keys[len(keys)-1]
 }
 
-func contains(value int, slices []nosqlcollection) bool {
+func contains(value int64, slices []nosqlcollection) bool {
 	exists := false
 
 	for _, element := range slices {

@@ -35,17 +35,17 @@ type (
 
 	sql struct {
 		orm        persistent.ORM
-		migrations map[int]*Script
+		migrations map[int64]*Script
 		logger     logs.Logger
 	}
 
 	nosql struct {
 		orm        mongo.Mongo
-		migrations map[int]*NoSqlScript
+		migrations map[int64]*NoSqlScript
 		logger     logs.Logger
 	}
 
 	nosqlcollection struct {
-		Version int `bson:"version"`
+		Version int64 `bson:"version"`
 	}
 )

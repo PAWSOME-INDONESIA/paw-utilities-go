@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-func NewSqlMigration(orm persistent.ORM, migrations map[int]*Script, logger logs.Logger) (Tool, error) {
+func NewSqlMigration(orm persistent.ORM, migrations map[int64]*Script, logger logs.Logger) (Tool, error) {
 	if orm == nil {
 		return nil, errors.New("orm is required!")
 	}
@@ -40,15 +40,17 @@ func (s *sql) Up() error {
 		return nil
 	}
 
-	keys := make([]int, 0)
+	keys := make([]int64, 0)
 
 	for k := range s.migrations {
 		keys = append(keys, k)
 	}
 
-	sort.Ints(keys)
+	sort.Slice(keys, func(l, r int) bool {
+		return keys[l] < keys[r]
+	})
 
-	versions := make([]int, 0)
+	versions := make([]int64, 0)
 
 	// - first migration or migration table truncated
 	if last == 0 {
@@ -133,13 +135,15 @@ func (s *sql) Down() error {
 		return nil
 	}
 
-	keys := make([]int, 0)
+	keys := make([]int64, 0)
 
 	for k := range s.migrations {
 		keys = append(keys, k)
 	}
 
-	sort.Ints(keys)
+	sort.Slice(keys, func(l, r int) bool {
+		return keys[l] < keys[r]
+	})
 
 	script := s.migrations[version]
 
@@ -279,7 +283,7 @@ func isMigrationTableExists(s *sql) error {
 	return nil
 }
 
-func isAlreadyMigrated(s *sql, version int) error {
+func isAlreadyMigrated(s *sql, version int64) error {
 	rows, err := s.orm.RawSql("SELECT version FROM "+TableName+" ORDER BY ?", ColumnName)
 
 	if err != nil {
@@ -293,7 +297,7 @@ func isAlreadyMigrated(s *sql, version int) error {
 	}()
 
 	err = nil
-	id, total := 0, 0
+	id, total := int64(0), 0
 	found := false
 
 	for rows.Next() {
@@ -328,19 +332,21 @@ func isAlreadyMigrated(s *sql, version int) error {
 	return nil
 }
 
-func getLatestMigrationVersion(s *sql) int {
-	keys := make([]int, 0)
+func getLatestMigrationVersion(s *sql) int64 {
+	keys := make([]int64, 0)
 
 	for k := range s.migrations {
 		keys = append(keys, k)
 	}
 
-	sort.Ints(keys)
+	sort.Slice(keys, func(l, r int) bool {
+		return keys[l] < keys[r]
+	})
 
 	return keys[len(keys)-1]
 }
 
-func getLatestMigrationVersionFromDatabase(s *sql) (int, error) {
+func getLatestMigrationVersionFromDatabase(s *sql) (int64, error) {
 	query := fmt.Sprintf("SELECT %s FROM migrations ORDER BY %s DESC", ColumnName, ColumnName)
 
 	rows, err := s.orm.RawSql(query)
@@ -355,7 +361,7 @@ func getLatestMigrationVersionFromDatabase(s *sql) (int, error) {
 		}
 	}()
 
-	version, err := 0, nil
+	version, err := int64(0), nil
 
 	for rows.Next() {
 		err = rows.Scan(&version)
