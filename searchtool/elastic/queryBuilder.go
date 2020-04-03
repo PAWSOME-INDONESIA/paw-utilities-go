@@ -221,12 +221,14 @@ func (s MatchQuery) Source() map[string]interface{} {
 type BoolQuery struct {
 	should Queries
 	must   Queries
+	filter Queries
 }
 
-func NewBoolQuery(should, must Queries) Query {
+func NewBoolQuery(should, must, filter Queries) Query {
 	return &BoolQuery{
 		must:   must,
 		should: should,
+		filter: filter,
 	}
 }
 
@@ -238,6 +240,9 @@ func (s BoolQuery) Source() map[string]interface{} {
 	}
 	if len(s.must) > 0 {
 		value["must"] = s.must.Source()
+	}
+	if len(s.must) > 0 {
+		value["filter"] = s.filter.Source()
 	}
 	response["bool"] = value
 	return response
