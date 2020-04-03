@@ -162,6 +162,26 @@ func (s TermsQuery) Source() map[string]interface{} {
 	return response
 }
 
+type TermQuery struct {
+	field string
+	value interface{}
+}
+
+func NewTermQuery(field string, value interface{}) Query {
+	return &TermsQuery{
+		field: field,
+		value: value,
+	}
+}
+
+func (s TermQuery) Source() map[string]interface{} {
+	var response = make(map[string]interface{})
+	response["term"] = map[string]interface{}{
+		s.field: s.value,
+	}
+	return response
+}
+
 type MatchPhraseQuery struct {
 	field string
 	value string
