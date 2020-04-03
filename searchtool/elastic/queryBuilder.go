@@ -168,7 +168,7 @@ type TermQuery struct {
 }
 
 func NewTermQuery(field string, value interface{}) Query {
-	return &TermsQuery{
+	return &TermQuery{
 		field: field,
 		value: value,
 	}
