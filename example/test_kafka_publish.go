@@ -1,8 +1,8 @@
 package example
 
 import (
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	kafka2 "github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging/kafka"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	kafka2 "github.com/PAWSOME-INDONESIA/paw-utilities-go/messaging/kafka"
 )
 
 func main() {

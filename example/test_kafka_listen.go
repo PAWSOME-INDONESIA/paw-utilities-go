@@ -1,9 +1,9 @@
 package example
 
 import (
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
-	kafka2 "github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging/kafka"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/messaging"
+	kafka2 "github.com/PAWSOME-INDONESIA/paw-utilities-go/messaging/kafka"
 	"sync"
 )
 

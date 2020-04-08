@@ -3,7 +3,7 @@ package example
 import (
 	"encoding/json"
 	"fmt"
-	cache2 "github.com/tiket/TIX-HOTEL-UTILITIES-GO/cache/redis"
+	cache2 "github.com/PAWSOME-INDONESIA/paw-utilities-go/cache/redis"
 	"log"
 	"math"
 	"os"
@@ -243,7 +243,7 @@ func main() {
 	//log.Printf("finish caching %s", time.Now().Sub(now).String())
 }
 
-func generateOtherHotel(iteration int) [] Hotel {
+func generateOtherHotel(iteration int) []Hotel {
 	hotels := make([]Hotel, 0)
 	for i := 0; i < iteration; i++ {
 		ht := Hotel{

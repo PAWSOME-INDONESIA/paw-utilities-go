@@ -1,9 +1,9 @@
 package migration
 
 import (
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/persistent"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/persistent/mongo"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/persistent"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/persistent/mongo"
 )
 
 const (
@@ -12,8 +12,8 @@ const (
 	UpTag      = "[MIGRATION-UP] -"
 	DownTag    = "[MIGRATION-DOWN] -"
 
-	NoSqlUpTag      = "[MIGRATION-UP-NOSQL] -"
-	NoSqlDownTag    = "[MIGRATION-DOWN-NOSQL] -"
+	NoSqlUpTag   = "[MIGRATION-UP-NOSQL] -"
+	NoSqlDownTag = "[MIGRATION-DOWN-NOSQL] -"
 )
 
 type (

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
 	"github.com/labstack/echo/v4"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 )
 
 type (

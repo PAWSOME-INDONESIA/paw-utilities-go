@@ -1,10 +1,10 @@
 package echokit
 
 import (
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
 	"github.com/labstack/gommon/log"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 	"io"
 )
 

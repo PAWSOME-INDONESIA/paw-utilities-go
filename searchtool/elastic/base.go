@@ -3,11 +3,11 @@ package elastic
 import (
 	"context"
 	"encoding/json"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/searchtool"
 	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/pkg/errors"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 	"time"
 )
 
@@ -64,7 +64,7 @@ type SearchResponseEasyJson struct {
 }
 
 type SearchHitsEasyJson struct {
-	Total int64                   `json:"total"`
+	Total int64                    `json:"total"`
 	Hits  []SearchDataHitsEasyJson `json:"hits"`
 }
 

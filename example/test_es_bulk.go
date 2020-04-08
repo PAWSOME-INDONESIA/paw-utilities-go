@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool/elastic"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/searchtool/elastic"
 )
 
 func esBulk() {

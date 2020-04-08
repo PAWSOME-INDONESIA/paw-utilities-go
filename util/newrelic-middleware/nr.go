@@ -2,11 +2,11 @@ package newrelic_middleware
 
 import (
 	"fmt"
+	shared_dto "github.com/PAWSOME-INDONESIA/paw-utilities-go/shared/dto"
 	"github.com/labstack/echo/v4"
 	newrelic "github.com/newrelic/go-agent"
 	"github.com/newrelic/go-agent/_integrations/nrpkgerrors"
 	"github.com/pkg/errors"
-	shared_dto "github.com/tiket/TIX-HOTEL-UTILITIES-GO/shared/dto"
 	"net/http"
 	"time"
 )

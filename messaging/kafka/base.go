@@ -2,21 +2,21 @@ package kafka
 
 import (
 	"context"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/messaging"
 	"github.com/pkg/errors"
 	kfk "github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/gzip"
 	_ "github.com/segmentio/kafka-go/gzip"
 	"github.com/segmentio/kafka-go/snappy"
 	_ "github.com/segmentio/kafka-go/snappy"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
 	"sync"
 	"time"
 )
 
 type (
 	Compression string
-	kafka struct {
+	kafka       struct {
 		option  Option
 		log     logs.Logger
 		writers map[string]*kfk.Writer

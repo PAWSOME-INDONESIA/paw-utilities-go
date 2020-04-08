@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"cloud.google.com/go/storage"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/filestore"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/filestore"
 
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"

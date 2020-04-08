@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/util"
 
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"

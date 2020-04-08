@@ -1,7 +1,7 @@
 package kafka_sarama
 
 import (
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/messaging"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/messaging"
 )
 
 func (l *Kafka) AddTopicListener(topic string, callback messaging.CallbackFunc) {

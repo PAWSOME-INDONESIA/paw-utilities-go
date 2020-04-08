@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/util"
 	"time"
 
 	"github.com/go-redis/redis"

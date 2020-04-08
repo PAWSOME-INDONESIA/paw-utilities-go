@@ -2,9 +2,9 @@ package migration
 
 import (
 	"fmt"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/persistent"
 	"github.com/pkg/errors"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/persistent"
 	"sort"
 )
 

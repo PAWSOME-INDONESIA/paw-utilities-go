@@ -3,7 +3,7 @@ package searchtool
 import (
 	"context"
 
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/util"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/util"
 )
 
 type SearchOption struct {

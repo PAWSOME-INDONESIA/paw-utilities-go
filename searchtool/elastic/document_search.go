@@ -8,10 +8,10 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/searchtool"
 	"github.com/digitalysin/ants"
 	"github.com/elastic/go-elasticsearch/v7/esapi"
 	"github.com/pkg/errors"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/searchtool"
 )
 
 type SearchData struct {

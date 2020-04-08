@@ -1,12 +1,12 @@
 package mysql
 
 import (
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/logs"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/logs"
 
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/persistent"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/persistent"
 )
 
 func New(uri string, option *persistent.Option, logger logs.Logger) (persistent.ORM, error) {

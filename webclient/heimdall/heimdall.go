@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/webclient"
 	"github.com/gojek/heimdall/httpclient"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/webclient"
 )
 
 type (

@@ -3,9 +3,9 @@ package redis_cluster
 import (
 	"encoding"
 	"fmt"
+	"github.com/PAWSOME-INDONESIA/paw-utilities-go/cache"
 	"github.com/go-redis/redis"
 	"github.com/pkg/errors"
-	"github.com/tiket/TIX-HOTEL-UTILITIES-GO/cache"
 	"log"
 	"sync"
 	"time"
